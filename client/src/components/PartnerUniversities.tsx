@@ -43,9 +43,9 @@ const PartnerUniversities: React.FC = () => {
               className="cursor-pointer"
             >
               <img 
-                src="https://upload.wikimedia.org/wikipedia/commons/4/4d/Stanford_University_logo.svg" 
-                alt="Stanford logó" 
-                className="h-7 object-contain brightness-200"
+                src={elteImage} 
+                alt="ELTE logó" 
+                className="h-10 object-contain brightness-200"
               />
             </motion.div>
             <motion.div

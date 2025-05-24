@@ -2,12 +2,13 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import elteImage from "../assets/ELTE.png";
 
 const freeCourses = [
   {
     id: 1,
     university: "Eötvös Loránd Tudományegyetem",
-    universityLogo: "https://www.elte.hu/media/d3/03/8414d9b52afbc0ec63c2198c2c0cda24df9c02d3e21cce1320a9a71eee17/elte_cimer_color.svg",
+    universityLogo: elteImage,
     title: "Pénzügyi piacok",
     image: "https://images.unsplash.com/photo-1560520653-9e0e4c89eb11?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300",
     type: "Tanfolyam"
