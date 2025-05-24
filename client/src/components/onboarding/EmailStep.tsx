@@ -11,7 +11,7 @@ interface EmailStepProps {
     verificationCode: string;
     goal: string;
   };
-  updateUserData: (data: Partial<typeof userData>) => void;
+  updateUserData: (data: Partial<{ userType: string; email: string; verificationCode: string; goal: string; }>) => void;
   onNext: () => void;
   onBack: () => void;
 }

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useLocation } from "wouter";
-import WelcomeStep from "@/components/onboarding/WelcomeStep";
-import UserTypeStep from "@/components/onboarding/UserTypeStep";
-import EmailStep from "@/components/onboarding/EmailStep";
-import VerificationStep from "@/components/onboarding/VerificationStep";
-import GoalSelectionStep from "@/components/onboarding/GoalSelectionStep";
-import SuccessStep from "@/components/onboarding/SuccessStep";
+import WelcomeStep from "../components/onboarding/WelcomeStep";
+import UserTypeStep from "../components/onboarding/UserTypeStep";
+import EmailStep from "../components/onboarding/EmailStep";
+import VerificationStep from "../components/onboarding/VerificationStep";
+import GoalSelectionStep from "../components/onboarding/GoalSelectionStep";
+import SuccessStep from "../components/onboarding/SuccessStep";
 
 const Onboarding: React.FC = () => {
   const [, setLocation] = useLocation();

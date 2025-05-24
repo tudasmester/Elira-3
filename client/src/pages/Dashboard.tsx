@@ -48,7 +48,7 @@ const Dashboard: React.FC = () => {
               <p className="text-white/90 mb-4">Örülünk, hogy csatlakozott! Fedezze fel a kurzusainkat és kezdje el tanulási útját.</p>
               <div className="flex space-x-4">
                 <Button variant="secondary" className="text-primary">Ajánlott kurzusok</Button>
-                <Button variant="whiteOutline">Profilom kitöltése</Button>
+                <Button variant="outline" className="bg-white text-primary border-white hover:bg-white/90">Profilom kitöltése</Button>
               </div>
             </div>
             <div className="md:w-1/3 flex justify-center">
