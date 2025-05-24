@@ -1,6 +1,7 @@
 import React from "react";
 import { universities } from "@/data/universities";
 import { motion } from "framer-motion";
+import elteImage from "../assets/ELTE.png";
 
 const PartnerUniversities: React.FC = () => {
   return (
