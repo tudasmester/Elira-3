@@ -11,7 +11,7 @@ interface VerificationStepProps {
     verificationCode: string;
     goal: string;
   };
-  updateUserData: (data: Partial<typeof userData>) => void;
+  updateUserData: (data: Partial<{ userType: string; email: string; verificationCode: string; goal: string; }>) => void;
   onNext: () => void;
   onBack: () => void;
 }
@@ -30,8 +30,9 @@ const VerificationStep: React.FC<VerificationStepProps> = ({
 
   // Focus the first input on component mount
   useEffect(() => {
-    if (inputRefs.current[0]) {
-      inputRefs.current[0].focus();
+    const firstInput = inputRefs.current[0];
+    if (firstInput) {
+      firstInput.focus();
     }
   }, []);
 
@@ -51,8 +52,9 @@ const VerificationStep: React.FC<VerificationStepProps> = ({
       
       // Focus on the appropriate input after paste
       const nextIndex = Math.min(index + chars.length, verificationCode.length - 1);
-      if (inputRefs.current[nextIndex]) {
-        inputRefs.current[nextIndex].focus();
+      const nextInput = inputRefs.current[nextIndex];
+      if (nextInput) {
+        nextInput.focus();
       }
     } else {
       // Normal single character input
@@ -61,8 +63,11 @@ const VerificationStep: React.FC<VerificationStepProps> = ({
       setVerificationCode(newCode);
       
       // Auto-focus next input
-      if (value && index < verificationCode.length - 1 && inputRefs.current[index + 1]) {
-        inputRefs.current[index + 1].focus();
+      if (value && index < verificationCode.length - 1) {
+        const nextInput = inputRefs.current[index + 1];
+        if (nextInput) {
+          nextInput.focus();
+        }
       }
     }
   };
@@ -70,8 +75,11 @@ const VerificationStep: React.FC<VerificationStepProps> = ({
   const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
     // Handle backspace
     if (e.key === 'Backspace') {
-      if (!verificationCode[index] && index > 0 && inputRefs.current[index - 1]) {
-        inputRefs.current[index - 1].focus();
+      if (!verificationCode[index] && index > 0) {
+        const prevInput = inputRefs.current[index - 1];
+        if (prevInput) {
+          prevInput.focus();
+        }
       }
     }
   };
@@ -103,8 +111,9 @@ const VerificationStep: React.FC<VerificationStepProps> = ({
       setIsResending(false);
       // Reset the inputs
       setVerificationCode(['', '', '', '', '', '']);
-      if (inputRefs.current[0]) {
-        inputRefs.current[0].focus();
+      const firstInput = inputRefs.current[0];
+      if (firstInput) {
+        firstInput.focus();
       }
     }, 1500);
   };
