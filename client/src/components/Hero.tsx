@@ -1,79 +1,59 @@
 import React from "react";
 import { Button } from "@/components/ui/button-variant";
 import { motion } from "framer-motion";
+import { useLocation } from "wouter";
 
 const Hero: React.FC = () => {
+  const [, setLocation] = useLocation();
+
+  const handleJoinClick = () => {
+    setLocation("/onboarding");
+  };
+
   return (
-    <section className="hero-pattern text-white">
-      <div className="max-w-7xl mx-auto px-4 py-16 sm:py-24 flex flex-col md:flex-row items-center">
-        <div className="md:w-1/2 mb-10 md:mb-0">
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-4xl md:text-5xl font-bold font-heading leading-tight mb-4"
-          >
-            Tanuljon <span className="text-tertiary">korlátok nélkül</span>
-          </motion.h1>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-lg mb-8 max-w-lg"
-          >
+    <section className="bg-white text-neutral-900 relative overflow-hidden">
+      <div className="absolute right-0 top-0 w-1/2 h-full z-0">
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.07 }}
+          transition={{ duration: 1 }}
+          className="w-full h-full"
+        >
+          <div className="text-[800px] font-bold text-primary/5 absolute -right-20 -top-80">C</div>
+        </motion.div>
+      </div>
+      
+      <div className="max-w-7xl mx-auto px-4 py-16 sm:py-24 relative z-10">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="max-w-2xl"
+        >
+          <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-4">
+            Learn without <span className="block">limits</span>
+          </h1>
+          <p className="text-lg mb-8 max-w-lg text-neutral-700">
             Kezdje el, váltson vagy fejlessze karrierjét több mint 5800 tanfolyammal, szakmai bizonyítványokkal és diplomákkal, amelyeket világszínvonalú egyetemek és vállalatok kínálnak.
-          </motion.p>
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4"
-          >
-            <Button variant="secondary" size="lg" className="text-base font-medium">
-              Csatlakozzon ingyen
+          </p>
+          <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+            <Button 
+              onClick={handleJoinClick}
+              variant="default" 
+              size="lg" 
+              className="text-base font-medium bg-primary text-white hover:bg-primary/90"
+            >
+              Join for free
             </Button>
-            <Button variant="whiteOutline" size="lg" className="bg-white text-primary hover:bg-neutral-100 text-base font-medium">
-              A Coursera for Business kipróbálása
+            <Button 
+              variant="outline" 
+              size="lg" 
+              className="text-base font-medium border-neutral-300 text-neutral-700 hover:bg-neutral-50"
+            >
+              Try Coursera for Business
             </Button>
-          </motion.div>
-        </div>
-        <div className="md:w-1/2 flex justify-center">
-          <div className="relative">
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 0.3, scale: 1 }}
-              transition={{ 
-                duration: 2, 
-                repeat: Infinity, 
-                repeatType: "reverse" 
-              }}
-              className="absolute -top-4 -left-4 w-24 h-24 bg-tertiary rounded-full opacity-30"
-            />
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 0.3, scale: 1 }}
-              transition={{ 
-                duration: 2, 
-                repeat: Infinity, 
-                repeatType: "reverse",
-                delay: 0.5 
-              }}
-              className="absolute -bottom-4 -right-4 w-32 h-32 bg-accent rounded-full opacity-30"
-            />
-            <motion.img 
-              initial={{ y: 0 }}
-              animate={{ y: -10 }}
-              transition={{ 
-                duration: 3, 
-                repeat: Infinity, 
-                repeatType: "reverse" 
-              }}
-              src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=600" 
-              alt="Tanuló diák" 
-              className="rounded-full w-64 h-64 object-cover border-4 border-white z-10 relative"
-            />
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
