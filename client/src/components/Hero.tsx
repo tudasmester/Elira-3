@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button-variant";
 import { motion, useAnimation } from "framer-motion";
 import { useLocation } from "wouter";
+import heroImage from "../assets/medical-office-manager-hero_1X.png";
 
 const Hero: React.FC = () => {
   const [, setLocation] = useLocation();
@@ -83,9 +84,9 @@ const Hero: React.FC = () => {
                 className="rounded-3xl overflow-hidden shadow-2xl relative z-20"
               >
                 <img 
-                  src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=600" 
+                  src={heroImage} 
                   alt="Tanuló diák" 
-                  className="w-full h-auto object-cover rounded-3xl"
+                  className="w-full h-auto object-contain rounded-3xl"
                 />
               </motion.div>
               
