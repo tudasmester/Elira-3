@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams } from "wouter";
+import { useParams, useLocation } from "wouter";
 import { courses } from "@/data/courses";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,18 +8,85 @@ import {
   ArrowLeft, Clock, Users, Award, BookOpen, Star, 
   Check, PlayCircle, Download, GraduationCap, 
   ChevronDown, ChevronRight, Shield, BarChart4, Sparkles, 
-  CalendarCheck, MessageCircle, Share2
+  CalendarCheck, MessageCircle, Share2, BookOpenCheck
 } from "lucide-react";
 import { Link } from "wouter";
+import { useAuth } from "@/hooks/useAuth";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 const CourseDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const courseId = parseInt(id || "1");
   const [activeTab, setActiveTab] = useState("overview");
   const [expandedModule, setExpandedModule] = useState<number | null>(null);
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
+  const [, navigate] = useLocation();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
   
   // Find the course with the matching ID
   const course = courses.find(course => course.id === courseId);
+  
+  // Check if user is enrolled in this course
+  interface EnrollmentResponse {
+    isEnrolled: boolean;
+  }
+  
+  const { 
+    data: enrollmentData,
+    isLoading: isEnrollmentLoading
+  } = useQuery<EnrollmentResponse>({
+    queryKey: [`/api/enrollments/check/${courseId}`],
+    enabled: isAuthenticated && !!courseId,
+    retry: false
+  });
+  
+  const isEnrolled = enrollmentData?.isEnrolled || false;
+  
+  // Mutation for enrolling in a course
+  const enrollMutation = useMutation({
+    mutationFn: async () => {
+      return await apiRequest(`/api/courses/enroll`, {
+        method: 'POST',
+        data: { courseId }
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/enrollments/check/${courseId}`] });
+      queryClient.invalidateQueries({ queryKey: ['/api/enrollments/user'] });
+      toast({
+        title: "Sikeres beiratkozás",
+        description: "Sikeresen beiratkozott a kurzusra.",
+        variant: "default",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Hiba történt",
+        description: "Nem sikerült beiratkozni a kurzusra. Kérjük, próbálja újra később.",
+        variant: "destructive",
+      });
+      console.error("Error enrolling in course:", error);
+    }
+  });
+  
+  // Handle enrollment button click
+  const handleEnrollClick = () => {
+    if (!isAuthenticated) {
+      // Redirect to login page if not authenticated
+      toast({
+        title: "Bejelentkezés szükséges",
+        description: "A kurzusra való beiratkozáshoz kérjük, jelentkezzen be.",
+        variant: "default",
+      });
+      navigate("/api/login");
+      return;
+    }
+    
+    enrollMutation.mutate();
+  };
   
   if (!course) {
     return <div className="max-w-7xl mx-auto py-16 px-4 text-center">Kurzus nem található</div>;
@@ -322,13 +389,48 @@ const CourseDetail: React.FC = () => {
                   <span className="text-white/80 text-sm">30 napos pénzvisszafizetési garancia</span>
                 </div>
                 
+                {isEnrolled && (
+                  <div className="bg-green-500/20 backdrop-blur-sm p-4 rounded-lg border border-green-500/30 mb-5">
+                    <div className="flex items-center">
+                      <BookOpenCheck className="h-5 w-5 text-green-400 mr-3" />
+                      <span className="text-white font-medium">Már beiratkozott erre a kurzusra</span>
+                    </div>
+                  </div>
+                )}
+                
                 <motion.div 
                   whileHover={{ scale: 1.03 }} 
                   whileTap={{ scale: 0.97 }}
                 >
-                  <Button className="w-full bg-primary-foreground hover:bg-primary-foreground/90 text-primary py-6 text-lg font-medium shadow-xl">
-                    Iratkozzon fel most
-                  </Button>
+                  {isEnrolled ? (
+                    <Button 
+                      className="w-full bg-green-600 hover:bg-green-700 text-white py-6 text-lg font-medium shadow-xl"
+                      onClick={() => navigate("/dashboard")}
+                    >
+                      <BookOpenCheck className="h-5 w-5 mr-2" />
+                      Folytatás a tanfolyammal
+                    </Button>
+                  ) : (
+                    <Button 
+                      className="w-full bg-primary-foreground hover:bg-primary-foreground/90 text-primary py-6 text-lg font-medium shadow-xl"
+                      onClick={handleEnrollClick}
+                      disabled={enrollMutation.isPending || (!isAuthenticated && authLoading)}
+                    >
+                      {enrollMutation.isPending ? (
+                        <span className="flex items-center">
+                          <span className="animate-spin mr-2">
+                            <svg className="h-5 w-5" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                          </span>
+                          Beiratkozás...
+                        </span>
+                      ) : (
+                        <>Iratkozzon fel most</>
+                      )}
+                    </Button>
+                  )}
                 </motion.div>
               </div>
             </motion.div>
