@@ -10,6 +10,7 @@ import CourseDetail from "@/pages/CourseDetail";
 import Trending from "@/pages/Trending";
 import Courses from "@/pages/Courses";
 import Degrees from "@/pages/Degrees";
+import DegreeDetail from "@/pages/DegreeDetail";
 import CategoryPage from "@/pages/CategoryPage";
 import NotFound from "@/pages/not-found";
 import Layout from "@/components/Layout";
@@ -30,6 +31,7 @@ function Router() {
       <Route path="/trending" component={Trending} />
       <Route path="/courses" component={Courses} />
       <Route path="/degrees" component={Degrees} />
+      <Route path="/degree/:id" component={DegreeDetail} />
       <Route path="/category/:slug" component={CategoryPage} />
       <Route component={NotFound} />
     </Switch>
