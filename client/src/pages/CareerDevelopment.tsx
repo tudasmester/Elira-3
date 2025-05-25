@@ -25,7 +25,8 @@ import {
   Filter,
   SlidersHorizontal,
   CheckCircle,
-  Zap
+  Zap,
+  Code
 } from 'lucide-react';
 import { courses } from '@/data/courses';
 import CoursePreviewModal from '@/components/CoursePreviewModal';
@@ -42,231 +43,35 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-// Custom Code icon for frontend developer
-function CodeIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <polyline points="16 18 22 12 16 6"></polyline>
-      <polyline points="8 6 2 12 8 18"></polyline>
-    </svg>
-  );
-}
+// Import career paths data
+import { careerPaths, careerCategories, difficultyLevels } from '@/data/careers';
 
-// Define career paths
-const careerPaths = [
-  {
-    id: 'data-analyst',
-    title: 'Adatelemző',
-    icon: <LineChart className="h-6 w-6 text-blue-500" />,
-    description: 'Adatelemzők adatokat gyűjtenek, tisztítanak és értelmeznek, hogy támogassák az üzleti döntéshozatalt. Python, SQL és adatvizualizációs eszközök használatával dolgoznak.',
-    imageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-    averageSalary: '800,000 - 1,200,000 Ft/hó',
-    jobOutlook: 'Magas',
-    growthRate: '+27%',
-    timeToComplete: '6 hónap',
-    difficulty: 'Közepes',
-    rating: 4.8,
-    students: 1250,
-    isPopular: true,
-    isTrending: true,
-    category: 'tech',
-    yearlyGrowth: [
-      { year: 2022, jobs: 3200 },
-      { year: 2023, jobs: 3800 },
-      { year: 2024, jobs: 4500 },
-      { year: 2025, jobs: 5200 },
-    ],
-    skills: ['SQL', 'Python', 'Excel', 'Adatvizualizáció', 'Statisztika', 'Tableau', 'R', 'Pandas'],
-    recommendedCourses: [10, 11, 12, 13],
-    topCompanies: ['OTP Bank', 'Vodafone', 'Mol Group', 'Telekom'],
-    certifications: ['Microsoft Data Analyst', 'IBM Data Science', 'Google Data Analytics'],
-    highlights: [
-      'Az adatelemzők a legkeresettebb szakemberek közé tartoznak',
-      'Rugalmas munkalehetőségek távmunkával is',
-      'Számos iparágban szükség van adatelemzőkre',
-      'A karrierváltók számára ideális kezdő pozíció'
-    ]
-  },
-  {
-    id: 'digital-marketer',
-    title: 'Digitális Marketing Specialista',
-    icon: <TrendingUp className="h-6 w-6 text-green-500" />,
-    description: 'Digitális marketing szakemberek online kampányokat terveznek és hajtanak végre különböző platformokon, analitikával mérik a teljesítményt és optimalizálják a stratégiákat.',
-    imageUrl: 'https://images.unsplash.com/photo-1533750516457-a7f992034fec?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-    averageSalary: '700,000 - 1,100,000 Ft/hó',
-    jobOutlook: 'Nagyon magas',
-    growthRate: '+32%',
-    timeToComplete: '5 hónap',
-    difficulty: 'Kezdő-barát',
-    rating: 4.7,
-    students: 1850,
-    isPopular: true,
-    isTrending: true,
-    category: 'marketing',
-    yearlyGrowth: [
-      { year: 2022, jobs: 2700 },
-      { year: 2023, jobs: 3200 },
-      { year: 2024, jobs: 4100 },
-      { year: 2025, jobs: 4800 },
-    ],
-    skills: ['SEO', 'Google Analytics', 'Közösségi média', 'PPC hirdetések', 'Tartalommarketing', 'Email marketing', 'Konverzió optimalizálás', 'Copywriting'],
-    recommendedCourses: [20, 21, 22, 23],
-    topCompanies: ['Wavemaker', 'Google Hungary', 'GroupM', 'Httpool'],
-    certifications: ['Google Ads', 'Facebook Blueprint', 'HubSpot Marketing'],
-    highlights: [
-      'A leggyorsabban növekvő karrierpálya Magyarországon',
-      'Alacsony belépési küszöb karrierváltóknak',
-      'Kreatív és adatvezérelt munka kombinációja',
-      'Könnyen szerezhető nemzetközi tanúsítványok'
-    ]
-  },
-  {
-    id: 'ux-designer',
-    title: 'UX/UI Designer',
-    icon: <PenTool className="h-6 w-6 text-purple-500" />,
-    description: 'UX/UI tervezők a felhasználói élményt és felületet tervezik, kutatást végeznek, prototípusokat készítenek, és a felhasználók visszajelzései alapján finomítják a termékeket.',
-    imageUrl: 'https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-    averageSalary: '800,000 - 1,300,000 Ft/hó',
-    jobOutlook: 'Magas',
-    growthRate: '+24%',
-    timeToComplete: '7 hónap',
-    difficulty: 'Közepes',
-    rating: 4.9,
-    students: 980,
-    isPopular: true,
-    isTrending: false,
-    category: 'design',
-    yearlyGrowth: [
-      { year: 2022, jobs: 1800 },
-      { year: 2023, jobs: 2100 },
-      { year: 2024, jobs: 2400 },
-      { year: 2025, jobs: 2800 },
-    ],
-    skills: ['Felhasználói kutatás', 'Wireframing', 'Prototyping', 'Figma', 'UI Design', 'Adobe XD', 'Interakciós design', 'Információs architektúra'],
-    recommendedCourses: [30, 31, 32, 33],
-    topCompanies: ['EPAM Systems', 'LogMeIn', 'Prezi', 'Emarsys'],
-    certifications: ['Google UX Design Professional', 'Nielsen Norman Group UX Certification', 'Interaction Design Foundation'],
-    highlights: [
-      'Kreatív munka erős technikai háttérrel',
-      'A hazai startupok egyik legkeresettebb pozíciója',
-      'Portfólió-központú karrierlehetőségek',
-      'Távmunka és nemzetközi lehetőségek'
-    ]
-  },
-  {
-    id: 'cybersecurity',
-    title: 'Kiberbiztonsági Specialista',
-    icon: <Shield className="h-6 w-6 text-red-500" />,
-    description: 'Kiberbiztonsági szakemberek védik a szervezetek rendszereit és adatait a digitális fenyegetésektől, biztonsági protokollokat fejlesztenek és incidenseket kezelnek.',
-    imageUrl: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-    averageSalary: '900,000 - 1,500,000 Ft/hó',
-    jobOutlook: 'Nagyon magas',
-    growthRate: '+35%',
-    timeToComplete: '8 hónap',
-    difficulty: 'Haladó',
-    rating: 4.8,
-    students: 720,
-    isPopular: false,
-    isTrending: true,
-    category: 'tech',
-    yearlyGrowth: [
-      { year: 2022, jobs: 1200 },
-      { year: 2023, jobs: 1500 },
-      { year: 2024, jobs: 1900 },
-      { year: 2025, jobs: 2300 },
-    ],
-    skills: ['Hálózati biztonság', 'Etikus hackelés', 'Incidenskezelés', 'Kockázatelemzés', 'Biztonsági eszközök', 'Penetrációs tesztelés', 'SIEM rendszerek', 'Kriptográfia'],
-    recommendedCourses: [40, 41, 42, 43],
-    topCompanies: ['Magyar Telekom', 'OTP Bank', 'Deloitte Hungary', 'IBM Hungary'],
-    certifications: ['CompTIA Security+', 'Certified Ethical Hacker (CEH)', 'Certified Information Systems Security Professional (CISSP)'],
-    highlights: [
-      'A legmagasabb fizetések a tech szektorban',
-      'Kritikus szakemberhiány az iparágban',
-      'Védett szakma gazdasági visszaesések idején is',
-      'Nemzetközi tanúsítványokkal globális karrierlehetőségek'
-    ]
-  },
-  {
-    id: 'data-scientist',
-    title: 'Data Scientist',
-    icon: <BarChart className="h-6 w-6 text-indigo-500" />,
-    description: 'Az adattudósok fejlett analitikai, statisztikai és programozási ismeretekkel elemzik a komplex adatokat, hogy előrejelzéseket készítsenek és értéket teremtsenek a vállalatok számára.',
-    imageUrl: 'https://images.unsplash.com/photo-1456428746267-a1756408f782?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-    averageSalary: '1,000,000 - 1,700,000 Ft/hó',
-    jobOutlook: 'Magas',
-    growthRate: '+30%',
-    timeToComplete: '9 hónap',
-    difficulty: 'Haladó',
-    rating: 4.9,
-    students: 650,
-    isPopular: false,
-    isTrending: true,
-    category: 'tech',
-    yearlyGrowth: [
-      { year: 2022, jobs: 900 },
-      { year: 2023, jobs: 1100 },
-      { year: 2024, jobs: 1350 },
-      { year: 2025, jobs: 1700 },
-    ],
-    skills: ['Python', 'Gépi tanulás', 'Mély tanulás', 'Statisztika', 'TensorFlow', 'R', 'SQL', 'Big Data technológiák'],
-    recommendedCourses: [50, 51, 52, 53],
-    topCompanies: ['Morgan Stanley', 'Ericsson', 'Continental', 'Bosch'],
-    certifications: ['IBM Data Science Professional', 'Microsoft Certified: Azure Data Scientist', 'Google Professional Data Engineer'],
-    highlights: [
-      'Az egyik legnagyobb presztízsű tech pozíció',
-      'Mély matematikai és informatikai tudás kombinációja',
-      'Kimagasló fizetések már junior szinten is',
-      'Kutatás-fejlesztési projektek és innovatív technológiák'
-    ]
-  },
-  {
-    id: 'frontend-developer',
-    title: 'Frontend Fejlesztő',
-    icon: <CodeIcon className="h-6 w-6 text-yellow-500" />,
-    description: 'A frontend fejlesztők weboldalak és alkalmazások felhasználói felületét tervezik és fejlesztik modern technológiákkal, mint a React, Angular és Vue.js.',
-    imageUrl: 'https://images.unsplash.com/photo-1547658719-da2b51169166?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-    averageSalary: '700,000 - 1,300,000 Ft/hó',
-    jobOutlook: 'Magas',
-    growthRate: '+23%',
-    timeToComplete: '6 hónap',
-    difficulty: 'Közepes',
-    rating: 4.7,
-    students: 1450,
-    isPopular: true,
-    isTrending: false,
-    category: 'tech',
-    yearlyGrowth: [
-      { year: 2022, jobs: 2800 },
-      { year: 2023, jobs: 3100 },
-      { year: 2024, jobs: 3500 },
-      { year: 2025, jobs: 3900 },
-    ],
-    skills: ['JavaScript', 'React', 'HTML', 'CSS', 'TypeScript', 'Reszponzív design', 'Git', 'Frontend tesztelés'],
-    recommendedCourses: [60, 61, 62, 63],
-    topCompanies: ['EPAM Systems', 'Cognizant', 'Accenture', 'Emarsys'],
-    certifications: ['Meta Front-End Developer', 'JavaScript Institute Certification', 'W3Schools Front End Developer'],
-    highlights: [
-      'Ideális karrierváltási lehetőség kreatív embereknek',
-      'A legkeresettebb fejlesztői pozíciók egyike Magyarországon',
-      'Bőséges junior pozíciók karrierváltóknak',
-      'Folyamatos szakmai fejlődési lehetőségek'
-    ]
+// Helper function to render the appropriate icon based on iconType
+const renderCareerIcon = (iconType: string, iconColor: string) => {
+  const className = `h-6 w-6 ${iconColor}`;
+  
+  switch (iconType) {
+    case 'lineChart':
+      return <LineChart className={className} />;
+    case 'trendingUp':
+      return <TrendingUp className={className} />;
+    case 'penTool':
+      return <PenTool className={className} />;
+    case 'shield':
+      return <Shield className={className} />;
+    case 'barChart':
+      return <BarChart className={className} />;
+    case 'code':
+      return <Code className={className} />;
+    case 'users':
+      return <Users className={className} />;
+    default:
+      return <BarChart className={className} />;
   }
-];
+};
 
 const CareerDevelopment: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [previewCourse, setPreviewCourse] = useState<any | null>(null);
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("all");
   const [savedCareers, setSavedCareers] = useState<string[]>(() => {
     // Initialize from localStorage if available
@@ -282,8 +87,9 @@ const CareerDevelopment: React.FC = () => {
     category: [],
     trending: null
   });
-  const [selectedCareer, setSelectedCareer] = useState<string | null>(null);
   const [showDetailedView, setShowDetailedView] = useState(false);
+  const [previewCourse, setPreviewCourse] = useState<any | null>(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   // Save to localStorage when savedCareers changes
   useEffect(() => {
@@ -329,7 +135,10 @@ const CareerDevelopment: React.FC = () => {
     }
   };
   
-  const toggleSavedCareer = (careerId: string) => {
+  const toggleSavedCareer = (careerId: string, event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    
     setSavedCareers(prev => {
       if (prev.includes(careerId)) {
         return prev.filter(id => id !== careerId);
@@ -497,18 +306,14 @@ const CareerDevelopment: React.FC = () => {
                     <div className="flex flex-wrap gap-2">
                       {categories.map(category => {
                         const isSelected = selectedFilters.category.includes(category);
+                        const categoryLabel = careerCategories[category as keyof typeof careerCategories]?.name || category;
                         return (
                           <Badge 
                             key={category} 
                             className={`cursor-pointer ${isSelected ? 'bg-primary text-white hover:bg-primary/90' : 'bg-neutral-100 text-neutral-800 hover:bg-neutral-200'}`}
                             onClick={() => toggleFilter('category', category)}
                           >
-                            {category === 'tech' && 'Technológia'}
-                            {category === 'marketing' && 'Marketing'}
-                            {category === 'design' && 'Design'}
-                            {category === 'business' && 'Üzlet'}
-                            {category === 'education' && 'Oktatás'}
-                            {!['tech', 'marketing', 'design', 'business', 'education'].includes(category) && category}
+                            {categoryLabel}
                           </Badge>
                         );
                       })}
@@ -568,126 +373,113 @@ const CareerDevelopment: React.FC = () => {
           {filteredCareers.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
               {filteredCareers.map((career) => (
-                <motion.div
-                  key={career.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                  className="bg-white rounded-xl overflow-hidden shadow-sm border border-neutral-100 flex flex-col transition-all duration-300 hover:shadow-md hover:-translate-y-1"
-                >
-                  <div className="relative">
-                    <img 
-                      src={career.imageUrl} 
-                      alt={career.title}
-                      className="w-full h-64 object-cover"
-                    />
-                    <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-black/70 to-transparent"></div>
-                    
-                    <div className="absolute top-4 left-4">
-                      <Badge className="bg-primary/90 text-white border-none">
-                        {career.jobOutlook}
-                        <span className="ml-1 font-bold text-green-300">{career.growthRate}</span>
-                      </Badge>
-                    </div>
-
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <div className="flex items-center">
-                        <div className="p-3 rounded-full bg-white/90 mr-3">
-                          {career.icon}
-                        </div>
-                        <h3 className="text-2xl font-bold text-white">{career.title}</h3>
-                      </div>
-                    </div>
-                    
-                    <div className="absolute top-4 right-4 flex space-x-0.5">
-                      {Array(5).fill(0).map((_, i) => (
-                        <Star 
-                          key={i} 
-                          className={`h-4 w-4 ${i < Math.floor(career.rating) ? "text-yellow-500 fill-yellow-500" : "text-neutral-300"}`} 
-                        />
-                      ))}
-                      <span className="ml-1 text-xs text-white font-medium">{career.rating}</span>
-                    </div>
-                    
-                    <button 
-                      className="absolute top-4 right-16 p-1.5 rounded-full bg-white/80 hover:bg-white transition-colors"
-                      onClick={() => toggleSavedCareer(career.id)}
-                    >
-                      {savedCareers.includes(career.id) ? (
-                        <Heart className="h-4 w-4 text-red-500 fill-red-500" />
-                      ) : (
-                        <Heart className="h-4 w-4 text-neutral-600" />
-                      )}
-                    </button>
-                    
-                    {career.isTrending && (
-                      <div className="absolute bottom-4 right-4">
-                        <Badge className="bg-amber-500/90 text-white border-none">
-                          <Sparkles className="h-3 w-3 mr-1" />
-                          Feltörekvő
+                <Link href={`/career/${career.id}`} key={career.id}>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="bg-white rounded-xl overflow-hidden shadow-sm border border-neutral-100 flex flex-col transition-all duration-300 hover:shadow-md hover:-translate-y-1"
+                  >
+                    <div className="relative">
+                      <img 
+                        src={career.imageUrl} 
+                        alt={career.title}
+                        className="w-full h-64 object-cover"
+                      />
+                      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-black/70 to-transparent"></div>
+                      
+                      <div className="absolute top-4 left-4">
+                        <Badge className="bg-primary/90 text-white border-none">
+                          {career.jobOutlook}
+                          <span className="ml-1 font-bold text-green-300">{career.growthRate}</span>
                         </Badge>
                       </div>
-                    )}
-                  </div>
-                  
-                  <div className="p-6 flex-grow flex flex-col">
-                    <div className="flex justify-between items-center mb-4">
-                      <div className="flex items-center">
-                        <DollarSign className="h-5 w-5 text-green-500 mr-2" />
-                        <span className="font-semibold text-neutral-800">{career.averageSalary}</span>
+
+                      <div className="absolute bottom-4 left-4 right-4">
+                        <div className="flex items-center">
+                          <div className="p-3 rounded-full bg-white/90 mr-3">
+                            {renderCareerIcon(career.iconType, career.iconColor)}
+                          </div>
+                          <h3 className="text-2xl font-bold text-white">{career.title}</h3>
+                        </div>
                       </div>
-                      <div className="flex items-center">
-                        <Clock className="h-4 w-4 mr-1 text-neutral-500" />
-                        <span className="text-neutral-600">{career.timeToComplete}</span>
+                      
+                      <div className="absolute top-4 right-4 flex space-x-0.5">
+                        {Array(5).fill(0).map((_, i) => (
+                          <Star 
+                            key={i} 
+                            className={`h-4 w-4 ${i < Math.floor(career.rating) ? "text-yellow-500 fill-yellow-500" : "text-neutral-300"}`} 
+                          />
+                        ))}
+                        <span className="ml-1 text-xs text-white font-medium">{career.rating}</span>
                       </div>
-                    </div>
-                    
-                    <p className="text-neutral-600 mb-4">
-                      {career.description}
-                    </p>
-                    
-                    <div className="mb-4">
-                      <h4 className="font-semibold text-neutral-900 mb-2">Főbb előnyök:</h4>
-                      <ul className="space-y-1">
-                        {career.highlights.slice(0, 2).map((highlight, index) => (
-                          <li key={index} className="flex items-start">
-                            <CheckCircle className="h-4 w-4 text-primary mr-2 flex-shrink-0 mt-0.5" />
-                            <span className="text-neutral-600 text-sm">{highlight}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    
-                    <div className="mb-4">
-                      <h4 className="font-semibold text-neutral-900 mb-2">Megszerezhető készségek:</h4>
-                      <div className="flex flex-wrap gap-2">
-                        {career.skills.slice(0, 4).map((skill, index) => (
-                          <Badge key={index} className="bg-blue-100 text-blue-800 hover:bg-blue-200">
-                            {skill}
-                          </Badge>
-                        ))}
-                        {career.skills.length > 4 && (
-                          <Badge className="bg-neutral-100 text-neutral-800">
-                            +{career.skills.length - 4}
-                          </Badge>
+                      
+                      <button 
+                        className="absolute top-4 right-16 p-1.5 rounded-full bg-white/80 hover:bg-white transition-colors"
+                        onClick={(e) => toggleSavedCareer(career.id, e)}
+                      >
+                        {savedCareers.includes(career.id) ? (
+                          <Heart className="h-4 w-4 text-red-500 fill-red-500" />
+                        ) : (
+                          <Heart className="h-4 w-4 text-neutral-600" />
                         )}
-                      </div>
+                      </button>
+                      
+                      {career.isTrending && (
+                        <div className="absolute bottom-4 right-4">
+                          <Badge className="bg-amber-500/90 text-white border-none">
+                            <Sparkles className="h-3 w-3 mr-1" />
+                            Feltörekvő
+                          </Badge>
+                        </div>
+                      )}
                     </div>
                     
-                    <div className="flex items-center justify-between mt-auto pt-4 border-t border-neutral-100">
-                      <div className="flex items-center">
-                        <Users className="h-4 w-4 mr-1 text-neutral-400" />
-                        <span className="text-sm text-neutral-500">{career.students.toLocaleString('hu-HU')} tanuló</span>
+                    <div className="p-6 flex-grow flex flex-col">
+                      <div className="flex justify-between items-center mb-4">
+                        <div className="flex items-center">
+                          <DollarSign className="h-5 w-5 text-green-500 mr-2" />
+                          <span className="font-semibold text-neutral-800">{career.averageSalary}</span>
+                        </div>
+                        <div className="flex items-center">
+                          <Clock className="h-4 w-4 mr-1 text-neutral-500" />
+                          <span className="text-neutral-600">{career.timeToComplete}</span>
+                        </div>
                       </div>
-                      <Link href={`/career/${career.id}`}>
+                      
+                      <p className="text-neutral-600 mb-4">
+                        {career.description}
+                      </p>
+                      
+                      <div className="mb-4">
+                        <h4 className="font-semibold text-neutral-900 mb-2">Megszerezhető készségek:</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {career.skills.slice(0, 4).map((skill, index) => (
+                            <Badge key={index} className="bg-blue-100 text-blue-800 hover:bg-blue-200">
+                              {skill}
+                            </Badge>
+                          ))}
+                          {career.skills.length > 4 && (
+                            <Badge className="bg-neutral-100 text-neutral-800">
+                              +{career.skills.length - 4}
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center justify-between mt-auto pt-4 border-t border-neutral-100">
+                        <div className="flex items-center">
+                          <Users className="h-4 w-4 mr-1 text-neutral-400" />
+                          <span className="text-sm text-neutral-500">{career.students.toLocaleString('hu-HU')} tanuló</span>
+                        </div>
                         <Button className="bg-primary hover:bg-primary/90 text-white">
                           Részletek
                           <ChevronRight className="ml-1 h-4 w-4" />
                         </Button>
-                      </Link>
+                      </div>
                     </div>
-                  </div>
-                </motion.div>
+                  </motion.div>
+                </Link>
               ))}
             </div>
           ) : (
