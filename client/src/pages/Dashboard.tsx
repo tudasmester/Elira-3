@@ -54,7 +54,7 @@ const Dashboard: React.FC = () => {
               <img 
                 src="/academion (3).png" 
                 alt="Academion logo" 
-                className="rounded-lg shadow-lg h-64 object-contain bg-white p-4"
+                className="rounded-lg shadow-lg h-64 object-contain bg-white p-6"
               />
             </div>
           </div>
