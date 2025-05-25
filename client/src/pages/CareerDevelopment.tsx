@@ -21,7 +21,6 @@ import {
   Star
 } from 'lucide-react';
 import { Link } from 'wouter';
-import Layout from '@/components/Layout';
 import { courses } from '@/data/courses';
 import { useIsMobile } from '@/hooks/use-mobile';
 import CoursePreviewModal from '@/components/CoursePreviewModal';
@@ -261,7 +260,7 @@ const CareerDevelopment: React.FC = () => {
   };
   
   return (
-    <Layout>
+    <div className="min-h-screen bg-white">
       <section className="pt-12 pb-8 bg-gradient-to-b from-blue-50 to-white">
         <div className="max-w-7xl mx-auto px-4">
           {/* Hero Section */}
@@ -384,194 +383,183 @@ const CareerDevelopment: React.FC = () => {
                         </div>
                       </div>
                     </div>
-                  </motion.div>
-                  
-                  {/* Career Roadmap */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                    className="col-span-1 lg:col-span-2"
-                  >
-                    <div className="bg-white rounded-xl border border-neutral-200 p-6 shadow-sm h-full">
-                      <h2 className="text-2xl font-bold mb-6 text-neutral-900">Tanulási útiterv</h2>
-                      
-                      {/* Progress Bar */}
-                      <div className="mb-8">
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="text-sm text-neutral-500">Haladás az útiterven</span>
-                          <span className="text-sm font-semibold">{selectedStage}/4</span>
-                        </div>
-                        <Progress value={selectedStage * 25} className="h-2" />
-                      </div>
-                      
-                      {/* Stage Selector */}
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
-                        {career.roadmap.map((stage) => (
-                          <button
-                            key={stage.stage}
-                            onClick={() => setSelectedStage(stage.stage)}
-                            className={`p-3 rounded-lg border ${
-                              selectedStage === stage.stage 
-                                ? 'bg-primary text-white border-primary' 
-                                : 'bg-white text-neutral-700 border-neutral-200 hover:bg-neutral-50'
-                            } transition-colors duration-200`}
-                          >
-                            <div className="text-lg font-semibold mb-1">Szint {stage.stage}</div>
-                            <div className={`text-sm ${selectedStage === stage.stage ? 'text-white/90' : 'text-neutral-500'}`}>
-                              {stage.title}
-                            </div>
-                          </button>
-                        ))}
-                      </div>
-                      
-                      {/* Courses for Selected Stage */}
-                      <div className="space-y-4">
-                        <h3 className="text-lg font-semibold mb-4">
-                          {selectedStage}. szint: {career.roadmap[selectedStage-1]?.title}
-                        </h3>
-                        
-                        {career.roadmap[selectedStage-1]?.courses.map((course, index) => (
-                          <motion.div
-                            key={course.id}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.3, delay: index * 0.1 }}
-                            className="border border-neutral-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-                          >
-                            <div className="flex justify-between items-start">
-                              <div>
-                                <h4 className="font-semibold text-neutral-800 mb-1">{course.title}</h4>
-                                <p className="text-sm text-neutral-500 flex items-center">
-                                  <Clock className="h-3.5 w-3.5 mr-1" />
-                                  {course.duration}
-                                </p>
-                              </div>
-                              <Button 
-                                variant="outline" 
-                                size="sm"
-                                className="text-primary border-primary hover:bg-primary/10"
-                                onClick={() => handleCoursePreview(course.id)}
-                              >
-                                Előnézet
-                              </Button>
-                            </div>
-                          </motion.div>
-                        ))}
-                        
-                        <div className="flex justify-between items-center pt-4">
-                          {selectedStage > 1 && (
-                            <Button
-                              variant="outline"
-                              onClick={() => setSelectedStage(prev => Math.max(prev - 1, 1))}
-                            >
-                              Előző szint
-                            </Button>
-                          )}
-                          
-                          {selectedStage < 4 ? (
-                            <Button 
-                              className="ml-auto"
-                              onClick={() => setSelectedStage(prev => Math.min(prev + 1, 4))}
-                            >
-                              Következő szint
-                            </Button>
-                          ) : (
-                            <Button className="ml-auto bg-primary hover:bg-primary/90">
-                              Kezdje el a képzést
-                              <ArrowRight className="ml-2 h-4 w-4" />
-                            </Button>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                </div>
-                
-                {/* Testimonial */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                  className="mt-8"
-                >
-                  <div className="bg-gradient-to-r from-neutral-50 to-blue-50 rounded-xl p-6 md:p-8 border border-neutral-200">
-                    <div className="flex flex-col md:flex-row gap-6 items-center">
-                      <div className="md:w-1/4 flex-shrink-0">
+                    
+                    {/* Testimonial */}
+                    <div className="bg-white rounded-xl border border-neutral-200 p-6 shadow-sm mt-6">
+                      <h3 className="font-semibold mb-4 text-neutral-800 flex items-center">
+                        <Star className="h-5 w-5 text-yellow-500 mr-2" />
+                        Sikertörténet
+                      </h3>
+                      <div className="flex items-start gap-4">
                         <img 
                           src={career.testimonial.image} 
                           alt={career.testimonial.name} 
-                          className="rounded-xl w-full max-w-[180px] md:max-w-full aspect-square object-cover shadow-md"
+                          className="w-16 h-16 rounded-full object-cover"
                         />
-                      </div>
-                      <div className="md:w-3/4">
-                        <div className="flex items-center mb-2">
-                          {[1, 2, 3, 4, 5].map(star => (
-                            <Star key={star} className="h-5 w-5 text-yellow-500 fill-yellow-500" />
-                          ))}
-                        </div>
-                        <blockquote className="text-lg italic text-neutral-700 mb-4">
-                          "{career.testimonial.quote}"
-                        </blockquote>
-                        <div className="flex items-center">
-                          <div>
-                            <div className="font-semibold text-neutral-900">{career.testimonial.name}</div>
-                            <div className="text-sm text-neutral-500">{career.testimonial.role}</div>
-                          </div>
+                        <div>
+                          <p className="text-neutral-600 italic mb-2">"{career.testimonial.quote}"</p>
+                          <p className="font-semibold text-neutral-800">{career.testimonial.name}</p>
+                          <p className="text-sm text-neutral-500">{career.testimonial.role}</p>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </motion.div>
+                  </motion.div>
+                  
+                  {/* Career Learning Path */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.1 }}
+                    className="col-span-2"
+                  >
+                    <div className="bg-white rounded-xl border border-neutral-200 p-6 shadow-sm">
+                      <div className="flex items-center justify-between mb-6">
+                        <h2 className="text-2xl font-bold text-neutral-900">Tanulási útiterv</h2>
+                        <Link href={`/course-track/${career.id}`}>
+                          <Button variant="outline" className="flex items-center gap-2">
+                            Teljes útiterv megtekintése
+                            <ArrowRight className="h-4 w-4" />
+                          </Button>
+                        </Link>
+                      </div>
+                      
+                      <div className="mb-8">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-sm text-neutral-500">Haladás</span>
+                          <span className="text-sm font-medium text-neutral-700">25%</span>
+                        </div>
+                        <Progress value={25} className="h-2" />
+                      </div>
+                      
+                      <div className="space-y-6">
+                        {career.roadmap.map((stage) => (
+                          <div 
+                            key={stage.stage} 
+                            className={`rounded-lg border p-4 ${selectedStage === stage.stage ? 'border-primary bg-primary/5' : 'border-neutral-200'}`}
+                          >
+                            <div 
+                              className="flex items-center justify-between cursor-pointer" 
+                              onClick={() => setSelectedStage(stage.stage)}
+                            >
+                              <div className="flex items-center gap-3">
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                                  selectedStage === stage.stage ? 'bg-primary text-white' : 'bg-neutral-100'
+                                }`}>
+                                  {stage.stage}
+                                </div>
+                                <h3 className="font-semibold text-lg text-neutral-900">{stage.title}</h3>
+                                <Badge className="bg-blue-100 text-blue-800">
+                                  {stage.courses.length} kurzus
+                                </Badge>
+                              </div>
+                              <ChevronRight className={`h-5 w-5 transform transition-transform ${
+                                selectedStage === stage.stage ? 'rotate-90' : ''
+                              }`} />
+                            </div>
+                            
+                            {selectedStage === stage.stage && (
+                              <motion.div 
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                                transition={{ duration: 0.3 }}
+                                className="mt-4 pt-4 border-t"
+                              >
+                                <div className="space-y-4">
+                                  {stage.courses.map((course, idx) => (
+                                    <div 
+                                      key={course.id} 
+                                      className="flex items-start justify-between p-3 rounded-lg hover:bg-neutral-50 transition-colors"
+                                    >
+                                      <div className="flex gap-3">
+                                        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-500">
+                                          {idx + 1}
+                                        </div>
+                                        <div>
+                                          <h4 className="font-medium text-neutral-900">{course.title}</h4>
+                                          <p className="text-sm text-neutral-500 flex items-center mt-1">
+                                            <Clock className="inline h-3 w-3 mr-1" />
+                                            {course.duration}
+                                          </p>
+                                        </div>
+                                      </div>
+                                      <div className="flex items-center gap-2">
+                                        <Button 
+                                          variant="outline" 
+                                          size="sm"
+                                          onClick={() => handleCoursePreview(course.id)}
+                                        >
+                                          Előnézet
+                                        </Button>
+                                        <Link href={`/course/${course.id}`}>
+                                          <Button size="sm">
+                                            {idx === 0 ? 'Elkezdem' : 'Iratkozz fel'}
+                                          </Button>
+                                        </Link>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </motion.div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* Career benefits */}
+                    <div className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl p-6 mt-6">
+                      <h3 className="text-xl font-bold mb-4 text-neutral-900">Miért válaszd ezt a karrierutat?</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="flex items-start gap-3">
+                          <div className="p-2 rounded-full bg-white text-primary">
+                            <Briefcase className="h-5 w-5" />
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-neutral-900">Magas kereseti potenciál</h4>
+                            <p className="text-neutral-600">A karrierút elvégzése után a kezdő fizetés is versenyképes.</p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-3">
+                          <div className="p-2 rounded-full bg-white text-primary">
+                            <TrendingUp className="h-5 w-5" />
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-neutral-900">Növekvő kereslet</h4>
+                            <p className="text-neutral-600">Folyamatosan nő a kereslet szakképzett {career.title.toLowerCase()} szakemberek iránt.</p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-3">
+                          <div className="p-2 rounded-full bg-white text-primary">
+                            <Zap className="h-5 w-5" />
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-neutral-900">Rugalmas munkalehetőségek</h4>
+                            <p className="text-neutral-600">Távmunka és szabadúszó lehetőségek széles skálája érhető el.</p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-3">
+                          <div className="p-2 rounded-full bg-white text-primary">
+                            <Award className="h-5 w-5" />
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-neutral-900">Elismert tanúsítvány</h4>
+                            <p className="text-neutral-600">Az Academion által kiadott tanúsítványt a munkáltatók elismerik.</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="mt-6 text-center">
+                        <Link href={`/course-track/${career.id}`}>
+                          <Button className="px-8">
+                            Beiratkozás a képzési programba
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                  </motion.div>
+                </div>
               </TabsContent>
             ))}
           </Tabs>
-          
-          {/* Call to Action Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="bg-primary text-white rounded-xl p-8 md:p-12 mt-16"
-          >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-              <div>
-                <h2 className="text-3xl font-bold mb-4">Induljon el karrierváltása útján még ma</h2>
-                <p className="text-white/90 mb-6">
-                  Strukturált tanulási útitervünk segítségével lépésről lépésre haladhat egy jól fizető, keresett új karrier felé. A kurzusok gyakorlati projektjei valós munkatapasztalatot biztosítanak.
-                </p>
-                <ul className="space-y-3 mb-8">
-                  {[
-                    'Személyre szabott tanulási út',
-                    'Gyakorlati projektek valós tapasztalattal',
-                    'Mentor támogatás és karriertanácsadás',
-                    'Elismert tanúsítványok'
-                  ].map((feature, index) => (
-                    <li key={index} className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-white mr-2" />
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-                <div className="flex flex-wrap gap-4">
-                  <Button className="bg-white text-primary hover:bg-white/90">
-                    Kezdje el most
-                    <Zap className="ml-2 h-4 w-4" />
-                  </Button>
-                  <Button variant="outline" className="text-white border-white hover:bg-white/10">
-                    Tanácsadás kérése
-                  </Button>
-                </div>
-              </div>
-              <div className="hidden md:block">
-                <img 
-                  src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80" 
-                  alt="Karrierfejlesztés" 
-                  className="rounded-xl shadow-lg"
-                />
-              </div>
-            </div>
-          </motion.div>
         </div>
       </section>
       
@@ -583,7 +571,7 @@ const CareerDevelopment: React.FC = () => {
           course={previewCourse}
         />
       )}
-    </Layout>
+    </div>
   );
 };
 
