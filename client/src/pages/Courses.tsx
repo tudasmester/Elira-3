@@ -20,8 +20,10 @@ import {
   Globe,
   Calculator,
   BarChart,
-  X
+  X,
+  Eye
 } from "lucide-react";
+import CoursePreviewModal from "@/components/CoursePreviewModal";
 import { 
   Tabs, 
   TabsContent, 
@@ -46,6 +48,17 @@ const CoursesPage: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("osszes");
+  const [previewCourse, setPreviewCourse] = useState<typeof courses[0] | null>(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  
+  const openPreview = (course: typeof courses[0]) => {
+    setPreviewCourse(course);
+    setIsPreviewOpen(true);
+  };
+
+  const closePreview = () => {
+    setIsPreviewOpen(false);
+  };
   
   // Filter courses based on active filter, search query, and tab
   const filteredCourses = courses.filter(course => {
@@ -178,12 +191,24 @@ const CoursesPage: React.FC = () => {
                     />
                     <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
                     
-                    <div className="absolute top-3 right-3">
+                    <div className="absolute top-3 right-3 flex space-x-2">
                       {course.isFree && (
                         <Badge className="bg-emerald-500 text-white">
                           Ingyenes
                         </Badge>
                       )}
+                      <Button 
+                        size="sm" 
+                        variant="secondary" 
+                        className="bg-white/90 hover:bg-white text-primary rounded-full shadow-md h-8 w-8 p-0"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          openPreview(course);
+                        }}
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
                     </div>
                     
                     <div className="absolute bottom-3 right-3 flex space-x-0.5">
@@ -264,6 +289,15 @@ const CoursesPage: React.FC = () => {
           )}
         </div>
       </div>
+      
+      {/* Course Preview Modal */}
+      {previewCourse && (
+        <CoursePreviewModal 
+          isOpen={isPreviewOpen}
+          onClose={closePreview}
+          course={previewCourse}
+        />
+      )}
     </div>
   );
 };
