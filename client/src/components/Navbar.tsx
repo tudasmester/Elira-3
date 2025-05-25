@@ -5,7 +5,7 @@ import {
   ChevronDown, Search, BookOpen, GraduationCap, 
   BarChart, Code, Database, School, HeartPulse, 
   Briefcase, Menu, X, Globe, Calculator, UserCircle,
-  LogOut
+  LogOut, TrendingUp
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Input } from "@/components/ui/input";
@@ -294,6 +294,10 @@ const Navbar: React.FC = () => {
                 <BarChart className="h-5 w-5 mr-3 text-neutral-500" />
                 Trending
                 <Badge className="ml-2 bg-orange-100 text-orange-800 text-[10px] py-0 px-1.5">Új</Badge>
+              </Link>
+              <Link href="/careers" className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-neutral-700 hover:bg-neutral-50">
+                <TrendingUp className="h-5 w-5 mr-3 text-neutral-500" />
+                Karrierutak
               </Link>
               
               <div className="pt-2 pb-1">

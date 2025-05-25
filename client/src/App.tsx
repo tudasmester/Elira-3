@@ -12,6 +12,7 @@ import Courses from "@/pages/Courses";
 import Degrees from "@/pages/Degrees";
 import DegreeDetail from "@/pages/DegreeDetail";
 import CategoryPage from "@/pages/CategoryPage";
+import CareerDevelopment from "@/pages/CareerDevelopment";
 import NotFound from "@/pages/not-found";
 import Layout from "@/components/Layout";
 import ScrollToTop from "@/components/ui/ScrollToTop";
@@ -33,6 +34,7 @@ function Router() {
       <Route path="/degrees" component={Degrees} />
       <Route path="/degree/:id" component={DegreeDetail} />
       <Route path="/category/:slug" component={CategoryPage} />
+      <Route path="/careers" component={CareerDevelopment} />
       <Route component={NotFound} />
     </Switch>
   );
