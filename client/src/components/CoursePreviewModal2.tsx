@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { X, Play, BookOpen, ChevronRight, ChevronLeft, Video, FileText, Clock, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { useLocation } from "wouter";
+import { Link } from "wouter";
 
 interface CoursePreviewModalProps {
   isOpen: boolean;
@@ -27,7 +27,6 @@ interface CoursePreviewModalProps {
 const CoursePreviewModal: React.FC<CoursePreviewModalProps> = ({ isOpen, onClose, course }) => {
   const [activePreviewTab, setActivePreviewTab] = useState<'overview' | 'curriculum' | 'instructor'>('overview');
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [, navigate] = useLocation();
 
   // Sample preview content that would come from the API in a real implementation
   const previewContent = {
@@ -80,12 +79,6 @@ const CoursePreviewModal: React.FC<CoursePreviewModalProps> = ({ isOpen, onClose
     ]
   };
 
-  // Handle enrollment
-  const handleEnroll = () => {
-    onClose();
-    navigate(`/courses/${course.id}`);
-  };
-
   // Handle slide navigation
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev < previewContent.previewVideos.length - 1 ? prev + 1 : prev));
@@ -100,13 +93,13 @@ const CoursePreviewModal: React.FC<CoursePreviewModalProps> = ({ isOpen, onClose
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 md:p-0">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 md:p-0 overflow-y-auto">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col"
+            className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col my-4 mx-auto"
           >
             {/* Modal header */}
             <div className="relative">
@@ -118,6 +111,7 @@ const CoursePreviewModal: React.FC<CoursePreviewModalProps> = ({ isOpen, onClose
                 <button
                   onClick={onClose}
                   className="absolute top-4 right-4 bg-black/40 hover:bg-black/60 text-white p-2 rounded-full transition-colors"
+                  aria-label="Close preview"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -138,7 +132,7 @@ const CoursePreviewModal: React.FC<CoursePreviewModalProps> = ({ isOpen, onClose
 
             {/* Modal tabs */}
             <div className="border-b border-gray-200">
-              <div className="flex overflow-x-auto px-6 pt-4 pb-2">
+              <div className="flex overflow-x-auto px-6 pt-4 pb-2 scrollbar-hide">
                 {[
                   { id: 'overview', label: 'Áttekintés' },
                   { id: 'curriculum', label: 'Tananyag előzetes' },
@@ -198,7 +192,10 @@ const CoursePreviewModal: React.FC<CoursePreviewModalProps> = ({ isOpen, onClose
                             className="absolute inset-0 w-full h-full object-cover opacity-60"
                           />
                           <div className="absolute inset-0 flex items-center justify-center">
-                            <button className="bg-white/20 backdrop-blur-sm hover:bg-white/30 p-4 rounded-full transition-colors">
+                            <button 
+                              className="bg-white/20 backdrop-blur-sm hover:bg-white/30 p-4 rounded-full transition-colors"
+                              aria-label="Play preview video"
+                            >
                               <Play className="h-10 w-10 text-white" />
                             </button>
                           </div>
@@ -219,6 +216,7 @@ const CoursePreviewModal: React.FC<CoursePreviewModalProps> = ({ isOpen, onClose
                             className={`absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 p-2 rounded-full ${
                               currentSlide === 0 ? 'opacity-40 cursor-not-allowed' : 'hover:bg-black/70'
                             }`}
+                            aria-label="Previous slide"
                           >
                             <ChevronLeft className="h-5 w-5 text-white" />
                           </button>
@@ -230,6 +228,7 @@ const CoursePreviewModal: React.FC<CoursePreviewModalProps> = ({ isOpen, onClose
                                 ? 'opacity-40 cursor-not-allowed'
                                 : 'hover:bg-black/70'
                             }`}
+                            aria-label="Next slide"
                           >
                             <ChevronRight className="h-5 w-5 text-white" />
                           </button>
@@ -398,9 +397,11 @@ const CoursePreviewModal: React.FC<CoursePreviewModalProps> = ({ isOpen, onClose
                 <Button variant="outline" onClick={onClose} className="w-full sm:w-auto">
                   Később
                 </Button>
-                <Button onClick={handleEnroll} className="w-full sm:w-auto">
-                  Iratkozzon fel most
-                </Button>
+                <Link href={`/courses/${course.id}`}>
+                  <Button className="w-full sm:w-auto">
+                    Iratkozzon fel most
+                  </Button>
+                </Link>
               </div>
             </div>
           </motion.div>

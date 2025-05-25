@@ -8,13 +8,14 @@ import {
   ArrowLeft, Clock, Users, Award, BookOpen, Star, 
   Check, PlayCircle, Download, GraduationCap, 
   ChevronDown, ChevronRight, Shield, BarChart4, Sparkles, 
-  CalendarCheck, MessageCircle, Share2, BookOpenCheck
+  CalendarCheck, MessageCircle, Share2, BookOpenCheck, Eye
 } from "lucide-react";
 import { Link } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import CoursePreviewModal from "@/components/CoursePreviewModal2";
 
 const CourseDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -25,6 +26,7 @@ const CourseDetail: React.FC = () => {
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   
   // Find the course with the matching ID
   const course = courses.find(course => course.id === courseId);
@@ -300,9 +302,27 @@ const CourseDetail: React.FC = () => {
                     whileTap={{ scale: 0.97 }}
                     className="flex-1"
                   >
-                    <Button className="w-full bg-white hover:bg-white/90 text-primary py-6 text-lg font-medium shadow-lg">
-                      <PlayCircle className="h-5 w-5 mr-2" />
-                      Kezdje el ma
+                    <Button 
+                      className="w-full bg-white hover:bg-white/90 text-primary py-6 text-lg font-medium shadow-lg"
+                      onClick={handleEnrollClick}
+                      disabled={enrollMutation.isPending || (!isAuthenticated && authLoading) || isEnrolled}
+                    >
+                      {enrollMutation.isPending ? (
+                        <span className="flex items-center">
+                          <span className="animate-spin mr-2">
+                            <svg className="h-5 w-5" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                          </span>
+                          Beiratkozás...
+                        </span>
+                      ) : (
+                        <>
+                          <PlayCircle className="h-5 w-5 mr-2" />
+                          {isEnrolled ? "Folytatás a tanfolyammal" : "Kezdje el ma"}
+                        </>
+                      )}
                     </Button>
                   </motion.div>
                   
@@ -314,9 +334,10 @@ const CourseDetail: React.FC = () => {
                     <Button 
                       variant="outline" 
                       className="w-full border-white text-white hover:bg-white/20 py-6 text-lg font-medium"
+                      onClick={() => setIsPreviewOpen(true)}
                     >
-                      <Download className="h-5 w-5 mr-2" />
-                      Tanterv letöltése
+                      <Eye className="h-5 w-5 mr-2" />
+                      Előnézet megtekintése
                     </Button>
                   </motion.div>
                 </div>

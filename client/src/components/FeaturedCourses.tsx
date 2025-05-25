@@ -5,7 +5,7 @@ import { courses } from "@/data/courses";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
 import { Badge } from "@/components/ui/badge";
-import CoursePreviewModal from "./CoursePreviewModal";
+import CoursePreviewModal from "./CoursePreviewModal2";
 
 const FeaturedCourses: React.FC = () => {
   const [previewCourse, setPreviewCourse] = useState<typeof courses[0] | null>(null);
