@@ -47,10 +47,15 @@ const CourseDetail: React.FC = () => {
   
   // Mutation for enrolling in a course
   const enrollMutation = useMutation({
-    mutationFn: async () => {
-      return await apiRequest(`/api/courses/enroll`, {
+    mutationFn: () => {
+      return fetch('/api/courses/enroll', {
         method: 'POST',
-        data: { courseId }
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ courseId }),
+        credentials: 'include'
+      }).then(res => {
+        if (!res.ok) throw new Error('Failed to enroll in course');
+        return res.json();
       });
     },
     onSuccess: () => {
