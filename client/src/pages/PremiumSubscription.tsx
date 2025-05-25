@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   CheckCircle, 
   X, 
@@ -9,7 +9,13 @@ import {
   Briefcase, 
   Clock, 
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Star,
+  Shield,
+  Zap,
+  BarChart,
+  Bookmark,
+  Award
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { GlassmorphicCard, PremiumCard } from '@/components/ui/design-system/GlassmorphicCard';
@@ -19,6 +25,7 @@ import {
   AccordionItem, 
   AccordionTrigger 
 } from '@/components/ui/accordion';
+import { motion } from 'framer-motion';
 
 const PremiumSubscription = () => {
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annually'>('monthly');
@@ -48,90 +55,204 @@ const PremiumSubscription = () => {
     premiumPlus: '20% megtakarítás',
   };
 
+  // Animation variants for staggered animations
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+  
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 100
+      }
+    }
+  };
+
+  // Track scroll position for parallax effects
+  const [scrollY, setScrollY] = useState(0);
+  
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-neutral-100 to-white dark:from-neutral-900 dark:to-neutral-800">
+    <div className="min-h-screen bg-gradient-to-b from-neutral-100 to-white dark:from-neutral-900 dark:to-neutral-800 overflow-x-hidden">
       {/* Hero Section */}
       <div className="w-full bg-premium-gradient-1 bg-pattern-dots relative overflow-hidden">
-        <div className="container mx-auto px-4 py-20 relative z-10">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              Academion Prémium Előfizetés
+        {/* Decorative Elements */}
+        <div 
+          className="absolute w-64 h-64 rounded-full bg-secondary/30 blur-3xl -top-20 -left-20"
+          style={{ transform: `translateY(${scrollY * 0.2}px)` }}
+        />
+        <div 
+          className="absolute w-96 h-96 rounded-full bg-accent/20 blur-3xl -bottom-40 -right-20"
+          style={{ transform: `translateY(${scrollY * -0.1}px)` }}
+        />
+        <div 
+          className="absolute top-10 right-10 w-20 h-20 rounded-full bg-white/5 backdrop-blur-md border border-white/10"
+          style={{ transform: `rotate(${scrollY * 0.05}deg)` }}
+        />
+        
+        <div className="container mx-auto px-4 py-24 relative z-10">
+          <motion.div 
+            className="max-w-3xl mx-auto text-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="inline-block mb-6">
+              <div className="relative">
+                <div className="absolute inset-0 bg-white/10 blur-xl rounded-full transform scale-150"></div>
+                <div className="relative bg-gradient-to-r from-primary to-accent px-6 py-2 rounded-full inline-flex items-center">
+                  <Star className="h-4 w-4 text-white mr-2" />
+                  <span className="text-sm font-semibold text-white">Új Prémium Szolgáltatások</span>
+                </div>
+              </div>
+            </div>
+            
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
+              Academion <span className="text-premium-gradient">Prémium</span> Előfizetés
             </h1>
-            <p className="text-white/90 text-lg mb-8">
+            
+            <p className="text-white/90 text-lg md:text-xl mb-8 leading-relaxed">
               Bontsa ki karrierje teljes potenciálját fejlett tanulási lehetőségekkel, 
-              szakértői mentorálással és prémium karrier-tanácsadással
+              szakértői mentorálással és személyre szabott karriertámogatással
             </p>
-            <div className="inline-flex p-1 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-12">
+            
+            <div className="inline-flex p-1 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-12 shadow-lg">
               <button 
-                className={`px-6 py-2 rounded-full text-sm font-medium ${billingPeriod === 'monthly' ? 'bg-white text-primary' : 'text-white'}`}
+                className={`px-8 py-3 rounded-full text-sm font-medium transition-all duration-300 ${billingPeriod === 'monthly' ? 'bg-white text-primary shadow-md' : 'text-white hover:bg-white/10'}`}
                 onClick={() => setBillingPeriod('monthly')}
               >
                 Havi
               </button>
               <button 
-                className={`px-6 py-2 rounded-full text-sm font-medium ${billingPeriod === 'annually' ? 'bg-white text-primary' : 'text-white'}`}
+                className={`px-8 py-3 rounded-full text-sm font-medium transition-all duration-300 ${billingPeriod === 'annually' ? 'bg-white text-primary shadow-md' : 'text-white hover:bg-white/10'}`}
                 onClick={() => setBillingPeriod('annually')}
               >
                 Éves
               </button>
             </div>
-          </div>
+            
+            <div className="flex items-center justify-center gap-8 mt-12">
+              <div className="flex items-center">
+                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center mr-3">
+                  <Shield className="h-5 w-5 text-white" />
+                </div>
+                <span className="text-white/80 text-sm">7 napos garancia</span>
+              </div>
+              
+              <div className="flex items-center">
+                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center mr-3">
+                  <Zap className="h-5 w-5 text-white" />
+                </div>
+                <span className="text-white/80 text-sm">Azonnali hozzáférés</span>
+              </div>
+              
+              <div className="flex items-center">
+                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center mr-3">
+                  <Award className="h-5 w-5 text-white" />
+                </div>
+                <span className="text-white/80 text-sm">Elégedettségi garancia</span>
+              </div>
+            </div>
+          </motion.div>
         </div>
-        <div className="absolute bottom-0 w-full h-20 bg-gradient-to-t from-neutral-100 to-transparent dark:from-neutral-900"></div>
+        
+        <div className="absolute bottom-0 w-full h-32 bg-gradient-to-t from-neutral-100 to-transparent dark:from-neutral-900"></div>
       </div>
       
       {/* Pricing Cards */}
       <div className="container mx-auto px-4 py-16 -mt-10 relative z-20">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-3 gap-8"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+        >
           {/* Basic Plan */}
-          <div 
+          <motion.div 
             className={`rounded-xl overflow-hidden transition-all duration-300 ${isPlanExpanded('basic') ? 'ring-2 ring-primary/20' : ''}`}
+            variants={itemVariants}
           >
             <GlassmorphicCard
               blurIntensity="subtle"
               borderStyle="light"
               backgroundOpacity="medium"
               className="h-full"
+              hoverEffect
             >
-              <div className="p-6">
-                <h3 className="text-xl font-bold mb-2">Alap</h3>
+              <div className="p-8">
+                <div className="w-12 h-12 bg-neutral-100 dark:bg-neutral-800 rounded-full flex items-center justify-center mb-6">
+                  <Bookmark className="h-6 w-6 text-neutral-600 dark:text-neutral-400" />
+                </div>
+                
+                <h3 className="text-2xl font-bold mb-2">Alap</h3>
                 <p className="text-neutral-600 dark:text-neutral-400 mb-6 text-sm">
                   Kezdje el tanulási útját
                 </p>
                 
                 <div className="mb-6">
-                  <span className="text-3xl font-bold">{prices.basic}</span>
+                  <span className="text-4xl font-bold">{prices.basic}</span>
                 </div>
                 
-                <Button className="w-full mb-6">
+                <Button className="w-full mb-8 py-6 text-base">
                   Regisztráció
                 </Button>
                 
-                <div className="space-y-3 mb-6">
+                <div className="space-y-4 mb-8">
                   <div className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+                    <div className="rounded-full p-1 bg-primary/10 flex-shrink-0 mt-0.5 mr-3">
+                      <CheckCircle className="h-4 w-4 text-primary" />
+                    </div>
                     <span className="text-sm">Korlátozott kurzus hozzáférés</span>
                   </div>
                   <div className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+                    <div className="rounded-full p-1 bg-primary/10 flex-shrink-0 mt-0.5 mr-3">
+                      <CheckCircle className="h-4 w-4 text-primary" />
+                    </div>
                     <span className="text-sm">Alapszintű karrierértékelés</span>
                   </div>
                   <div className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+                    <div className="rounded-full p-1 bg-primary/10 flex-shrink-0 mt-0.5 mr-3">
+                      <CheckCircle className="h-4 w-4 text-primary" />
+                    </div>
                     <span className="text-sm">Közösségi fórum hozzáférés</span>
                   </div>
                   <div className="flex items-start">
-                    <X className="h-5 w-5 text-neutral-400 mr-2 flex-shrink-0 mt-0.5" />
+                    <div className="rounded-full p-1 bg-neutral-200 dark:bg-neutral-800 flex-shrink-0 mt-0.5 mr-3">
+                      <X className="h-4 w-4 text-neutral-400" />
+                    </div>
                     <span className="text-sm text-neutral-500">Egyéni tanulási útvonal</span>
                   </div>
                   <div className="flex items-start">
-                    <X className="h-5 w-5 text-neutral-400 mr-2 flex-shrink-0 mt-0.5" />
+                    <div className="rounded-full p-1 bg-neutral-200 dark:bg-neutral-800 flex-shrink-0 mt-0.5 mr-3">
+                      <X className="h-4 w-4 text-neutral-400" />
+                    </div>
                     <span className="text-sm text-neutral-500">Karrier mentorálás</span>
                   </div>
                 </div>
                 
                 <button 
-                  className="text-primary text-sm flex items-center justify-center w-full"
+                  className="text-primary text-sm flex items-center justify-center w-full py-2 rounded-lg hover:bg-primary/5 transition-colors"
                   onClick={() => toggleExpandTier('basic')}
                 >
                   {isPlanExpanded('basic') ? (
@@ -170,63 +291,81 @@ const PremiumSubscription = () => {
                 )}
               </div>
             </GlassmorphicCard>
-          </div>
+          </motion.div>
           
           {/* Premium Plan */}
-          <div 
-            className={`rounded-xl overflow-hidden transition-all duration-300 transform ${isPlanExpanded('premium') ? 'ring-2 ring-primary scale-[1.02]' : ''}`}
+          <motion.div 
+            className={`rounded-xl overflow-hidden transition-all duration-300 transform scale-105 z-10 ${isPlanExpanded('premium') ? 'ring-2 ring-primary scale-[1.07]' : ''}`}
+            variants={itemVariants}
           >
             <PremiumCard className="h-full relative">
-              <div className="absolute top-0 right-0 bg-primary text-white text-xs font-semibold px-3 py-1 rounded-bl-lg">
-                Népszerű
+              <div className="absolute -top-4 left-0 right-0 flex justify-center">
+                <div className="bg-gradient-to-r from-primary to-secondary text-white text-xs font-semibold px-4 py-1 rounded-full shadow-lg">
+                  Népszerű választás
+                </div>
               </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold mb-2">Prémium</h3>
+              <div className="p-8 pt-10">
+                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+                  <Star className="h-6 w-6 text-primary" />
+                </div>
+                
+                <h3 className="text-2xl font-bold mb-2">Prémium</h3>
                 <p className="text-neutral-600 dark:text-neutral-400 mb-6 text-sm">
                   Teljes hozzáférés a prémium szolgáltatásokhoz
                 </p>
                 
                 <div className="mb-6">
-                  <span className="text-3xl font-bold">{prices.premium}</span>
+                  <span className="text-4xl font-bold">{prices.premium}</span>
                   <span className="text-sm text-neutral-500 ml-2">/hó</span>
                   {billingPeriod === 'annually' && (
-                    <div className="mt-1">
-                      <span className="text-sm font-medium bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                    <div className="mt-2">
+                      <span className="text-sm font-medium bg-primary/10 text-primary px-3 py-1 rounded-full">
                         {annualDiscount.premium}
                       </span>
                     </div>
                   )}
                 </div>
                 
-                <Button className="w-full bg-primary hover:bg-primary/90 mb-6">
-                  7 napos próbaidőszak
+                <Button className="w-full bg-primary hover:bg-primary/90 mb-8 py-6 text-base relative overflow-hidden group">
+                  <span className="relative z-10">7 napos próbaidőszak</span>
+                  <span className="absolute inset-0 bg-gradient-to-r from-primary via-primary to-secondary opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
                 </Button>
                 
-                <div className="space-y-3 mb-6">
+                <div className="space-y-4 mb-8">
                   <div className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+                    <div className="rounded-full p-1 bg-primary/10 flex-shrink-0 mt-0.5 mr-3">
+                      <CheckCircle className="h-4 w-4 text-primary" />
+                    </div>
                     <span className="text-sm">Korlátlan kurzus hozzáférés</span>
                   </div>
                   <div className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+                    <div className="rounded-full p-1 bg-primary/10 flex-shrink-0 mt-0.5 mr-3">
+                      <CheckCircle className="h-4 w-4 text-primary" />
+                    </div>
                     <span className="text-sm">Bővített karrierértékelés</span>
                   </div>
                   <div className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+                    <div className="rounded-full p-1 bg-primary/10 flex-shrink-0 mt-0.5 mr-3">
+                      <CheckCircle className="h-4 w-4 text-primary" />
+                    </div>
                     <span className="text-sm">Egyéni tanulási útvonal</span>
                   </div>
                   <div className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+                    <div className="rounded-full p-1 bg-primary/10 flex-shrink-0 mt-0.5 mr-3">
+                      <CheckCircle className="h-4 w-4 text-primary" />
+                    </div>
                     <span className="text-sm">Havi 1 mentorálás</span>
                   </div>
                   <div className="flex items-start">
-                    <X className="h-5 w-5 text-neutral-400 mr-2 flex-shrink-0 mt-0.5" />
+                    <div className="rounded-full p-1 bg-neutral-200 dark:bg-neutral-800 flex-shrink-0 mt-0.5 mr-3">
+                      <X className="h-4 w-4 text-neutral-400" />
+                    </div>
                     <span className="text-sm text-neutral-500">Álláskeresési garancia</span>
                   </div>
                 </div>
                 
                 <button 
-                  className="text-primary text-sm flex items-center justify-center w-full"
+                  className="text-primary text-sm flex items-center justify-center w-full py-2 rounded-lg hover:bg-primary/5 transition-colors"
                   onClick={() => toggleExpandTier('premium')}
                 >
                   {isPlanExpanded('premium') ? (
@@ -273,11 +412,12 @@ const PremiumSubscription = () => {
                 )}
               </div>
             </PremiumCard>
-          </div>
+          </motion.div>
           
           {/* Premium Plus Plan */}
-          <div 
+          <motion.div 
             className={`rounded-xl overflow-hidden transition-all duration-300 ${isPlanExpanded('premiumPlus') ? 'ring-2 ring-primary/20' : ''}`}
+            variants={itemVariants}
           >
             <GlassmorphicCard
               premium
@@ -285,54 +425,69 @@ const PremiumSubscription = () => {
               borderStyle="gradient"
               backgroundOpacity="light"
               className="h-full"
+              hoverEffect
             >
-              <div className="p-6">
-                <h3 className="text-xl font-bold mb-2">Prémium Plusz</h3>
+              <div className="p-8">
+                <div className="w-12 h-12 bg-gradient-to-br from-tertiary to-accent rounded-full flex items-center justify-center mb-6">
+                  <Trophy className="h-6 w-6 text-white" />
+                </div>
+                
+                <h3 className="text-2xl font-bold mb-2">Prémium Plusz</h3>
                 <p className="text-neutral-600 dark:text-neutral-400 mb-6 text-sm">
                   Teljes körű karriertámogatás garantált eredményekkel
                 </p>
                 
                 <div className="mb-6">
-                  <span className="text-3xl font-bold">{prices.premiumPlus}</span>
+                  <span className="text-4xl font-bold">{prices.premiumPlus}</span>
                   <span className="text-sm text-neutral-500 ml-2">/hó</span>
                   {billingPeriod === 'annually' && (
-                    <div className="mt-1">
-                      <span className="text-sm font-medium bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                    <div className="mt-2">
+                      <span className="text-sm font-medium bg-primary/10 text-primary px-3 py-1 rounded-full">
                         {annualDiscount.premiumPlus}
                       </span>
                     </div>
                   )}
                 </div>
                 
-                <Button className="w-full bg-gradient-to-r from-primary to-secondary hover:opacity-90 mb-6">
+                <Button className="w-full bg-gradient-to-r from-primary to-secondary hover:opacity-90 mb-8 py-6 text-base animate-subtle-pulse">
                   7 napos próbaidőszak
                 </Button>
                 
-                <div className="space-y-3 mb-6">
+                <div className="space-y-4 mb-8">
                   <div className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+                    <div className="rounded-full p-1 bg-primary/10 flex-shrink-0 mt-0.5 mr-3">
+                      <CheckCircle className="h-4 w-4 text-primary" />
+                    </div>
                     <span className="text-sm">Minden Prémium funkció</span>
                   </div>
                   <div className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+                    <div className="rounded-full p-1 bg-primary/10 flex-shrink-0 mt-0.5 mr-3">
+                      <CheckCircle className="h-4 w-4 text-primary" />
+                    </div>
                     <span className="text-sm">Heti 1 mentorálás</span>
                   </div>
                   <div className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+                    <div className="rounded-full p-1 bg-primary/10 flex-shrink-0 mt-0.5 mr-3">
+                      <CheckCircle className="h-4 w-4 text-primary" />
+                    </div>
                     <span className="text-sm">Munkáltatói kapcsolatok</span>
                   </div>
                   <div className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+                    <div className="rounded-full p-1 bg-primary/10 flex-shrink-0 mt-0.5 mr-3">
+                      <CheckCircle className="h-4 w-4 text-primary" />
+                    </div>
                     <span className="text-sm">Portfólió fejlesztés</span>
                   </div>
                   <div className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-primary mr-2 flex-shrink-0 mt-0.5" />
+                    <div className="rounded-full p-1 bg-primary/10 flex-shrink-0 mt-0.5 mr-3">
+                      <CheckCircle className="h-4 w-4 text-primary" />
+                    </div>
                     <span className="text-sm">Álláskeresési garancia*</span>
                   </div>
                 </div>
                 
                 <button 
-                  className="text-primary text-sm flex items-center justify-center w-full"
+                  className="text-primary text-sm flex items-center justify-center w-full py-2 rounded-lg hover:bg-primary/5 transition-colors"
                   onClick={() => toggleExpandTier('premiumPlus')}
                 >
                   {isPlanExpanded('premiumPlus') ? (
@@ -382,8 +537,8 @@ const PremiumSubscription = () => {
                 )}
               </div>
             </GlassmorphicCard>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
       
       {/* Premium Features */}
