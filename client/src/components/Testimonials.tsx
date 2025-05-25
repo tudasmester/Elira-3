@@ -23,43 +23,8 @@ const testimonials = [
 ];
 
 const Testimonials: React.FC = () => {
-  return (
-    <section className="bg-white py-16">
-      <div className="max-w-7xl mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="mb-8"
-        >
-          <h2 className="text-2xl md:text-3xl font-bold mb-2">From the community</h2>
-          <p className="text-neutral-600">Over 100 million people have already joined Coursera</p>
-        </motion.div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {testimonials.map((testimonial, index) => (
-            <motion.div
-              key={testimonial.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.1 }}
-              className="flex flex-col items-center text-center"
-            >
-              <img 
-                src={testimonial.image} 
-                alt={testimonial.name}
-                className="w-24 h-24 rounded-full mb-4 object-cover"
-              />
-              <h3 className="text-lg font-bold mb-2">{testimonial.name}</h3>
-              <p className="text-neutral-600 text-sm">
-                "{testimonial.quote}"
-              </p>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
+  // Component has been emptied as requested
+  return null;
 };
 
 export default Testimonials;
