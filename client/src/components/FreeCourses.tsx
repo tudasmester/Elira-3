@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import elteImage from "../assets/ELTE.png";
 import bmeImage from "../assets/bme.png";
+import debreceniImage from "../assets/debreceni.png";
 import { Link } from "wouter";
 
 const freeCourses = [
@@ -26,15 +27,15 @@ const freeCourses = [
   {
     id: 3,
     university: "Debreceni Egyetem",
-    universityLogo: "https://unideb.hu/sites/default/files/DE_SZGK_Emblem_Eng.png",
+    universityLogo: debreceniImage,
     title: "Angol a karrierfejlesztésért",
     image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300",
     type: "Tanfolyam"
   },
   {
     id: 4,
-    university: "Szegedi Tudományegyetem",
-    universityLogo: "https://u-szeged.hu/site/upload/2019/08/SZTE_cimer.png",
+    university: "Corvinus Egyetem",
+    universityLogo: elteImage, // Using ELTE image temporarily
     title: "Üzleti analitika Excel segítségével: Alapfokoktól a haladóig",
     image: "https://images.unsplash.com/photo-1553484771-371a605b060b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300",
     type: "Tanfolyam"
