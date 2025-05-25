@@ -44,7 +44,16 @@ import {
   Sparkles,
   Target,
   TrendingUp,
-  Award
+  Award,
+  Activity,
+  Check,
+  CheckCircle,
+  X,
+  AlertCircle,
+  ArrowUpCircle,
+  BarChart3,
+  BrainCircuit,
+  Rocket
 } from "lucide-react";
 
 interface CareerPathInfo {
@@ -402,15 +411,41 @@ const AICareerPathVisualization: React.FC<AICareerPathVisualizationProps> = ({ i
     <section className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4">
         <div className="mb-10">
-          <h2 className="text-3xl font-bold mb-6 text-center">
+          <h2 className="text-3xl font-bold mb-3 text-center">
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600">
-              AI-alapú karriertervezés
+              Személyre szabott karriertervező
             </span>
           </h2>
-          <p className="text-lg text-neutral-600 text-center max-w-3xl mx-auto">
-            Fedezze fel részletesen a különböző karrierutakat, elemezze készségeit és kapjon 
-            személyre szabott ajánlásokat a jövőbeni szakmai fejlődéséhez.
+          <p className="text-lg text-neutral-600 text-center max-w-3xl mx-auto mb-8">
+            Válogasson a legnépszerűbb karrierutak között, elemezze készségeit és kapjon
+            személyre szabott javaslatokat az AI asszisztenstől.
           </p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto mb-8">
+            <div className="bg-white p-4 rounded-xl border border-indigo-100 shadow-sm text-center">
+              <div className="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 mx-auto mb-3">
+                <Target className="h-6 w-6" />
+              </div>
+              <h3 className="font-medium text-lg mb-2">Fedezze fel a karrierlehetőségeket</h3>
+              <p className="text-neutral-600 text-sm">Találja meg a legkeresettebb szakmákat és a hozzájuk vezető utat</p>
+            </div>
+            
+            <div className="bg-white p-4 rounded-xl border border-indigo-100 shadow-sm text-center">
+              <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 mx-auto mb-3">
+                <Activity className="h-6 w-6" />
+              </div>
+              <h3 className="font-medium text-lg mb-2">Elemezze készségeit</h3>
+              <p className="text-neutral-600 text-sm">Azonosítsa erősségeit és a fejlesztendő területeket a választott karrierúthoz</p>
+            </div>
+            
+            <div className="bg-white p-4 rounded-xl border border-indigo-100 shadow-sm text-center">
+              <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 mx-auto mb-3">
+                <Lightbulb className="h-6 w-6" />
+              </div>
+              <h3 className="font-medium text-lg mb-2">Kapjon személyes javaslatokat</h3>
+              <p className="text-neutral-600 text-sm">Az AI megtalálja az Önnek leginkább megfelelő karrierutakat</p>
+            </div>
+          </div>
         </div>
 
         <Tabs 
@@ -419,9 +454,21 @@ const AICareerPathVisualization: React.FC<AICareerPathVisualizationProps> = ({ i
           className="w-full"
         >
           <TabsList className="grid grid-cols-3 max-w-2xl mx-auto mb-8">
-            <TabsTrigger value="explore">Karrierutak felfedezése</TabsTrigger>
-            <TabsTrigger value="skills">Készség elemzés</TabsTrigger>
-            <TabsTrigger value="recommend">Személyes ajánlások</TabsTrigger>
+            <TabsTrigger value="explore" id="explore-tab">
+              <Target className="h-4 w-4 mr-2 md:mr-2" />
+              <span className="hidden md:inline">Karrierutak felfedezése</span>
+              <span className="inline md:hidden">Felfedezés</span>
+            </TabsTrigger>
+            <TabsTrigger value="skills" id="skills-tab">
+              <Activity className="h-4 w-4 mr-2 md:mr-2" />
+              <span className="hidden md:inline">Készségek elemzése</span>
+              <span className="inline md:hidden">Készségek</span>
+            </TabsTrigger>
+            <TabsTrigger value="recommend" id="recommended-tab">
+              <Lightbulb className="h-4 w-4 mr-2 md:mr-2" />
+              <span className="hidden md:inline">Személyes ajánlások</span>
+              <span className="inline md:hidden">Ajánlások</span>
+            </TabsTrigger>
           </TabsList>
 
           {/* Career Path Exploration Tab */}

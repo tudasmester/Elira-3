@@ -3,7 +3,7 @@ import AICareerPathVisualization from "@/components/AICareerPathVisualization";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
 import { motion } from "framer-motion";
-import { BrainCircuit, Sparkles, Activity, Users } from "lucide-react";
+import { BrainCircuit, Sparkles, Activity, Users, Lightbulb, Target, Rocket } from "lucide-react";
 
 const CareerPathsAI: React.FC = () => {
   const [, setLocation] = useLocation();
@@ -33,25 +33,45 @@ const CareerPathsAI: React.FC = () => {
                     AI-alapú karriertervezés
                   </span>
                 </h1>
-                <p className="text-lg text-neutral-700 mb-8 leading-relaxed">
-                  Fedezze fel a személyre szabott karrierutakat és fejlődési lehetőségeket
-                  a legmodernebb mesterséges intelligencia segítségével. Ismerje meg a 
-                  szükséges készségeket és képzéseket, amelyek a sikeres karrierhez vezetnek.
+                <p className="text-lg text-neutral-700 mb-6 leading-relaxed">
+                  Találja meg az Önnek leginkább megfelelő karrierutat mindössze <span className="font-semibold text-indigo-700">3 egyszerű lépésben</span>!
+                  A mesterséges intelligencia segítségével személyre szabott ajánlásokat kap, amelyek figyelembe veszik készségeit, érdeklődését és céljait.
                 </p>
+                
+                <div className="bg-white p-4 rounded-xl border border-indigo-100 shadow-sm mb-6">
+                  <div className="flex flex-col gap-3">
+                    <div className="flex items-center">
+                      <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 mr-3 flex-shrink-0">1</div>
+                      <p className="text-neutral-700"><span className="font-medium">Adja meg készségeit és érdeklődési köreit</span> – minél részletesebben, annál pontosabb lesz az eredmény</p>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 mr-3 flex-shrink-0">2</div>
+                      <p className="text-neutral-700"><span className="font-medium">Fedezze fel a javasolt karrierlehetőségeket</span> – ismerje meg a legfrissebb munkaerőpiaci trendeket</p>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 mr-3 flex-shrink-0">3</div>
+                      <p className="text-neutral-700"><span className="font-medium">Kapjon személyre szabott tanulási tervet</span> – részletes útmutató a sikeres karrierhez</p>
+                    </div>
+                  </div>
+                </div>
                 
                 <div className="flex flex-wrap gap-4">
                   <Button
                     onClick={() => document.getElementById('career-paths')?.scrollIntoView({ behavior: 'smooth' })}
                     className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white"
+                    size="lg"
                   >
-                    Karrierutak felfedezése
+                    <Rocket className="mr-2 h-5 w-5" />
+                    Karriertervező indítása
                   </Button>
                   <Button
-                    onClick={() => setLocation("/career-assessment")}
+                    onClick={() => document.getElementById('recommended-tab')?.click()}
                     variant="outline"
                     className="border-indigo-200 text-indigo-700 hover:bg-indigo-50"
+                    size="lg"
                   >
-                    Személyes értékelés
+                    <Lightbulb className="mr-2 h-5 w-5" />
+                    Személyes ajánlások
                   </Button>
                 </div>
               </motion.div>
