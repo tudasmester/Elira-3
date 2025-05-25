@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, ChevronRight, ArrowRight, Sparkles } from "lucide-react";
+import { CheckCircle, ChevronRight, ArrowRight, Sparkles, Zap, User, BookOpen, Award } from "lucide-react";
 
 // Course suggestions based on user preferences
 const courseSuggestions = {
@@ -163,6 +163,7 @@ const CoursePersonalizationQuiz: React.FC = () => {
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [recommendedCourse, setRecommendedCourse] = useState<any>(null);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [quizStarted, setQuizStarted] = useState(false);
 
   const handleAnswer = (questionId: number, answerId: string) => {
     setIsAnimating(true);
@@ -213,12 +214,13 @@ const CoursePersonalizationQuiz: React.FC = () => {
   const currentQuestion = questions[currentQuestionIndex];
 
   return (
-    <section className="py-16 relative overflow-hidden">
+    <section className="py-16 relative overflow-hidden mt-[-6rem]">
       {/* Background decorations */}
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 z-0"></div>
       <div className="absolute top-40 right-10 w-64 h-64 bg-blue-400/10 rounded-full blur-3xl"></div>
       <div className="absolute bottom-40 left-10 w-64 h-64 bg-purple-400/10 rounded-full blur-3xl"></div>
       <div className="absolute top-1/3 left-1/3 w-64 h-64 bg-indigo-400/10 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-teal-400/10 rounded-full blur-3xl"></div>
       
       <div className="max-w-5xl mx-auto px-4 relative z-10">
         <motion.div
@@ -236,7 +238,100 @@ const CoursePersonalizationQuiz: React.FC = () => {
         </motion.div>
 
         <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl overflow-hidden border border-indigo-100">
-          {!quizCompleted ? (
+          {!quizStarted && !quizCompleted ? (
+            <div className="p-8 md:p-12">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.6 }}
+                className="text-center mb-10"
+              >
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ duration: 0.5, delay: 0.2, type: "spring" }}
+                  className="w-24 h-24 mx-auto bg-gradient-to-r from-indigo-500 via-purple-500 to-blue-500 rounded-full flex items-center justify-center mb-6"
+                >
+                  <Zap className="h-12 w-12 text-white" />
+                </motion.div>
+                <h3 className="text-2xl md:text-3xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600">
+                  Tegye meg az első lépést karrierje fejlesztése felé!
+                </h3>
+                <p className="text-neutral-600 text-lg max-w-3xl mx-auto mb-6">
+                  Fedezze fel az Önnek leginkább megfelelő tanulási utat mindössze néhány kérdés megválaszolásával. 
+                  Személyre szabott ajánlatunk segít időt és energiát megtakarítani.
+                </p>
+              </motion.div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                  className="bg-gradient-to-br from-indigo-50 to-blue-50 p-6 rounded-xl text-center"
+                >
+                  <div className="w-12 h-12 bg-gradient-to-r from-indigo-400 to-blue-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <User className="h-6 w-6 text-white" />
+                  </div>
+                  <h4 className="text-lg font-semibold mb-2 text-indigo-800">Személyre szabott</h4>
+                  <p className="text-neutral-600">
+                    Az Ön igényeire és tanulási céljára optimalizált kurzusajánlatok
+                  </p>
+                </motion.div>
+                
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.4 }}
+                  className="bg-gradient-to-br from-purple-50 to-indigo-50 p-6 rounded-xl text-center"
+                >
+                  <div className="w-12 h-12 bg-gradient-to-r from-purple-400 to-indigo-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <BookOpen className="h-6 w-6 text-white" />
+                  </div>
+                  <h4 className="text-lg font-semibold mb-2 text-purple-800">Ingyenes tanfolyamok</h4>
+                  <p className="text-neutral-600">
+                    Fedezze fel a legjobb ingyenes kurzusokat hazai egyetemektől
+                  </p>
+                </motion.div>
+                
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.5 }}
+                  className="bg-gradient-to-br from-blue-50 to-teal-50 p-6 rounded-xl text-center"
+                >
+                  <div className="w-12 h-12 bg-gradient-to-r from-blue-400 to-teal-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Award className="h-6 w-6 text-white" />
+                  </div>
+                  <h4 className="text-lg font-semibold mb-2 text-blue-800">Elismert képesítések</h4>
+                  <p className="text-neutral-600">
+                    Szerezzen értékes tudást és növelje karrierlehetőségeit
+                  </p>
+                </motion.div>
+              </div>
+              
+              <motion.div
+                className="text-center"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.6 }}
+              >
+                <div className="relative inline-block">
+                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600 blur-lg opacity-70 rounded-full transform scale-110"></div>
+                  <Button
+                    onClick={() => setQuizStarted(true)}
+                    className="relative bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-lg py-6 px-10 rounded-full shadow-lg"
+                  >
+                    Fedezze fel a legjobb kurzust
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </div>
+                <p className="text-neutral-500 text-sm mt-4">
+                  Csak 30 másodpercet vesz igénybe, és teljesen ingyenes!
+                </p>
+              </motion.div>
+            </div>
+          ) : !quizCompleted ? (
             <div className="p-6 md:p-8">
               {/* Progress bar */}
               <div className="w-full h-2 bg-neutral-200 rounded-full mb-8 overflow-hidden">
