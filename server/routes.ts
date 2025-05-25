@@ -1,10 +1,11 @@
-import express, { type Express } from "express";
+import express, { type Express, type Request, type Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertSubscriberSchema, insertEnrollmentSchema } from "@shared/schema";
 import { z } from "zod";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import enrollmentRouter from "./enrollment-routes";
+import { generateCareerPathInfo, getCareerRecommendation, generateSkillsAnalysis } from "./openai";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware

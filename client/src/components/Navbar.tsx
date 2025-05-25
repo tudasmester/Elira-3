@@ -312,6 +312,15 @@ const Navbar: React.FC = () => {
                 Trending
                 <Badge className="ml-2 bg-orange-100 text-orange-800 text-[10px] py-0 px-1.5">Új</Badge>
               </Link>
+              <Link href="/careers" className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-neutral-700 hover:bg-neutral-50">
+                <TrendingUp className="h-5 w-5 mr-3 text-neutral-500" />
+                Karrierutak
+              </Link>
+              <Link href="/career-paths-ai" className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-neutral-700 hover:bg-neutral-50">
+                <BrainCircuit className="h-5 w-5 mr-3 text-neutral-500" />
+                AI Karriertervező
+                <Badge className="ml-2 bg-purple-100 text-purple-800 text-[10px] py-0 px-1.5">Új</Badge>
+              </Link>
               
               <div className="pt-2 pb-1">
                 <p className="px-3 text-xs font-medium text-neutral-500 uppercase tracking-wider">
