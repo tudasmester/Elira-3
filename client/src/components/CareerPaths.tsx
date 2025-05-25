@@ -1,11 +1,20 @@
 import React, { useState } from "react";
-import { ArrowRight } from "lucide-react";
-import { careers } from "@/data/careers";
+import { ArrowRight, BarChart3, TrendingUp, ChevronRight } from "lucide-react";
+import { careerPaths } from "@/data/careers";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { useLocation } from "wouter";
 
 const CareerPaths: React.FC = () => {
   const [activeCard, setActiveCard] = useState(0);
+  const [, setLocation] = useLocation();
+  
+  // Using the Data Scientist career from the existing careers data
+  const dataScientist = careerPaths.find(career => career.id === 'data-scientist');
+  
+  const handleExploreCareer = () => {
+    setLocation(`/careers/${dataScientist?.id}`);
+  };
   
   return (
     <section className="py-16 bg-gradient-to-b from-white to-blue-50">
@@ -23,31 +32,55 @@ const CareerPaths: React.FC = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="bg-gradient-to-br from-primary to-teal-800 rounded-2xl p-6 mb-10 shadow-xl"
+          className="bg-gradient-to-br from-primary to-blue-700 rounded-2xl p-6 mb-10 shadow-xl relative overflow-hidden"
         >
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          {/* Decorative elements */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mt-20 -mr-20"></div>
+          <div className="absolute bottom-0 left-0 w-40 h-40 bg-white/5 rounded-full -mb-10 -ml-10"></div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 relative z-10">
             {/* Career Information Section */}
             <div className="lg:col-span-2 text-white">
               <div className="space-y-4">
                 <div className="flex space-x-3">
+                  <div className="bg-indigo-500/20 backdrop-blur-sm rounded-lg p-2">
+                    <BarChart3 className="h-5 w-5 text-indigo-300" />
+                  </div>
                   <div className="flex flex-col items-start">
-                    <span className="text-sm text-blue-200">Projektmenedzser</span>
+                    <span className="text-sm text-blue-200">{dataScientist?.category === 'tech' ? 'Technológia' : 'Szakmai terület'}</span>
                     <span className="text-sm text-blue-200">Keresett pozíció</span>
                   </div>
                 </div>
                 
-                <h3 className="text-lg font-semibold">Projektmenedzser</h3>
-                <p className="text-sm text-blue-100">A projektmenedzser üzleti projekteket felügyel elejétől a végéig</p>
-                <div className="text-sm text-blue-200">Átlagos fizetés</div>
-                <div className="text-xl font-semibold">22.000.000 Ft</div>
+                <h3 className="text-xl font-semibold">{dataScientist?.title}</h3>
+                <p className="text-sm text-blue-100">{dataScientist?.description}</p>
+                
+                <div className="flex items-center space-x-3">
+                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-2">
+                    <TrendingUp className="h-4 w-4 text-green-300" />
+                  </div>
+                  <div>
+                    <div className="text-sm text-blue-200">Növekedési ráta</div>
+                    <div className="text-lg font-semibold">{dataScientist?.growthRate}</div>
+                  </div>
+                </div>
+                
+                <div>
+                  <div className="text-sm text-blue-200">Átlagos fizetés</div>
+                  <div className="text-xl font-semibold">{dataScientist?.averageSalary}</div>
+                </div>
                 
                 <div className="pt-4">
                   <motion.div
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
                   >
-                    <Button className="bg-gradient-to-r from-primary to-teal-500 hover:from-primary hover:to-teal-600 text-white rounded-md w-full shadow-lg hover:shadow-xl transition-all duration-300">
-                      Projektmenedzser képzés
+                    <Button 
+                      onClick={handleExploreCareer}
+                      className="bg-gradient-to-r from-indigo-500 to-blue-500 hover:from-indigo-600 hover:to-blue-600 text-white rounded-md w-full shadow-lg hover:shadow-xl transition-all duration-300"
+                    >
+                      Data Scientist karrierút
+                      <ChevronRight className="ml-2 h-4 w-4" />
                     </Button>
                   </motion.div>
                 </div>
@@ -64,19 +97,19 @@ const CareerPaths: React.FC = () => {
                 {/* Certificate Card 1 */}
                 <motion.div 
                   whileHover={{ scale: 1.03, y: -5 }}
-                  className="bg-gradient-to-br from-teal-700 to-primary rounded-lg overflow-hidden flex cursor-pointer shadow-lg"
+                  className="bg-gradient-to-br from-blue-700 to-indigo-600 rounded-lg overflow-hidden flex cursor-pointer shadow-lg"
                 >
                   <div className="w-2/5">
                     <img 
-                      src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200" 
-                      alt="Google Projektmenedzsment" 
+                      src="https://images.unsplash.com/photo-1456428746267-a1756408f782?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200" 
+                      alt="IBM Data Science" 
                       className="w-full h-full object-cover"
                     />
                   </div>
                   <div className="w-3/5 p-3">
-                    <div className="text-xs text-teal-300">Google</div>
-                    <div className="text-sm font-medium text-white">Google Projektmenedzsment: Szakmai tanúsítvány</div>
-                    <div className="mt-2 flex items-center text-xs text-teal-300">
+                    <div className="text-xs text-blue-300">IBM</div>
+                    <div className="text-sm font-medium text-white">IBM Data Science Professional Certificate</div>
+                    <div className="mt-2 flex items-center text-xs text-blue-300">
                       <span className="mr-2">4.9</span>
                       <div className="flex">
                         {[1, 2, 3, 4, 5].map((star) => (
@@ -92,19 +125,19 @@ const CareerPaths: React.FC = () => {
                 {/* Certificate Card 2 */}
                 <motion.div 
                   whileHover={{ scale: 1.03, y: -5 }}
-                  className="bg-gradient-to-br from-teal-700 to-primary rounded-lg overflow-hidden flex cursor-pointer shadow-lg"
+                  className="bg-gradient-to-br from-blue-700 to-indigo-600 rounded-lg overflow-hidden flex cursor-pointer shadow-lg"
                 >
                   <div className="w-2/5">
                     <img 
-                      src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200" 
-                      alt="Google IT Support" 
+                      src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200" 
+                      alt="Microsoft Azure Data Scientist" 
                       className="w-full h-full object-cover"
                     />
                   </div>
                   <div className="w-3/5 p-3">
-                    <div className="text-xs text-teal-300">Google</div>
-                    <div className="text-sm font-medium text-white">Google IT-támogatás: Szakmai tanúsítvány</div>
-                    <div className="mt-2 flex items-center text-xs text-teal-300">
+                    <div className="text-xs text-blue-300">Microsoft</div>
+                    <div className="text-sm font-medium text-white">Microsoft Certified: Azure Data Scientist</div>
+                    <div className="mt-2 flex items-center text-xs text-blue-300">
                       <span className="mr-2">4.8</span>
                       <div className="flex">
                         {[1, 2, 3, 4, 5].map((star) => (
