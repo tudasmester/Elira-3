@@ -5,7 +5,7 @@ import {
   ChevronDown, Search, BookOpen, GraduationCap, 
   BarChart, Code, Database, School, HeartPulse, 
   Briefcase, Menu, X, Globe, Calculator, UserCircle,
-  LogOut, TrendingUp
+  LogOut, TrendingUp, BrainCircuit
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Input } from "@/components/ui/input";
@@ -146,6 +146,15 @@ const Navbar: React.FC = () => {
                 }`}>
                   <TrendingUp className="h-4 w-4 mr-1" />
                   Karrierutak
+                </Link>
+                <Link href="/career-paths-ai" className={`flex items-center px-3 py-2 rounded-md text-sm font-medium ${
+                  isActive("/career-paths-ai") 
+                    ? "text-primary bg-primary/5" 
+                    : "text-neutral-700 hover:text-primary hover:bg-neutral-50"
+                }`}>
+                  <BrainCircuit className="h-4 w-4 mr-1" />
+                  AI Karriertervező
+                  <Badge className="ml-2 bg-purple-100 text-purple-800 text-[10px] py-0 px-1.5">Új</Badge>
                 </Link>
               </nav>
             )}

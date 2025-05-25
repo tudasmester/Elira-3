@@ -14,6 +14,7 @@ import DegreeDetail from "@/pages/DegreeDetail";
 import CategoryPage from "@/pages/CategoryPage";
 import CareerDevelopment from "@/pages/CareerDevelopment";
 import CareerDetail from "@/pages/CareerDetail";
+import CareerPathsAI from "@/pages/CareerPathsAI";
 import NotFound from "@/pages/not-found";
 import Layout from "@/components/Layout";
 import ScrollToTop from "@/components/ui/ScrollToTop";
@@ -37,6 +38,8 @@ function Router() {
       <Route path="/category/:slug" component={CategoryPage} />
       <Route path="/careers" component={CareerDevelopment} />
       <Route path="/career/:id" component={CareerDetail} />
+      <Route path="/career-paths-ai" component={CareerPathsAI} />
+      <Route path="/career-paths/:careerId" component={CareerPathsAI} />
       <Route component={NotFound} />
     </Switch>
   );
