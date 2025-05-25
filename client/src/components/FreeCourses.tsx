@@ -1,12 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Eye } from "lucide-react";
 import elteImage from "../assets/ELTE.png";
 import bmeImage from "../assets/bme.png";
 import debreceniImage from "../assets/debreceni.png";
 import corvinusImage from "../assets/corvinus_logo_angol_sz_transparent.png";
 import { Link } from "wouter";
+import CoursePreviewModal from "./CoursePreviewModal";
 
 const freeCourses = [
   {
@@ -14,7 +15,12 @@ const freeCourses = [
     university: "Eötvös Loránd Tudományegyetem",
     universityLogo: elteImage,
     title: "Pénzügyi piacok",
+    description: "Ismerje meg a pénzügyi piacok működését, a befektetési eszközöket és a modern pénzügyi elemzési módszereket ebben az átfogó kurzusban.",
+    imageUrl: "https://images.unsplash.com/photo-1560520653-9e0e4c89eb11?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300",
     image: "https://images.unsplash.com/photo-1560520653-9e0e4c89eb11?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300",
+    category: "Pénzügy",
+    level: "Kezdő",
+    isFree: true,
     type: "Tanfolyam"
   },
   {

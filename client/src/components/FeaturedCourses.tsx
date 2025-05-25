@@ -1,12 +1,25 @@
-import React from "react";
-import { ChevronRight, ArrowRight, Clock, Users, Award, Bookmark, Star } from "lucide-react";
+import React, { useState } from "react";
+import { ChevronRight, ArrowRight, Clock, Users, Award, Bookmark, Star, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { courses } from "@/data/courses";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
 import { Badge } from "@/components/ui/badge";
+import CoursePreviewModal from "./CoursePreviewModal";
 
 const FeaturedCourses: React.FC = () => {
+  const [previewCourse, setPreviewCourse] = useState<typeof courses[0] | null>(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  
+  const openPreview = (course: typeof courses[0]) => {
+    setPreviewCourse(course);
+    setIsPreviewOpen(true);
+  };
+
+  const closePreview = () => {
+    setIsPreviewOpen(false);
+  };
+
   // Animation variants for the cards
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -84,7 +97,24 @@ const FeaturedCourses: React.FC = () => {
                   </span>
                 </div>
                 <div className="absolute bottom-3 left-3 z-20 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <Button size="sm" variant="secondary" className="bg-white/90 hover:bg-white text-primary backdrop-blur-sm rounded-full shadow-lg">
+                  <Button 
+                    size="sm" 
+                    variant="secondary" 
+                    className="bg-white/90 hover:bg-white text-primary backdrop-blur-sm rounded-full shadow-lg"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      openPreview(course);
+                    }}
+                  >
+                    <Eye className="h-4 w-4 mr-1" />
+                    Előnézet
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    variant="secondary" 
+                    className="bg-white/90 hover:bg-white text-primary backdrop-blur-sm rounded-full shadow-lg"
+                  >
                     <Bookmark className="h-4 w-4 mr-1" />
                     Mentés
                   </Button>
@@ -176,6 +206,15 @@ const FeaturedCourses: React.FC = () => {
           </Button>
         </motion.div>
       </div>
+
+      {/* Course Preview Modal */}
+      {previewCourse && (
+        <CoursePreviewModal 
+          isOpen={isPreviewOpen}
+          onClose={closePreview}
+          course={previewCourse}
+        />
+      )}
     </section>
   );
 };
