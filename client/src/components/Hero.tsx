@@ -213,14 +213,16 @@ const Hero: React.FC = () => {
                 whileHover={{ y: -5 }}
                 className="bg-white rounded-2xl overflow-hidden shadow-2xl relative z-20 border border-neutral-200/50"
               >
-                <img 
-                  src={heroImage} 
-                  alt="Academion platform" 
-                  className="w-full h-auto object-contain rounded-t-2xl"
-                />
+                <div className="bg-gradient-to-r from-primary/10 to-teal-100/20 p-8 flex items-center justify-center">
+                  <img 
+                    src="@assets/bme.png" 
+                    alt="BME - Budapesti Műszaki és Gazdaságtudományi Egyetem" 
+                    className="w-full max-h-64 object-contain"
+                  />
+                </div>
                 <div className="bg-white p-6 rounded-b-2xl">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-bold text-lg">Academion Online Platform</h3>
+                    <h3 className="font-bold text-lg">BME Mérnöki Képzések</h3>
                     <div className="flex space-x-2">
                       <span className="inline-block w-3 h-3 bg-red-500 rounded-full"></span>
                       <span className="inline-block w-3 h-3 bg-yellow-500 rounded-full"></span>
@@ -231,7 +233,7 @@ const Hero: React.FC = () => {
                     <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
                       <div className="bg-primary h-full rounded-full" style={{width: "75%"}}></div>
                     </div>
-                    <span className="text-sm font-medium">75%</span>
+                    <span className="text-sm font-medium">24 kurzus</span>
                   </div>
                 </div>
               </motion.div>
