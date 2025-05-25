@@ -17,6 +17,8 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import CoursePreviewModal from "@/components/CoursePreviewModal2";
 
+import { usePreviewModal } from "@/hooks/usePreviewModal";
+
 const CourseDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const courseId = parseInt(id || "1");
@@ -26,7 +28,7 @@ const CourseDetail: React.FC = () => {
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const { openPreview } = usePreviewModal();
   
   // Find the course with the matching ID
   const course = courses.find(course => course.id === courseId);
@@ -334,7 +336,7 @@ const CourseDetail: React.FC = () => {
                     <Button 
                       variant="outline" 
                       className="w-full border-white text-white hover:bg-white/20 py-6 text-lg font-medium"
-                      onClick={() => setIsPreviewOpen(true)}
+                      onClick={() => usePreviewModal().openPreview()}
                     >
                       <Eye className="h-5 w-5 mr-2" />
                       Előnézet megtekintése
@@ -1010,27 +1012,4 @@ const CourseDetail: React.FC = () => {
   );
 };
 
-// Add the Course Preview Modal component
-const CourseDetailWithPreview: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
-  const courseId = parseInt(id || "1");
-  const course = courses.find(course => course.id === courseId);
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  
-  return (
-    <>
-      <CourseDetail />
-      
-      {/* Course Preview Modal */}
-      {course && (
-        <CoursePreviewModal 
-          isOpen={isPreviewOpen}
-          onClose={() => setIsPreviewOpen(false)}
-          course={course}
-        />
-      )}
-    </>
-  );
-};
-
-export default CourseDetailWithPreview;
+export default CourseDetail;
