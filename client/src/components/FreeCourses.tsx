@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react";
 import elteImage from "../assets/ELTE.png";
 import bmeImage from "../assets/bme.png";
 import debreceniImage from "../assets/debreceni.png";
+import corvinusImage from "../assets/corvinus_logo_angol_sz_transparent.png";
 import { Link } from "wouter";
 
 const freeCourses = [
@@ -35,7 +36,7 @@ const freeCourses = [
   {
     id: 4,
     university: "Corvinus Egyetem",
-    universityLogo: elteImage, // Using ELTE image temporarily
+    universityLogo: corvinusImage,
     title: "Üzleti analitika Excel segítségével: Alapfokoktól a haladóig",
     image: "https://images.unsplash.com/photo-1553484771-371a605b060b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300",
     type: "Tanfolyam"
