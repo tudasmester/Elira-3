@@ -75,22 +75,24 @@ const GrowthChart = ({ data }: { data: { year: number; jobs: number }[] }) => {
     <div className="w-full h-40 flex items-end justify-between gap-4 mt-4">
       {data.map((item, i) => (
         <div key={i} className="flex flex-col items-center">
-          <div 
-            className="w-16 bg-primary/80 hover:bg-primary transition-all rounded-t-md"
-            style={{ 
-              height: `${(item.jobs / maxJobs) * 100}%`,
-              minHeight: '10%'
-            }}
-          >
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="w-full h-full cursor-pointer"></div>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p className="font-medium">{item.year}: {item.jobs.toLocaleString('hu-HU')} állás</p>
-              </TooltipContent>
-            </Tooltip>
-          </div>
+          <TooltipProvider>
+            <div 
+              className="w-16 bg-primary/80 hover:bg-primary transition-all rounded-t-md"
+              style={{ 
+                height: `${(item.jobs / maxJobs) * 100}%`,
+                minHeight: '10%'
+              }}
+            >
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="w-full h-full cursor-pointer"></div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="font-medium">{item.year}: {item.jobs.toLocaleString('hu-HU')} állás</p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
+          </TooltipProvider>
           <span className="text-sm mt-2 text-neutral-500">{item.year}</span>
         </div>
       ))}
@@ -339,281 +341,281 @@ const CareerDetail: React.FC = () => {
             </div>
           </div>
           
-          <div className="flex flex-wrap border-b border-neutral-200">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="justify-start rounded-none border-b bg-transparent p-0">
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <div className="border-b border-neutral-200">
+              <TabsList className="h-auto justify-start rounded-none border-b-0 bg-transparent p-0">
                 <TabsTrigger 
                   value="overview" 
-                  className="rounded-none border-b-2 border-transparent px-4 py-3 data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none py-3 px-4 bg-transparent text-neutral-600 data-[state=active]:text-primary"
                 >
                   Áttekintés
                 </TabsTrigger>
                 <TabsTrigger 
                   value="courses" 
-                  className="rounded-none border-b-2 border-transparent px-4 py-3 data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none py-3 px-4 bg-transparent text-neutral-600 data-[state=active]:text-primary"
                 >
                   Ajánlott kurzusok
                 </TabsTrigger>
                 <TabsTrigger 
                   value="market" 
-                  className="rounded-none border-b-2 border-transparent px-4 py-3 data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none py-3 px-4 bg-transparent text-neutral-600 data-[state=active]:text-primary"
                 >
                   Munkaerőpiac
                 </TabsTrigger>
                 <TabsTrigger 
                   value="certifications" 
-                  className="rounded-none border-b-2 border-transparent px-4 py-3 data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none py-3 px-4 bg-transparent text-neutral-600 data-[state=active]:text-primary"
                 >
                   Tanúsítványok
                 </TabsTrigger>
               </TabsList>
-            </Tabs>
-          </div>
-          
-          <div className="p-6 md:p-8">
-            <TabsContent value="overview" className="mt-0 pt-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div className="md:col-span-2">
-                  <h2 className="text-2xl font-bold text-neutral-900 mb-4">A karrierút leírása</h2>
-                  <p className="text-neutral-700 mb-6">
-                    {career.description}
-                  </p>
-                  
-                  <h3 className="text-xl font-bold text-neutral-900 mb-3">Kiemelt előnyök</h3>
-                  <ul className="space-y-2 mb-6">
-                    {career.highlights.map((highlight: string, idx: number) => (
-                      <li key={idx} className="flex items-start">
-                        <CheckCircle className="h-5 w-5 text-primary mr-3 flex-shrink-0 mt-0.5" />
-                        <span className="text-neutral-700">{highlight}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  
-                  <h3 className="text-xl font-bold text-neutral-900 mb-3">Szükséges készségek</h3>
-                  <div className="flex flex-wrap gap-2 mb-6">
-                    {career.skills.map((skill: string, idx: number) => (
-                      <Badge key={idx} className="bg-blue-100 text-blue-800 hover:bg-blue-200">
-                        {skill}
-                      </Badge>
-                    ))}
-                  </div>
-                  
-                  <h3 className="text-xl font-bold text-neutral-900 mb-3">Vezető vállalatok</h3>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                    {career.topCompanies.map((company: string, idx: number) => (
-                      <div key={idx} className="flex items-center space-x-2 bg-neutral-50 p-3 rounded-lg border border-neutral-100">
-                        <Building className="h-5 w-5 text-neutral-500" />
-                        <span className="text-neutral-700 font-medium">{company}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                
-                <div className="space-y-6">
-                  <div className="bg-neutral-50 p-5 rounded-xl border border-neutral-200">
-                    <h3 className="text-lg font-bold text-neutral-900 mb-4">Karrierút adatok</h3>
-                    <div className="space-y-4">
-                      <div>
-                        <div className="flex justify-between text-sm text-neutral-600 mb-1">
-                          <span>Átlagos fizetés</span>
+            </div>
+            
+            <div className="p-6 md:p-8">
+              <TabsContent value="overview" className="m-0">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  <div className="md:col-span-2">
+                    <h2 className="text-2xl font-bold text-neutral-900 mb-4">A karrierút leírása</h2>
+                    <p className="text-neutral-700 mb-6">
+                      {career.description}
+                    </p>
+                    
+                    <h3 className="text-xl font-bold text-neutral-900 mb-3">Kiemelt előnyök</h3>
+                    <ul className="space-y-2 mb-6">
+                      {career.highlights.map((highlight: string, idx: number) => (
+                        <li key={idx} className="flex items-start">
+                          <CheckCircle className="h-5 w-5 text-primary mr-3 flex-shrink-0 mt-0.5" />
+                          <span className="text-neutral-700">{highlight}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    
+                    <h3 className="text-xl font-bold text-neutral-900 mb-3">Szükséges készségek</h3>
+                    <div className="flex flex-wrap gap-2 mb-6">
+                      {career.skills.map((skill: string, idx: number) => (
+                        <Badge key={idx} className="bg-blue-100 text-blue-800 hover:bg-blue-200">
+                          {skill}
+                        </Badge>
+                      ))}
+                    </div>
+                    
+                    <h3 className="text-xl font-bold text-neutral-900 mb-3">Vezető vállalatok</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                      {career.topCompanies.map((company: string, idx: number) => (
+                        <div key={idx} className="flex items-center space-x-2 bg-neutral-50 p-3 rounded-lg border border-neutral-100">
+                          <Building className="h-5 w-5 text-neutral-500" />
+                          <span className="text-neutral-700 font-medium">{company}</span>
                         </div>
-                        <div className="font-bold text-neutral-800 flex items-center">
-                          <DollarSign className="h-5 w-5 text-green-600 mr-1" />
-                          {career.averageSalary}
-                        </div>
-                      </div>
-                      
-                      <div>
-                        <div className="flex justify-between text-sm text-neutral-600 mb-1">
-                          <span>Képzési idő</span>
-                        </div>
-                        <div className="font-bold text-neutral-800 flex items-center">
-                          <Clock className="h-5 w-5 text-blue-600 mr-1" />
-                          {career.timeToComplete}
-                        </div>
-                      </div>
-                      
-                      <div>
-                        <div className="flex justify-between text-sm text-neutral-600 mb-1">
-                          <span>Munkaerőpiaci kilátások</span>
-                        </div>
-                        <div className="font-bold text-neutral-800 flex items-center">
-                          <TrendingUp className="h-5 w-5 text-primary mr-1" />
-                          {career.jobOutlook} 
-                          <span className="ml-1 text-green-600">{career.growthRate}</span>
-                        </div>
-                      </div>
-                      
-                      <div>
-                        <div className="flex justify-between text-sm text-neutral-600 mb-1">
-                          <span>Nehézségi szint</span>
-                        </div>
-                        <div className="font-bold text-neutral-800">
-                          {career.difficulty}
-                        </div>
-                      </div>
+                      ))}
                     </div>
                   </div>
                   
-                  <div className="bg-neutral-50 p-5 rounded-xl border border-neutral-200">
-                    <h3 className="text-lg font-bold text-neutral-900 mb-3">Ajánlott oktatási út</h3>
-                    <p className="text-neutral-600 mb-4">
-                      Segítünk, hogy magabiztosan elindulj a karrierutadon a szükséges készségek megszerzésével.
-                    </p>
-                    <Button className="w-full bg-primary hover:bg-primary/90 text-white">
-                      Személyre szabott tanulási terv
+                  <div className="space-y-6">
+                    <div className="bg-neutral-50 p-5 rounded-xl border border-neutral-200">
+                      <h3 className="text-lg font-bold text-neutral-900 mb-4">Karrierút adatok</h3>
+                      <div className="space-y-4">
+                        <div>
+                          <div className="flex justify-between text-sm text-neutral-600 mb-1">
+                            <span>Átlagos fizetés</span>
+                          </div>
+                          <div className="font-bold text-neutral-800 flex items-center">
+                            <DollarSign className="h-5 w-5 text-green-600 mr-1" />
+                            {career.averageSalary}
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <div className="flex justify-between text-sm text-neutral-600 mb-1">
+                            <span>Képzési idő</span>
+                          </div>
+                          <div className="font-bold text-neutral-800 flex items-center">
+                            <Clock className="h-5 w-5 text-blue-600 mr-1" />
+                            {career.timeToComplete}
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <div className="flex justify-between text-sm text-neutral-600 mb-1">
+                            <span>Munkaerőpiaci kilátások</span>
+                          </div>
+                          <div className="font-bold text-neutral-800 flex items-center">
+                            <TrendingUp className="h-5 w-5 text-primary mr-1" />
+                            {career.jobOutlook} 
+                            <span className="ml-1 text-green-600">{career.growthRate}</span>
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <div className="flex justify-between text-sm text-neutral-600 mb-1">
+                            <span>Nehézségi szint</span>
+                          </div>
+                          <div className="font-bold text-neutral-800">
+                            {career.difficulty}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-neutral-50 p-5 rounded-xl border border-neutral-200">
+                      <h3 className="text-lg font-bold text-neutral-900 mb-3">Ajánlott oktatási út</h3>
+                      <p className="text-neutral-600 mb-4">
+                        Segítünk, hogy magabiztosan elindulj a karrierutadon a szükséges készségek megszerzésével.
+                      </p>
+                      <Button className="w-full bg-primary hover:bg-primary/90 text-white">
+                        Személyre szabott tanulási terv
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="courses" className="m-0">
+                <div>
+                  <h2 className="text-2xl font-bold text-neutral-900 mb-4">Ajánlott kurzusok</h2>
+                  <p className="text-neutral-700 mb-6">
+                    Ezek a kurzusok segítenek elsajátítani a {career.title.toLowerCase()} karrierúthoz szükséges kulcsfontosságú készségeket.
+                  </p>
+                  
+                  <RecommendedCourses courseIds={career.recommendedCourses} />
+                  
+                  <div className="mt-8 text-center">
+                    <Button className="bg-primary hover:bg-primary/90 text-white">
+                      Összes kapcsolódó kurzus megtekintése
                     </Button>
                   </div>
                 </div>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="courses" className="mt-0 pt-4">
-              <div>
-                <h2 className="text-2xl font-bold text-neutral-900 mb-4">Ajánlott kurzusok</h2>
-                <p className="text-neutral-700 mb-6">
-                  Ezek a kurzusok segítenek elsajátítani a {career.title.toLowerCase()} karrierúthoz szükséges kulcsfontosságú készségeket.
-                </p>
-                
-                <RecommendedCourses courseIds={career.recommendedCourses} />
-                
-                <div className="mt-8 text-center">
-                  <Button className="bg-primary hover:bg-primary/90 text-white">
-                    Összes kapcsolódó kurzus megtekintése
-                  </Button>
-                </div>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="market" className="mt-0 pt-4">
-              <div>
-                <h2 className="text-2xl font-bold text-neutral-900 mb-4">Munkaerőpiaci trendek</h2>
-                <p className="text-neutral-700 mb-6">
-                  A {career.title} karrierút iránti kereslet az elmúlt években folyamatosan növekszik. Az alábbi grafikon mutatja a magyarországi pozíciók számának alakulását.
-                </p>
-                
-                <div className="bg-white p-5 rounded-xl border border-neutral-200 mb-8">
-                  <h3 className="text-lg font-bold text-neutral-900 mb-3">Álláshelyek számának alakulása</h3>
-                  <GrowthChart data={career.yearlyGrowth} />
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                  <div className="bg-white p-5 rounded-xl border border-neutral-200">
-                    <h3 className="text-lg font-bold text-neutral-900 mb-3">Fizetési tartomány</h3>
-                    <p className="text-neutral-600 mb-3">
-                      A fizetés a tapasztalattól és a konkrét pozíciótól függően változhat.
-                    </p>
-                    <div className="space-y-3">
-                      <div>
-                        <div className="flex justify-between text-sm mb-1">
-                          <span className="text-neutral-600">Junior</span>
-                          <span className="font-medium text-neutral-800">500,000 - 800,000 Ft/hó</span>
+              </TabsContent>
+              
+              <TabsContent value="market" className="m-0">
+                <div>
+                  <h2 className="text-2xl font-bold text-neutral-900 mb-4">Munkaerőpiaci trendek</h2>
+                  <p className="text-neutral-700 mb-6">
+                    A {career.title} karrierút iránti kereslet az elmúlt években folyamatosan növekszik. Az alábbi grafikon mutatja a magyarországi pozíciók számának alakulását.
+                  </p>
+                  
+                  <div className="bg-white p-5 rounded-xl border border-neutral-200 mb-8">
+                    <h3 className="text-lg font-bold text-neutral-900 mb-3">Álláshelyek számának alakulása</h3>
+                    <GrowthChart data={career.yearlyGrowth} />
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div className="bg-white p-5 rounded-xl border border-neutral-200">
+                      <h3 className="text-lg font-bold text-neutral-900 mb-3">Fizetési tartomány</h3>
+                      <p className="text-neutral-600 mb-3">
+                        A fizetés a tapasztalattól és a konkrét pozíciótól függően változhat.
+                      </p>
+                      <div className="space-y-3">
+                        <div>
+                          <div className="flex justify-between text-sm mb-1">
+                            <span className="text-neutral-600">Junior</span>
+                            <span className="font-medium text-neutral-800">500,000 - 800,000 Ft/hó</span>
+                          </div>
+                          <Progress value={30} className="h-2" />
                         </div>
-                        <Progress value={30} className="h-2" />
-                      </div>
-                      <div>
-                        <div className="flex justify-between text-sm mb-1">
-                          <span className="text-neutral-600">Medior</span>
-                          <span className="font-medium text-neutral-800">{career.averageSalary}</span>
+                        <div>
+                          <div className="flex justify-between text-sm mb-1">
+                            <span className="text-neutral-600">Medior</span>
+                            <span className="font-medium text-neutral-800">{career.averageSalary}</span>
+                          </div>
+                          <Progress value={60} className="h-2" />
                         </div>
-                        <Progress value={60} className="h-2" />
-                      </div>
-                      <div>
-                        <div className="flex justify-between text-sm mb-1">
-                          <span className="text-neutral-600">Senior</span>
-                          <span className="font-medium text-neutral-800">1,200,000 - 1,800,000 Ft/hó</span>
+                        <div>
+                          <div className="flex justify-between text-sm mb-1">
+                            <span className="text-neutral-600">Senior</span>
+                            <span className="font-medium text-neutral-800">1,200,000 - 1,800,000 Ft/hó</span>
+                          </div>
+                          <Progress value={90} className="h-2" />
                         </div>
-                        <Progress value={90} className="h-2" />
                       </div>
+                    </div>
+                    
+                    <div className="bg-white p-5 rounded-xl border border-neutral-200">
+                      <h3 className="text-lg font-bold text-neutral-900 mb-3">Leggyakoribb pozíciók</h3>
+                      <ul className="space-y-2">
+                        <li className="flex items-center justify-between p-2 rounded hover:bg-neutral-50">
+                          <span className="text-neutral-800">Junior {career.title}</span>
+                          <Badge>500+ állás</Badge>
+                        </li>
+                        <li className="flex items-center justify-between p-2 rounded hover:bg-neutral-50">
+                          <span className="text-neutral-800">Senior {career.title}</span>
+                          <Badge>300+ állás</Badge>
+                        </li>
+                        <li className="flex items-center justify-between p-2 rounded hover:bg-neutral-50">
+                          <span className="text-neutral-800">{career.title} Team Lead</span>
+                          <Badge>100+ állás</Badge>
+                        </li>
+                        <li className="flex items-center justify-between p-2 rounded hover:bg-neutral-50">
+                          <span className="text-neutral-800">Freelance {career.title}</span>
+                          <Badge>200+ állás</Badge>
+                        </li>
+                      </ul>
                     </div>
                   </div>
                   
-                  <div className="bg-white p-5 rounded-xl border border-neutral-200">
-                    <h3 className="text-lg font-bold text-neutral-900 mb-3">Leggyakoribb pozíciók</h3>
+                  <div className="bg-neutral-50 p-6 rounded-xl border border-neutral-200 flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div>
+                      <h3 className="text-lg font-bold text-neutral-900 mb-2">Álláskeresési segítség</h3>
+                      <p className="text-neutral-600">
+                        Személyre szabott álláskeresési tanácsadásunkkal és partneri kapcsolatainkkal segítünk az ideális pozíció megtalálásában.
+                      </p>
+                    </div>
+                    <Button className="whitespace-nowrap bg-primary hover:bg-primary/90 text-white">
+                      Karriertanácsadás
+                    </Button>
+                  </div>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="certifications" className="m-0">
+                <div>
+                  <h2 className="text-2xl font-bold text-neutral-900 mb-4">Ajánlott tanúsítványok</h2>
+                  <p className="text-neutral-700 mb-6">
+                    Ezek a nemzetközileg elismert tanúsítványok jelentősen növelhetik elhelyezkedési esélyeidet és fizetésedet.
+                  </p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    {career.certifications.map((cert: string, idx: number) => (
+                      <div key={idx} className="bg-white p-5 rounded-xl border border-neutral-200 flex flex-col">
+                        <div className="mb-3">
+                          <Award className="h-8 w-8 text-primary" />
+                        </div>
+                        <h3 className="text-lg font-bold text-neutral-900 mb-2">{cert}</h3>
+                        <p className="text-neutral-600 text-sm flex-grow">
+                          Növeld szakmai hitelességedet és tegyél szert értékes készségekre ezzel a tanúsítvánnyal.
+                        </p>
+                        <div className="flex justify-between items-center mt-4 pt-4 border-t border-neutral-200">
+                          <span className="text-sm text-neutral-500">Időtartam: 2-3 hónap</span>
+                          <Button variant="outline" size="sm">Részletek</Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-6 rounded-xl border border-primary/20">
+                    <h3 className="text-lg font-bold text-neutral-900 mb-3">Miért fontosak a tanúsítványok?</h3>
                     <ul className="space-y-2">
-                      <li className="flex items-center justify-between p-2 rounded hover:bg-neutral-50">
-                        <span className="text-neutral-800">Junior {career.title}</span>
-                        <Badge>500+ állás</Badge>
+                      <li className="flex items-start">
+                        <CheckCircle className="h-5 w-5 text-primary mr-3 flex-shrink-0 mt-0.5" />
+                        <span className="text-neutral-700">Növelik a versenyelőnyödet az álláspiacon</span>
                       </li>
-                      <li className="flex items-center justify-between p-2 rounded hover:bg-neutral-50">
-                        <span className="text-neutral-800">Senior {career.title}</span>
-                        <Badge>300+ állás</Badge>
+                      <li className="flex items-start">
+                        <CheckCircle className="h-5 w-5 text-primary mr-3 flex-shrink-0 mt-0.5" />
+                        <span className="text-neutral-700">Bizonyítják a szakmai tudásodat és elkötelezettségedet</span>
                       </li>
-                      <li className="flex items-center justify-between p-2 rounded hover:bg-neutral-50">
-                        <span className="text-neutral-800">{career.title} Team Lead</span>
-                        <Badge>100+ állás</Badge>
+                      <li className="flex items-start">
+                        <CheckCircle className="h-5 w-5 text-primary mr-3 flex-shrink-0 mt-0.5" />
+                        <span className="text-neutral-700">Átlagosan 15-20%-kal magasabb fizetést eredményezhetnek</span>
                       </li>
-                      <li className="flex items-center justify-between p-2 rounded hover:bg-neutral-50">
-                        <span className="text-neutral-800">Freelance {career.title}</span>
-                        <Badge>200+ állás</Badge>
+                      <li className="flex items-start">
+                        <CheckCircle className="h-5 w-5 text-primary mr-3 flex-shrink-0 mt-0.5" />
+                        <span className="text-neutral-700">Naprakész, iparági sztenderdeknek megfelelő tudást biztosítanak</span>
                       </li>
                     </ul>
                   </div>
                 </div>
-                
-                <div className="bg-neutral-50 p-6 rounded-xl border border-neutral-200 flex flex-col md:flex-row items-center justify-between gap-6">
-                  <div>
-                    <h3 className="text-lg font-bold text-neutral-900 mb-2">Álláskeresési segítség</h3>
-                    <p className="text-neutral-600">
-                      Személyre szabott álláskeresési tanácsadásunkkal és partneri kapcsolatainkkal segítünk az ideális pozíció megtalálásában.
-                    </p>
-                  </div>
-                  <Button className="whitespace-nowrap bg-primary hover:bg-primary/90 text-white">
-                    Karriertanácsadás
-                  </Button>
-                </div>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="certifications" className="mt-0 pt-4">
-              <div>
-                <h2 className="text-2xl font-bold text-neutral-900 mb-4">Ajánlott tanúsítványok</h2>
-                <p className="text-neutral-700 mb-6">
-                  Ezek a nemzetközileg elismert tanúsítványok jelentősen növelhetik elhelyezkedési esélyeidet és fizetésedet.
-                </p>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                  {career.certifications.map((cert: string, idx: number) => (
-                    <div key={idx} className="bg-white p-5 rounded-xl border border-neutral-200 flex flex-col">
-                      <div className="mb-3">
-                        <Award className="h-8 w-8 text-primary" />
-                      </div>
-                      <h3 className="text-lg font-bold text-neutral-900 mb-2">{cert}</h3>
-                      <p className="text-neutral-600 text-sm flex-grow">
-                        Növeld szakmai hitelességedet és tegyél szert értékes készségekre ezzel a tanúsítvánnyal.
-                      </p>
-                      <div className="flex justify-between items-center mt-4 pt-4 border-t border-neutral-200">
-                        <span className="text-sm text-neutral-500">Időtartam: 2-3 hónap</span>
-                        <Button variant="outline" size="sm">Részletek</Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                
-                <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-6 rounded-xl border border-primary/20">
-                  <h3 className="text-lg font-bold text-neutral-900 mb-3">Miért fontosak a tanúsítványok?</h3>
-                  <ul className="space-y-2">
-                    <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-primary mr-3 flex-shrink-0 mt-0.5" />
-                      <span className="text-neutral-700">Növelik a versenyelőnyödet az álláspiacon</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-primary mr-3 flex-shrink-0 mt-0.5" />
-                      <span className="text-neutral-700">Bizonyítják a szakmai tudásodat és elkötelezettségedet</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-primary mr-3 flex-shrink-0 mt-0.5" />
-                      <span className="text-neutral-700">Átlagosan 15-20%-kal magasabb fizetést eredményezhetnek</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircle className="h-5 w-5 text-primary mr-3 flex-shrink-0 mt-0.5" />
-                      <span className="text-neutral-700">Naprakész, iparági sztenderdeknek megfelelő tudást biztosítanak</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </TabsContent>
-          </div>
+              </TabsContent>
+            </div>
+          </Tabs>
         </div>
         
         {/* Related Careers */}
