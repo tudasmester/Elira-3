@@ -2,6 +2,8 @@ import React from "react";
 import { universities } from "@/data/universities";
 import { motion } from "framer-motion";
 import elteImage from "../assets/ELTE.png";
+import corvinusImage from "../assets/corvinus_logo_angol_sz_transparent.png";
+import bmeImage from "../assets/bme.png";
 
 const PartnerUniversities: React.FC = () => {
   return (
@@ -17,11 +19,11 @@ const PartnerUniversities: React.FC = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="text-center text-xl mb-6 font-medium"
+            className="text-center text-xl mb-8 font-medium"
           >
             Együttműködünk 350+ vezető egyetemmel és vállalattal
           </motion.h2>
-          <div className="flex flex-wrap justify-center items-center gap-10">
+          <div className="flex flex-wrap justify-center items-center gap-12">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -40,18 +42,37 @@ const PartnerUniversities: React.FC = () => {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.2 }}
               whileHover={{ scale: 1.1 }}
-              className="cursor-pointer"
+              className="cursor-pointer rounded-lg bg-white/20 backdrop-blur-sm p-2 flex items-center justify-center"
+              style={{ height: "44px" }}
             >
-              <img 
-                src={elteImage} 
-                alt="ELTE logó" 
-                className="h-10 object-contain brightness-200"
-              />
+              <div className="bg-white rounded-md px-3 py-1.5 flex items-center justify-center">
+                <img 
+                  src={bmeImage} 
+                  alt="BME logó" 
+                  className="h-8 object-contain"
+                />
+              </div>
             </motion.div>
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.3 }}
+              whileHover={{ scale: 1.1 }}
+              className="cursor-pointer rounded-lg bg-white/20 backdrop-blur-sm p-2 flex items-center justify-center"
+              style={{ height: "44px" }}
+            >
+              <div className="bg-white rounded-md px-3 py-1.5 flex items-center justify-center">
+                <img 
+                  src={corvinusImage} 
+                  alt="Corvinus Egyetem logó" 
+                  className="h-8 object-contain"
+                />
+              </div>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
               whileHover={{ scale: 1.1 }}
               className="cursor-pointer"
             >
