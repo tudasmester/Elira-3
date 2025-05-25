@@ -1,5 +1,5 @@
 import { 
-  User, InsertUser, Course, InsertCourse,
+  User, InsertUser, UpsertUser, Course, InsertCourse,
   University, InsertUniversity, Degree, InsertDegree,
   Subscriber, InsertSubscriber,
   users, courses, universities, degrees, subscribers
@@ -9,10 +9,10 @@ import { eq, and } from "drizzle-orm";
 
 export interface IStorage {
   // User operations
-  getUser(id: number): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
+  getUser(id: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  upsertUser(user: UpsertUser): Promise<User>;
   
   // Course operations
   getCourse(id: number): Promise<Course | undefined>;
