@@ -14,7 +14,7 @@ const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
           <div className="lg:col-span-2">
-            <h2 className="text-2xl font-bold font-heading mb-4">Elira</h2>
+            <h2 className="text-2xl font-bold font-heading mb-4">Academion</h2>
             <p className="text-neutral-400 mb-6">Tanuljon korlátok nélkül világszínvonalú egyetemek és vállalatok kurzusaival.</p>
             <div className="flex space-x-4">
               <a href="#" className="text-white hover:text-tertiary transition duration-200">
@@ -36,7 +36,7 @@ const Footer: React.FC = () => {
           </div>
           
           <div>
-            <h3 className="text-lg font-bold mb-4">Elira</h3>
+            <h3 className="text-lg font-bold mb-4">Academion</h3>
             <ul className="space-y-2">
               <li><a href="#" className="text-neutral-400 hover:text-white transition duration-200">Rólunk</a></li>
               <li><a href="#" className="text-neutral-400 hover:text-white transition duration-200">Mi működik</a></li>

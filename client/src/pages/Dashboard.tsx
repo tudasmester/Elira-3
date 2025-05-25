@@ -10,7 +10,7 @@ const Dashboard: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center">
-              <div className="text-primary text-2xl font-bold font-heading">Elira</div>
+              <div className="text-primary text-2xl font-bold font-heading">Academion</div>
               <nav className="ml-10 hidden md:flex space-x-8">
                 <a href="#" className="text-neutral-700 hover:text-primary font-medium">Felfedezés</a>
                 <a href="#" className="text-neutral-700 hover:text-primary font-medium">Kurzusaim</a>
@@ -52,9 +52,9 @@ const Dashboard: React.FC = () => {
             </div>
             <div className="md:w-1/3 flex justify-center">
               <img 
-                src="https://images.unsplash.com/photo-1501504905252-473c47e087f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300" 
-                alt="Learning" 
-                className="rounded-lg shadow-lg"
+                src="/attached_assets/academion (3).png" 
+                alt="Academion logo" 
+                className="rounded-lg shadow-lg h-64 object-contain"
               />
             </div>
           </div>

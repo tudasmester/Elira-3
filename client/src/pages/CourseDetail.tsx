@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   ArrowLeft, Clock, Users, Award, BookOpen, Star, 
-  Check, PlayCircle, Download, Certificate, 
+  Check, PlayCircle, Download, GraduationCap, 
   ChevronDown, ChevronRight, Shield, BarChart4, Sparkles, 
   CalendarCheck, MessageCircle, Share2
 } from "lucide-react";
@@ -786,7 +786,7 @@ const CourseDetail: React.FC = () => {
                       { icon: <PlayCircle className="h-4 w-4" />, text: "11 óra on-demand videó" },
                       { icon: <BookOpen className="h-4 w-4" />, text: "30 lecke 5 modulban" },
                       { icon: <Download className="h-4 w-4" />, text: "15 letölthető erőforrás" },
-                      { icon: <Certificate className="h-4 w-4" />, text: "Befejeztési tanúsítvány" },
+                      { icon: <GraduationCap className="h-4 w-4" />, text: "Befejeztési tanúsítvány" },
                       { icon: <Clock className="h-4 w-4" />, text: "Korlátlan hozzáférés" }
                     ].map((item, index) => (
                       <li key={index} className="flex items-center">
