@@ -1,8 +1,8 @@
 import { 
   User, InsertUser, UpsertUser, Course, InsertCourse,
   University, InsertUniversity, Degree, InsertDegree,
-  Subscriber, InsertSubscriber,
-  users, courses, universities, degrees, subscribers
+  Subscriber, InsertSubscriber, Enrollment, InsertEnrollment,
+  users, courses, universities, degrees, subscribers, enrollments
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and } from "drizzle-orm";
@@ -37,6 +37,15 @@ export interface IStorage {
   addSubscriber(subscriber: InsertSubscriber): Promise<Subscriber>;
   getSubscriberByEmail(email: string): Promise<Subscriber | undefined>;
   getAllSubscribers(): Promise<Subscriber[]>;
+  
+  // Enrollment operations
+  enrollUserInCourse(enrollment: InsertEnrollment): Promise<Enrollment>;
+  getEnrollment(userId: string, courseId: number): Promise<Enrollment | undefined>;
+  getUserEnrollments(userId: string): Promise<Enrollment[]>;
+  getCourseEnrollments(courseId: number): Promise<Enrollment[]>;
+  updateEnrollmentProgress(id: number, progress: number): Promise<Enrollment>;
+  updateEnrollmentStatus(id: number, status: string): Promise<Enrollment>;
+  isUserEnrolledInCourse(userId: string, courseId: number): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -167,6 +176,85 @@ export class DatabaseStorage implements IStorage {
   
   async getAllSubscribers(): Promise<Subscriber[]> {
     return await db.select().from(subscribers);
+  }
+  
+  // Enrollment operations
+  async enrollUserInCourse(enrollment: InsertEnrollment): Promise<Enrollment> {
+    // Check if enrollment already exists
+    const existingEnrollment = await this.getEnrollment(enrollment.userId, enrollment.courseId);
+    
+    if (existingEnrollment) {
+      // If already enrolled, just return the existing enrollment
+      return existingEnrollment;
+    }
+    
+    // Otherwise create a new enrollment
+    const [newEnrollment] = await db
+      .insert(enrollments)
+      .values(enrollment)
+      .returning();
+      
+    return newEnrollment;
+  }
+  
+  async getEnrollment(userId: string, courseId: number): Promise<Enrollment | undefined> {
+    const [enrollment] = await db
+      .select()
+      .from(enrollments)
+      .where(
+        and(
+          eq(enrollments.userId, userId),
+          eq(enrollments.courseId, courseId)
+        )
+      );
+      
+    return enrollment;
+  }
+  
+  async getUserEnrollments(userId: string): Promise<Enrollment[]> {
+    return await db
+      .select()
+      .from(enrollments)
+      .where(eq(enrollments.userId, userId));
+  }
+  
+  async getCourseEnrollments(courseId: number): Promise<Enrollment[]> {
+    return await db
+      .select()
+      .from(enrollments)
+      .where(eq(enrollments.courseId, courseId));
+  }
+  
+  async updateEnrollmentProgress(id: number, progress: number): Promise<Enrollment> {
+    const [updatedEnrollment] = await db
+      .update(enrollments)
+      .set({ 
+        progress,
+        lastAccessedAt: new Date()
+      })
+      .where(eq(enrollments.id, id))
+      .returning();
+      
+    return updatedEnrollment;
+  }
+  
+  async updateEnrollmentStatus(id: number, status: string): Promise<Enrollment> {
+    const [updatedEnrollment] = await db
+      .update(enrollments)
+      .set({ 
+        status,
+        lastAccessedAt: new Date(),
+        ...(status === "completed" ? { completedAt: new Date() } : {})
+      })
+      .where(eq(enrollments.id, id))
+      .returning();
+      
+    return updatedEnrollment;
+  }
+  
+  async isUserEnrolledInCourse(userId: string, courseId: number): Promise<boolean> {
+    const enrollment = await this.getEnrollment(userId, courseId);
+    return !!enrollment;
   }
 
   // Initialize database with sample data if needed

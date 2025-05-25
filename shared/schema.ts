@@ -97,6 +97,27 @@ export const insertSubscriberSchema = createInsertSchema(subscribers).omit({
   createdAt: true,
 });
 
+// Course enrollments
+export const enrollments = pgTable("enrollments", {
+  id: serial("id").primaryKey(),
+  userId: varchar("user_id").notNull().references(() => users.id),
+  courseId: integer("course_id").notNull().references(() => courses.id),
+  enrolledAt: timestamp("enrolled_at").defaultNow().notNull(),
+  progress: integer("progress").default(0).notNull(),
+  status: text("status").default("active").notNull(),
+  lastAccessedAt: timestamp("last_accessed_at").defaultNow().notNull(),
+  completedAt: timestamp("completed_at"),
+});
+
+export const insertEnrollmentSchema = createInsertSchema(enrollments).omit({
+  id: true,
+  enrolledAt: true,
+  progress: true,
+  status: true,
+  lastAccessedAt: true,
+  completedAt: true,
+});
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type UpsertUser = z.infer<typeof upsertUserSchema>;
@@ -113,3 +134,6 @@ export type Degree = typeof degrees.$inferSelect;
 
 export type InsertSubscriber = z.infer<typeof insertSubscriberSchema>;
 export type Subscriber = typeof subscribers.$inferSelect;
+
+export type InsertEnrollment = z.infer<typeof insertEnrollmentSchema>;
+export type Enrollment = typeof enrollments.$inferSelect;
