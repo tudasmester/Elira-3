@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
 import { motion } from "framer-motion";
-import { BrainCircuit, Sparkles, Activity, Users, Lightbulb, Target, Rocket, ChevronDown } from "lucide-react";
+import { BrainCircuit, Sparkles, Activity, Users, Lightbulb, Target, Rocket, ChevronDown, UserCircle } from "lucide-react";
 import CareerQuestionnaire from "@/components/CareerQuestionnaire";
 
 const CareerPathsAI: React.FC = () => {
@@ -40,7 +40,7 @@ const CareerPathsAI: React.FC = () => {
                 <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 text-indigo-700 rounded-full text-sm font-medium mb-6 border border-indigo-100/50 shadow-sm">
                   <BrainCircuit className="w-4 h-4 mr-2 text-indigo-600" />
                   <span className="bg-gradient-to-r from-indigo-700 to-purple-700 inline-block text-transparent bg-clip-text">
-                    Tudományos karrierelemzés
+                    Személyre szabott karriertervezés
                   </span>
                 </div>
                 
@@ -53,13 +53,13 @@ const CareerPathsAI: React.FC = () => {
                 <div className="flex items-center space-x-4 mb-6">
                   <div className="h-px flex-grow bg-gradient-to-r from-indigo-200 to-transparent"></div>
                   <div className="px-4 py-1.5 rounded-md bg-indigo-50 text-indigo-700 font-medium text-sm border border-indigo-100">
-                    98% megbízhatóság
+                    Egyedi karrierutak
                   </div>
                   <div className="h-px flex-grow bg-gradient-to-l from-indigo-200 to-transparent"></div>
                 </div>
                 
                 <p className="text-lg text-neutral-600 mb-8 leading-relaxed">
-                  Prémium karrierelemzésünk feltárja rejtett tehetségeit és azonosítja az Önhöz tökéletesen illő karrierutakat – pontosan olyan részletességgel, ahogy Ön személyes.
+                  Fedezze fel karrierlehetőségeit interaktív kérdőívünk segítségével. Ismerje meg erősségeit, érdeklődési köreit és találja meg azt az utat, amely inspirálja Önt.
                 </p>
                 
                 <div className="relative">
@@ -72,8 +72,8 @@ const CareerPathsAI: React.FC = () => {
                           <Target className="h-5 w-5" />
                         </div>
                         <div>
-                          <h3 className="font-semibold text-neutral-900 text-lg mb-1">Tudományos pontosság</h3>
-                          <p className="text-neutral-700">Validált pszichometriai profilozás és munkaerőpiaci trendanalitika alapján.</p>
+                          <h3 className="font-semibold text-neutral-900 text-lg mb-1">Átfogó karrierértékelés</h3>
+                          <p className="text-neutral-700">Fedezze fel készségeit, személyiségét és érdeklődési köreit egy inspiráló utazás során.</p>
                         </div>
                       </div>
                       
@@ -82,8 +82,8 @@ const CareerPathsAI: React.FC = () => {
                           <Lightbulb className="h-5 w-5" />
                         </div>
                         <div>
-                          <h3 className="font-semibold text-neutral-900 text-lg mb-1">Személyre szabott jelentés</h3>
-                          <p className="text-neutral-700">Részletes karrierút-térkép az Ön személyiségéhez és készségeihez igazítva.</p>
+                          <h3 className="font-semibold text-neutral-900 text-lg mb-1">Inspiráló lehetőségek</h3>
+                          <p className="text-neutral-700">Fedezzen fel különböző karrierutakat és képzési lehetőségeket, amelyek illeszkedhetnek céljaihoz.</p>
                         </div>
                       </div>
                     </div>
@@ -107,7 +107,7 @@ const CareerPathsAI: React.FC = () => {
                         <Sparkles key={star} className="h-4 w-4 text-amber-400" />
                       ))}
                     </div>
-                    <span>8,500+ felhasználó értékelése alapján</span>
+                    <span>Inspiráló karrierlehetőségek</span>
                   </div>
                 </div>
               </motion.div>
@@ -131,26 +131,26 @@ const CareerPathsAI: React.FC = () => {
                         <Sparkles className="h-5 w-5" />
                       </div>
                       <div className="ml-4">
-                        <h3 className="text-xl font-bold text-neutral-800">Karrierelemzés jelentés</h3>
-                        <p className="text-sm text-neutral-500">100% személyre szabott eredmények</p>
+                        <h3 className="text-xl font-bold text-neutral-800">Karrierút felfedező</h3>
+                        <p className="text-sm text-neutral-500">Inspiráló lehetőségek feltárása</p>
                       </div>
                     </div>
                     
                     <div className="space-y-4">
                       {[
                         {
-                          title: "Átfogó karrierprofil",
-                          value: "95%",
+                          title: "Készségek feltérképezése",
+                          icon: <Target className="h-5 w-5 text-blue-500" />,
                           color: "from-blue-500 to-indigo-500"
                         },
                         {
-                          title: "Készség-karrierút illeszkedés",
-                          value: "98%",
+                          title: "Személyiség megismerése",
+                          icon: <UserCircle className="h-5 w-5 text-purple-500" />,
                           color: "from-purple-500 to-pink-500"
                         },
                         {
-                          title: "Személyiség-munkakörnyezet kompatibilitás",
-                          value: "91%",
+                          title: "Karrierlehetőségek felfedezése",
+                          icon: <Lightbulb className="h-5 w-5 text-emerald-500" />,
                           color: "from-emerald-500 to-teal-500"
                         }
                       ].map((item, index) => (
@@ -161,14 +161,16 @@ const CareerPathsAI: React.FC = () => {
                           transition={{ duration: 0.4, delay: 0.5 + index * 0.1 }}
                           className="bg-white rounded-lg p-4 border border-indigo-50 shadow-sm"
                         >
-                          <div className="flex justify-between mb-1.5">
+                          <div className="flex items-center mb-3">
+                            <div className="p-2 rounded-md bg-gradient-to-r from-indigo-50 to-blue-50 mr-3">
+                              {item.icon}
+                            </div>
                             <h4 className="font-medium text-neutral-700">{item.title}</h4>
-                            <span className="font-semibold text-indigo-700">{item.value}</span>
                           </div>
                           <div className="w-full h-2 bg-neutral-100 rounded-full overflow-hidden">
                             <motion.div 
                               initial={{ width: "0%" }}
-                              animate={{ width: item.value }}
+                              animate={{ width: "100%" }}
                               transition={{ duration: 1, delay: 0.7 + index * 0.2 }}
                               className={`h-full bg-gradient-to-r ${item.color} rounded-full`}
                             ></motion.div>
