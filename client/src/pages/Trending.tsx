@@ -1,9 +1,44 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
-import { ArrowRight, Clock, Users, Star, TrendingUp, Zap, Award } from "lucide-react";
+import { 
+  ArrowRight, Clock, Users, Star, TrendingUp, Zap, Award, 
+  Bookmark, BriefcaseMedical, Globe, Sparkles, Rocket, Database, Building, Brain
+} from "lucide-react";
+
+// Industry sectors in high demand in the Hungarian job market
+const trendingIndustries = [
+  { 
+    id: "tech",
+    name: "Technológia", 
+    growth: "+35%", 
+    description: "A tech szektor Magyarországon továbbra is az egyik leggyorsabban növekvő terület, különösen a szoftverfejlesztés, adatvezérelt megoldások és kiberbiztonság területein.",
+    icon: <Rocket className="h-6 w-6 text-purple-500" />
+  },
+  { 
+    id: "business",
+    name: "Üzlet és pénzügy", 
+    growth: "+28%", 
+    description: "A pénzügyi szolgáltatások és üzleti tanácsadás területén egyre nagyobb igény mutatkozik, különösen a fenntarthatósági jelentések és ESG irányelvek kapcsán.",
+    icon: <Building className="h-6 w-6 text-blue-500" />
+  },
+  { 
+    id: "healthcare",
+    name: "Egészségügy", 
+    growth: "+42%", 
+    description: "Az egészségügyi szektorban, különösen a digitális egészségügy és az adatvezérelt betegellátás területén jelentős növekedés tapasztalható Magyarországon.",
+    icon: <BriefcaseMedical className="h-6 w-6 text-red-500" />
+  },
+  { 
+    id: "education",
+    name: "Oktatás", 
+    growth: "+25%", 
+    description: "A digitális oktatási megoldások iránti kereslet ugrásszerűen megnőtt, különösen a szakmai továbbképzések és a vállalati képzések területén.",
+    icon: <Brain className="h-6 w-6 text-green-500" />
+  }
+];
 
 // Trending courses data with a focus on Hungarian market trends
 const trendingCourses = [
@@ -136,6 +171,18 @@ const trendingCourses = [
 ];
 
 const TrendingPage: React.FC = () => {
+  const [selectedIndustry, setSelectedIndustry] = useState<string | null>(null);
+  
+  const filteredCourses = selectedIndustry 
+    ? trendingCourses.filter(course => {
+        if (selectedIndustry === 'tech') return course.category === 'Informatika' || course.category === 'Adattudomány';
+        if (selectedIndustry === 'business') return course.category === 'Üzlet' || course.category === 'Marketing';
+        if (selectedIndustry === 'healthcare') return course.category === 'Egészségügy';
+        if (selectedIndustry === 'education') return course.category === 'Oktatás';
+        return true;
+      })
+    : trendingCourses;
+  
   return (
     <div className="bg-gradient-to-b from-neutral-50 to-white">
       <div className="max-w-7xl mx-auto px-4 py-12 md:py-16">
@@ -159,6 +206,58 @@ const TrendingPage: React.FC = () => {
             </p>
           </motion.div>
         </div>
+        
+        {/* Industry Insights Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="mb-16"
+        >
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold text-neutral-900">
+              Növekedő iparágak Magyarországon
+            </h2>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {trendingIndustries.map((industry, index) => (
+              <motion.div
+                key={industry.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
+                className={`bg-white rounded-xl p-6 border transition-all duration-300 hover:-translate-y-1 hover:shadow-md cursor-pointer ${
+                  selectedIndustry === industry.id 
+                    ? 'border-primary shadow-md' 
+                    : 'border-neutral-100 shadow-sm'
+                }`}
+                onClick={() => setSelectedIndustry(selectedIndustry === industry.id ? null : industry.id)}
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <div className="p-3 rounded-full bg-neutral-50">
+                    {industry.icon}
+                  </div>
+                  <Badge className="bg-green-100 text-green-800">
+                    {industry.growth}
+                  </Badge>
+                </div>
+                
+                <h3 className="text-xl font-bold text-neutral-900 mb-2">{industry.name}</h3>
+                <p className="text-neutral-600 text-sm mb-4">{industry.description}</p>
+                
+                <div className="flex items-center text-primary font-medium text-sm">
+                  {selectedIndustry === industry.id ? (
+                    <span>Összes kurzus megtekintése</span>
+                  ) : (
+                    <span>Kapcsolódó kurzusok</span>
+                  )}
+                  <ArrowRight className="ml-1 h-4 w-4" />
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
 
         {/* Trending Stats Summary */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
@@ -202,121 +301,156 @@ const TrendingPage: React.FC = () => {
           transition={{ duration: 0.6, delay: 0.3 }}
           className="mb-12"
         >
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-neutral-900">
-              Legkeresettebb kurzusok
-            </h2>
-            <Link href="/courses">
-              <Button variant="ghost" className="text-primary">
-                Összes kurzus megtekintése
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+            <div>
+              <h2 className="text-2xl md:text-3xl font-bold text-neutral-900 mb-2">
+                {selectedIndustry ? (
+                  <>
+                    {trendingIndustries.find(ind => ind.id === selectedIndustry)?.name} területen keresett kurzusok
+                  </>
+                ) : (
+                  <>Legkeresettebb kurzusok</>
+                )}
+              </h2>
+              {selectedIndustry && (
+                <p className="text-neutral-600 mb-4">
+                  Szűrés alapján {filteredCourses.length} kurzus található ebben a kategóriában
+                </p>
+              )}
+            </div>
+            <div className="flex items-center space-x-4">
+              {selectedIndustry && (
+                <Button 
+                  variant="outline" 
+                  className="border-primary text-primary"
+                  onClick={() => setSelectedIndustry(null)}
+                >
+                  Szűrés törlése
+                </Button>
+              )}
+              <Link href="/courses">
+                <Button variant="ghost" className="text-primary">
+                  Összes kurzus megtekintése
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {trendingCourses.map((course, index) => (
-              <motion.div
-                key={course.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.4 + index * 0.1 }}
-                className="bg-white rounded-xl overflow-hidden shadow-sm border border-neutral-100 flex flex-col transition-all duration-300 hover:shadow-md hover:-translate-y-1"
-              >
-                <div className="relative">
-                  <img 
-                    src={course.image} 
-                    alt={course.title}
-                    className="w-full h-48 object-cover"
-                  />
-                  <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
-                  
-                  <div className="absolute top-3 right-3 flex space-x-2">
-                    <Badge className="bg-orange-500 text-white">
-                      <TrendingUp className="h-3 w-3 mr-1" />
-                      #{course.trending.position}
-                    </Badge>
-                    {course.isFree && (
-                      <Badge className="bg-emerald-500 text-white">Ingyenes</Badge>
-                    )}
-                  </div>
-                  
-                  <div className="absolute bottom-3 left-3 right-3 flex items-center">
-                    <div className="flex items-center bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-medium text-neutral-900">
-                      <TrendingUp className="h-3 w-3 mr-1 text-orange-500" />
-                      {course.trending.growthPercent}% növekedés
-                    </div>
-                    <div className="ml-auto flex space-x-0.5">
-                      {Array(5).fill(0).map((_, i) => (
-                        <Star 
-                          key={i} 
-                          className={`h-3 w-3 ${i < Math.floor(course.rating) ? "text-yellow-500 fill-yellow-500" : "text-neutral-300"}`} 
-                        />
-                      ))}
-                      <span className="ml-1 text-xs text-white font-medium">{course.rating}</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="p-5 flex-grow flex flex-col">
-                  <div className="flex items-center mb-3">
-                    <div className="flex-shrink-0 w-8 h-8 mr-3 rounded-full overflow-hidden border border-neutral-200 bg-white p-1">
-                      <img 
-                        src={course.universityLogo} 
-                        alt={`${course.university} logó`} 
-                        className="w-full h-full object-contain" 
-                      />
-                    </div>
-                    <span className="text-sm text-neutral-600 font-medium truncate">
-                      {course.university}
-                    </span>
-                  </div>
-                  
-                  <h3 className="text-lg font-bold text-neutral-800 mb-2 line-clamp-2">
-                    {course.title}
-                  </h3>
-                  
-                  <p className="text-neutral-600 text-sm mb-4 line-clamp-2">
-                    {course.description}
-                  </p>
-                  
-                  <div className="flex items-center justify-between mb-4 text-sm text-neutral-500 mt-auto">
-                    <div className="flex items-center">
-                      <Clock className="h-4 w-4 mr-1 text-neutral-400" />
-                      <span>{course.duration}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <Users className="h-4 w-4 mr-1 text-neutral-400" />
-                      <span>{course.students.toLocaleString('hu-HU')} hallgató</span>
-                    </div>
-                  </div>
-                  
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {course.tags.map((tag, idx) => (
-                      <Badge key={idx} variant="outline" className="bg-neutral-50 text-neutral-700 border-neutral-200">
-                        {tag}
+          {filteredCourses.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredCourses.map((course, index) => (
+                <motion.div
+                  key={course.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.4 + index * 0.1 }}
+                  className="bg-white rounded-xl overflow-hidden shadow-sm border border-neutral-100 flex flex-col transition-all duration-300 hover:shadow-md hover:-translate-y-1"
+                >
+                  <div className="relative">
+                    <img 
+                      src={course.image} 
+                      alt={course.title}
+                      className="w-full h-48 object-cover"
+                    />
+                    <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
+                    
+                    <div className="absolute top-3 right-3 flex space-x-2">
+                      <Badge className="bg-orange-500 text-white">
+                        <TrendingUp className="h-3 w-3 mr-1" />
+                        #{course.trending.position}
                       </Badge>
-                    ))}
-                  </div>
-                  
-                  <div className="flex items-center justify-between mt-auto pt-4 border-t border-neutral-100">
-                    <div>
-                      {course.isFree ? (
-                        <span className="font-bold text-emerald-600">Ingyenes</span>
-                      ) : (
-                        <span className="font-bold text-neutral-900">{course.price.toLocaleString('hu-HU')} Ft</span>
+                      {course.isFree && (
+                        <Badge className="bg-emerald-500 text-white">Ingyenes</Badge>
                       )}
                     </div>
-                    <Link href={`/course/${course.id}`}>
-                      <Button variant="outline" className="text-primary border-primary hover:bg-primary/5">
-                        Részletek
-                      </Button>
-                    </Link>
+                    
+                    <div className="absolute bottom-3 left-3 right-3 flex items-center">
+                      <div className="flex items-center bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-medium text-neutral-900">
+                        <TrendingUp className="h-3 w-3 mr-1 text-orange-500" />
+                        {course.trending.growthPercent}% növekedés
+                      </div>
+                      <div className="ml-auto flex space-x-0.5">
+                        {Array(5).fill(0).map((_, i) => (
+                          <Star 
+                            key={i} 
+                            className={`h-3 w-3 ${i < Math.floor(course.rating) ? "text-yellow-500 fill-yellow-500" : "text-neutral-300"}`} 
+                          />
+                        ))}
+                        <span className="ml-1 text-xs text-white font-medium">{course.rating}</span>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+                  
+                  <div className="p-5 flex-grow flex flex-col">
+                    <div className="flex items-center mb-3">
+                      <div className="flex-shrink-0 w-8 h-8 mr-3 rounded-full overflow-hidden border border-neutral-200 bg-white p-1">
+                        <img 
+                          src={course.universityLogo} 
+                          alt={`${course.university} logó`} 
+                          className="w-full h-full object-contain" 
+                        />
+                      </div>
+                      <span className="text-sm text-neutral-600 font-medium truncate">
+                        {course.university}
+                      </span>
+                    </div>
+                    
+                    <h3 className="text-lg font-bold text-neutral-800 mb-2 line-clamp-2">
+                      {course.title}
+                    </h3>
+                    
+                    <p className="text-neutral-600 text-sm mb-4 line-clamp-2">
+                      {course.description}
+                    </p>
+                    
+                    <div className="flex items-center justify-between mb-4 text-sm text-neutral-500 mt-auto">
+                      <div className="flex items-center">
+                        <Clock className="h-4 w-4 mr-1 text-neutral-400" />
+                        <span>{course.duration}</span>
+                      </div>
+                      <div className="flex items-center">
+                        <Users className="h-4 w-4 mr-1 text-neutral-400" />
+                        <span>{course.students.toLocaleString('hu-HU')} hallgató</span>
+                      </div>
+                    </div>
+                    
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {course.tags.map((tag, idx) => (
+                        <Badge key={idx} variant="outline" className="bg-neutral-50 text-neutral-700 border-neutral-200">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                    
+                    <div className="flex items-center justify-between mt-auto pt-4 border-t border-neutral-100">
+                      <div>
+                        {course.isFree ? (
+                          <span className="font-bold text-emerald-600">Ingyenes</span>
+                        ) : (
+                          <span className="font-bold text-neutral-900">{course.price.toLocaleString('hu-HU')} Ft</span>
+                        )}
+                      </div>
+                      <Link href={`/course/${course.id}`}>
+                        <Button variant="outline" className="text-primary border-primary hover:bg-primary/5">
+                          Részletek
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-neutral-50 rounded-xl p-8 text-center border border-neutral-200">
+              <p className="text-neutral-600 mb-4">
+                Nincs az ön által választott kategóriában kurzus. Kérjük, válasszon másik kategóriát.
+              </p>
+              <Button onClick={() => setSelectedIndustry(null)}>
+                Összes kurzus megtekintése
+              </Button>
+            </div>
+          )}
         </motion.div>
 
         {/* CTA Section */}
