@@ -190,24 +190,50 @@ const CareerDevelopment: React.FC = () => {
     <div className="bg-gradient-to-b from-neutral-50 to-white min-h-screen">
       <div className="max-w-7xl mx-auto px-4 py-12">
         {/* Hero Section */}
-        <div className="text-center mb-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <Badge className="bg-primary/10 text-primary mb-4 px-3 py-1.5">
-              <TrendingUp className="h-3.5 w-3.5 mr-1.5" />
-              Karrierutak
-            </Badge>
-            <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-6 leading-tight">
-              Induljon el az <span className="text-primary">álomkarrierjének</span> útján
-            </h1>
-            <p className="text-neutral-600 text-lg md:text-xl max-w-3xl mx-auto mb-8">
-              Fedezze fel a jövő legkeresettebb karrierútjait, és szerezze meg a szükséges készségeket 
-              gyakorlati képzéseinken keresztül. Karrierváltást tervez? Segítünk az első lépésektől.
-            </p>
-          </motion.div>
+        <div className="relative overflow-hidden rounded-2xl mb-16">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/30 via-primary/20 to-blue-500/10 opacity-70"></div>
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQ0MCIgaGVpZ2h0PSI0MDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiIGlkPSJhIj48c3RvcCBzdG9wLWNvbG9yPSIjRkZGIiBvZmZzZXQ9IjAlIi8+PHN0b3Agc3RvcC1jb2xvcj0iI0ZGRiIgc3RvcC1vcGFjaXR5PSIwIiBvZmZzZXQ9IjEwMCUiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cGF0aCBkPSJNMCAwaDcyMHY0MDBIMHoiIGZpbGw9InVybCgjYSkiIGZpbGwtcnVsZT0iZXZlbm9kZCIgZmlsbC1vcGFjaXR5PSIuMDUiLz48L3N2Zz4=')] bg-center bg-no-repeat opacity-100"></div>
+          <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
+          <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
+          
+          <div className="relative text-center py-16 md:py-24 px-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <Badge className="bg-primary/20 text-primary mb-6 px-4 py-2 text-base">
+                <TrendingUp className="h-4 w-4 mr-2" />
+                Karrierutak
+              </Badge>
+              
+              <h1 className="text-4xl md:text-6xl font-bold text-neutral-900 mb-8 leading-tight">
+                Induljon el az <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-500">álomkarrierjének</span> útján
+              </h1>
+              
+              <p className="text-neutral-700 text-lg md:text-xl max-w-3xl mx-auto mb-10">
+                Fedezze fel a jövő legkeresettebb karrierútjait, és szerezze meg a szükséges készségeket 
+                gyakorlati képzéseinken keresztül. Karrierváltást tervez? Segítünk az első lépésektől.
+              </p>
+              
+              <div className="flex flex-wrap justify-center gap-3 mb-8">
+                <Badge className="bg-blue-100 text-blue-800 text-sm px-3 py-1">Technológia</Badge>
+                <Badge className="bg-green-100 text-green-800 text-sm px-3 py-1">Marketing</Badge>
+                <Badge className="bg-purple-100 text-purple-800 text-sm px-3 py-1">Design</Badge>
+                <Badge className="bg-amber-100 text-amber-800 text-sm px-3 py-1">Üzlet</Badge>
+                <Badge className="bg-rose-100 text-rose-800 text-sm px-3 py-1">Oktatás</Badge>
+              </div>
+              
+              <div className="flex flex-col sm:flex-row justify-center gap-4">
+                <Button size="lg" className="bg-primary hover:bg-primary/90 text-white">
+                  Találd meg karrierutad
+                </Button>
+                <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary/10">
+                  Ingyenes karrierkonzultáció
+                </Button>
+              </div>
+            </motion.div>
+          </div>
         </div>
         
         {/* Search and Filters Section */}
