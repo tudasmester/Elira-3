@@ -146,7 +146,6 @@ const Hero: React.FC = () => {
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-8 text-neutral-900">
                 <span className="relative inline-block">
                   Tanulás a
-                  <div className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-blue-300 to-primary/30 rounded-full"></div>
                 </span>
                 <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-primary to-teal-500">
