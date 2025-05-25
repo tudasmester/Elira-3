@@ -1,29 +1,33 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Progress } from "@/components/ui/progress";
+import { Input } from "@/components/ui/input";
+import { Link } from "wouter";
 import {
-  ArrowRight,
-  CheckCircle,
+  Search,
   TrendingUp,
   Briefcase,
   GraduationCap,
   LineChart,
   Shield,
   PenTool,
-  Zap,
-  ChevronRight,
   DollarSign,
+  X,
+  ChevronRight,
   Clock,
+  Users,
+  BookOpen,
+  Eye,
+  Star,
   Award,
-  Star
+  CheckCircle,
+  Zap
 } from 'lucide-react';
-import { Link } from 'wouter';
 import { courses } from '@/data/courses';
 import { useIsMobile } from '@/hooks/use-mobile';
 import CoursePreviewModal from '@/components/CoursePreviewModal';
+import Layout from '@/components/Layout';
 
 // Define career paths
 const careerPaths = [
@@ -32,45 +36,21 @@ const careerPaths = [
     title: 'Adatelemző',
     icon: <LineChart className="h-6 w-6 text-blue-500" />,
     description: 'Adatelemzők adatokat gyűjtenek, tisztítanak és értelmeznek, hogy támogassák az üzleti döntéshozatalt. Python, SQL és adatvizualizációs eszközök használatával dolgoznak.',
+    imageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
     averageSalary: '800,000 - 1,200,000 Ft/hó',
     jobOutlook: 'Magas',
     growthRate: '+27%',
     timeToComplete: '6 hónap',
     difficulty: 'Közepes',
+    rating: 4.8,
+    students: 1250,
     prerequisites: ['Alapvető számítógépes ismeretek', 'Logikus gondolkodás', 'Angol nyelvtudás'],
     skills: ['SQL', 'Python', 'Excel', 'Adatvizualizáció', 'Statisztika'],
-    roadmap: [
-      {
-        stage: 1,
-        title: 'Alapok',
-        courses: [
-          { id: 10, title: 'Bevezetés az adatelemzésbe', duration: '4 hét' },
-          { id: 11, title: 'SQL alapok', duration: '3 hét' }
-        ]
-      },
-      {
-        stage: 2,
-        title: 'Eszközök',
-        courses: [
-          { id: 12, title: 'Python az adatelemzésben', duration: '6 hét' },
-          { id: 13, title: 'Adatvizualizáció eszközei', duration: '4 hét' }
-        ]
-      },
-      {
-        stage: 3,
-        title: 'Haladó technikák',
-        courses: [
-          { id: 14, title: 'Statisztikai elemzés', duration: '5 hét' },
-          { id: 15, title: 'Gépi tanulás alapjai', duration: '6 hét' }
-        ]
-      },
-      {
-        stage: 4,
-        title: 'Gyakorlati projekt',
-        courses: [
-          { id: 16, title: 'Adatelemző portfólió projekt', duration: '4 hét' }
-        ]
-      }
+    highlights: [
+      'Valós projekteken alapuló gyakorlati tapasztalat',
+      'Iparági szakértők által tartott oktatás',
+      'Karriertámogatás és elhelyezkedési segítség',
+      'Garantált tudás vagy pénzvisszafizetés'
     ],
     testimonial: {
       name: 'Kovács Bence',
@@ -84,45 +64,21 @@ const careerPaths = [
     title: 'Digitális Marketing Specialista',
     icon: <TrendingUp className="h-6 w-6 text-green-500" />,
     description: 'Digitális marketing szakemberek online kampányokat terveznek és hajtanak végre különböző platformokon, analitikával mérik a teljesítményt és optimalizálják a stratégiákat.',
+    imageUrl: 'https://images.unsplash.com/photo-1533750516457-a7f992034fec?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
     averageSalary: '700,000 - 1,100,000 Ft/hó',
     jobOutlook: 'Nagyon magas',
     growthRate: '+32%',
     timeToComplete: '5 hónap',
     difficulty: 'Kezdő-barát',
+    rating: 4.7,
+    students: 1850,
     prerequisites: ['Kreativitás', 'Kommunikációs készség', 'Alapvető számítógépes ismeretek'],
     skills: ['SEO', 'Google Analytics', 'Közösségi média marketing', 'PPC hirdetések', 'Tartalommarketing'],
-    roadmap: [
-      {
-        stage: 1,
-        title: 'Alapok',
-        courses: [
-          { id: 20, title: 'Digitális marketing alapelvek', duration: '3 hét' },
-          { id: 21, title: 'Tartalommarketing stratégiák', duration: '3 hét' }
-        ]
-      },
-      {
-        stage: 2,
-        title: 'Csatornák',
-        courses: [
-          { id: 22, title: 'Közösségi média marketing', duration: '4 hét' },
-          { id: 23, title: 'SEO és keresőmarketing', duration: '4 hét' }
-        ]
-      },
-      {
-        stage: 3,
-        title: 'Elemzés és optimalizálás',
-        courses: [
-          { id: 24, title: 'Google Analytics és adatvezérelt marketing', duration: '4 hét' },
-          { id: 25, title: 'PPC hirdetések és remarketing', duration: '3 hét' }
-        ]
-      },
-      {
-        stage: 4,
-        title: 'Kampány',
-        courses: [
-          { id: 26, title: 'Teljes digitális marketing kampány', duration: '4 hét' }
-        ]
-      }
+    highlights: [
+      'Valós kampányok készítése és optimalizálása',
+      'Google és Facebook tanúsítványok megszerzése',
+      'Naprakész trendek és platformismeretek',
+      'Portfolio építés valós ügyfelekkel'
     ],
     testimonial: {
       name: 'Nagy Eszter',
@@ -136,45 +92,21 @@ const careerPaths = [
     title: 'UX/UI Designer',
     icon: <PenTool className="h-6 w-6 text-purple-500" />,
     description: 'UX/UI tervezők a felhasználói élményt és felületet tervezik, kutatást végeznek, prototípusokat készítenek, és a felhasználók visszajelzései alapján finomítják a termékeket.',
+    imageUrl: 'https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
     averageSalary: '800,000 - 1,300,000 Ft/hó',
     jobOutlook: 'Magas',
     growthRate: '+24%',
     timeToComplete: '7 hónap',
     difficulty: 'Közepes',
+    rating: 4.9,
+    students: 980,
     prerequisites: ['Vizuális érzék', 'Empátia', 'Alapvető számítógépes ismeretek'],
     skills: ['Felhasználói kutatás', 'Wireframing', 'Prototyping', 'Figma', 'UI Design'],
-    roadmap: [
-      {
-        stage: 1,
-        title: 'Alapok',
-        courses: [
-          { id: 30, title: 'UX tervezés alapjai', duration: '4 hét' },
-          { id: 31, title: 'Design thinking', duration: '3 hét' }
-        ]
-      },
-      {
-        stage: 2,
-        title: 'Kutatás és tervezés',
-        courses: [
-          { id: 32, title: 'Felhasználói kutatás módszerei', duration: '4 hét' },
-          { id: 33, title: 'Wireframing és információs architektúra', duration: '3 hét' }
-        ]
-      },
-      {
-        stage: 3,
-        title: 'Vizuális design és prototípus',
-        courses: [
-          { id: 34, title: 'UI design alapelvek', duration: '4 hét' },
-          { id: 35, title: 'Prototyping Figmával', duration: '4 hét' }
-        ]
-      },
-      {
-        stage: 4,
-        title: 'Portfólió',
-        courses: [
-          { id: 36, title: 'UX/UI Design portfólió projekt', duration: '5 hét' }
-        ]
-      }
+    highlights: [
+      'Komplett UX/UI portfólió építése',
+      'Valós projektek tervezése',
+      'Design rendszerek létrehozása',
+      'Figma és Adobe eszközök mesteri szintű elsajátítása'
     ],
     testimonial: {
       name: 'Szabó Gergely',
@@ -188,45 +120,21 @@ const careerPaths = [
     title: 'Kiberbiztonsági Specialista',
     icon: <Shield className="h-6 w-6 text-red-500" />,
     description: 'Kiberbiztonsági szakemberek védik a szervezetek rendszereit és adatait a digitális fenyegetésektől, biztonsági protokollokat fejlesztenek és incidenseket kezelnek.',
+    imageUrl: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
     averageSalary: '900,000 - 1,500,000 Ft/hó',
     jobOutlook: 'Nagyon magas',
     growthRate: '+35%',
     timeToComplete: '8 hónap',
     difficulty: 'Haladó',
+    rating: 4.8,
+    students: 720,
     prerequisites: ['IT alapismeretek', 'Hálózati ismeretek', 'Logikus gondolkodás'],
     skills: ['Hálózati biztonság', 'Etikus hackelés', 'Incidenskezelés', 'Kockázatelemzés', 'Biztonsági eszközök'],
-    roadmap: [
-      {
-        stage: 1,
-        title: 'Alapok',
-        courses: [
-          { id: 40, title: 'Kiberbiztonság alapjai', duration: '4 hét' },
-          { id: 41, title: 'Hálózati biztonság', duration: '4 hét' }
-        ]
-      },
-      {
-        stage: 2,
-        title: 'Támadás és védelem',
-        courses: [
-          { id: 42, title: 'Etikus hackelés és sebezhetőség tesztelés', duration: '5 hét' },
-          { id: 43, title: 'Biztonsági rendszerek és tűzfalak', duration: '4 hét' }
-        ]
-      },
-      {
-        stage: 3,
-        title: 'Incidenskezelés',
-        courses: [
-          { id: 44, title: 'Biztonsági incidensek kezelése', duration: '4 hét' },
-          { id: 45, title: 'Digitális forensics', duration: '5 hét' }
-        ]
-      },
-      {
-        stage: 4,
-        title: 'Gyakorlat',
-        courses: [
-          { id: 46, title: 'Kiberbiztonsági gyakorlati projekt', duration: '4 hét' }
-        ]
-      }
+    highlights: [
+      'Gyakorlati támadás-szimulációk és védekezés',
+      'Nemzetközi tanúsítványok megszerzése',
+      'Valós biztonsági incidensek elemzése',
+      'Biztonsági auditálás gyakorlati tapasztalata'
     ],
     testimonial: {
       name: 'Horváth Péter',
@@ -237,331 +145,287 @@ const careerPaths = [
   }
 ];
 
+// Add more career paths as needed
 const CareerDevelopment: React.FC = () => {
-  const [selectedCareer, setSelectedCareer] = useState(careerPaths[0].id);
-  const [selectedStage, setSelectedStage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCareer, setSelectedCareer] = useState<string | null>(null);
   const [previewCourse, setPreviewCourse] = useState<any | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const isMobile = useIsMobile();
-  
-  const activeCareer = careerPaths.find(career => career.id === selectedCareer) || careerPaths[0];
-  
-  const handleCareerChange = (careerId: string) => {
-    setSelectedCareer(careerId);
-    setSelectedStage(1);
-  };
-  
-  const handleCoursePreview = (courseId: number) => {
+
+  // Filter careers based on search query
+  const filteredCareers = careerPaths.filter(career => {
+    if (searchQuery) {
+      return (
+        career.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        career.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        career.skills.some(skill => skill.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
+    }
+    return true;
+  });
+
+  const handlePreviewCourse = (courseId: number) => {
     const course = courses.find(c => c.id === courseId);
     if (course) {
       setPreviewCourse(course);
       setIsPreviewOpen(true);
     }
   };
-  
+
   return (
-    <div className="min-h-screen bg-white">
-      <section className="pt-12 pb-8 bg-gradient-to-b from-blue-50 to-white">
-        <div className="max-w-7xl mx-auto px-4">
+    <Layout>
+      <div className="bg-gradient-to-b from-neutral-50 to-white min-h-screen">
+        <div className="max-w-7xl mx-auto px-4 py-12">
           {/* Hero Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-16"
-          >
-            <Badge className="mb-4 px-3 py-1 bg-primary/10 text-primary border-primary/20">
-              Karrierfejlesztés
-            </Badge>
-            <h1 className="text-4xl md:text-5xl font-bold mb-6 text-neutral-900">
-              Fedezze fel új karrierlehetőségeit
-            </h1>
-            <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
-              Az Academion segítségével elsajátíthatja a keresett készségeket, és magabiztosan indulhat el új karrierútján. Szakértőink által összeállított útitervek lépésről lépésre vezetik végig a tanulási folyamaton.
-            </p>
-          </motion.div>
-
-          {/* Career Paths Tabs */}
-          <Tabs 
-            defaultValue={selectedCareer} 
-            value={selectedCareer} 
-            onValueChange={handleCareerChange}
-            className="mb-12"
-          >
-            <TabsList className="grid grid-cols-2 md:grid-cols-4 gap-2 bg-transparent h-auto p-1">
-              {careerPaths.map(career => (
-                <TabsTrigger 
-                  key={career.id} 
-                  value={career.id}
-                  className={`flex items-center gap-2 py-3 px-4 border rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:border-primary`}
-                >
-                  {career.icon}
-                  <span className={isMobile ? "hidden" : ""}>{career.title}</span>
-                </TabsTrigger>
-              ))}
-            </TabsList>
-
-            {careerPaths.map(career => (
-              <TabsContent key={career.id} value={career.id} className="mt-8">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                  {/* Career Overview */}
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.5 }}
-                    className="col-span-1"
+          <div className="text-center mb-16">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <Badge className="bg-primary/10 text-primary mb-4 px-3 py-1.5">
+                <TrendingUp className="h-3.5 w-3.5 mr-1.5" />
+                Karrierutak
+              </Badge>
+              <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-6 leading-tight">
+                Induljon el az <span className="text-primary">álomkarrierjének</span> útján
+              </h1>
+              <p className="text-neutral-600 text-lg md:text-xl max-w-3xl mx-auto mb-8">
+                Fedezze fel a jövő legkeresettebb karrierútjait, és szerezze meg a szükséges készségeket 
+                gyakorlati képzéseinken keresztül. Karrierváltást tervez? Segítünk az első lépésektől.
+              </p>
+              
+              {/* Search Bar */}
+              <div className="max-w-2xl mx-auto relative mb-12">
+                <Input
+                  type="text"
+                  placeholder="Keressen karrierutakat, készségeket..."
+                  className="w-full pl-12 pr-4 py-6 rounded-full border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-lg"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <span className="absolute left-5 top-1/2 transform -translate-y-1/2 text-neutral-500">
+                  <Search className="h-5 w-5" />
+                </span>
+                {searchQuery && (
+                  <button 
+                    className="absolute right-5 top-1/2 transform -translate-y-1/2 text-neutral-500 hover:text-neutral-700"
+                    onClick={() => setSearchQuery("")}
                   >
-                    <div className="bg-white rounded-xl border border-neutral-200 p-6 shadow-sm h-full">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="p-3 rounded-full bg-neutral-100">
-                          {career.icon}
+                    <X className="h-5 w-5" />
+                  </button>
+                )}
+              </div>
+            </motion.div>
+          </div>
+          
+          {/* Career Path Cards in Grid Layout */}
+          <div className="mb-12">
+            <div className="flex justify-between items-center mb-8">
+              <h2 className="text-2xl font-bold text-neutral-900">Népszerű karrierutak</h2>
+              <div className="text-neutral-600 font-medium">
+                {filteredCareers.length} karrierút
+              </div>
+            </div>
+            
+            {filteredCareers.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
+                {filteredCareers.map((career) => (
+                  <motion.div
+                    key={career.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="bg-white rounded-xl overflow-hidden shadow-sm border border-neutral-100 flex flex-col transition-all duration-300 hover:shadow-md hover:-translate-y-1"
+                  >
+                    <div className="relative">
+                      <img 
+                        src={career.imageUrl} 
+                        alt={career.title}
+                        className="w-full h-64 object-cover"
+                      />
+                      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-black/70 to-transparent"></div>
+                      
+                      <div className="absolute top-4 left-4">
+                        <Badge className="bg-primary/90 text-white border-none">
+                          {career.jobOutlook}
+                          <span className="ml-1 font-bold text-green-300">{career.growthRate}</span>
+                        </Badge>
+                      </div>
+
+                      <div className="absolute bottom-4 left-4 right-4">
+                        <div className="flex items-center">
+                          <div className="p-3 rounded-full bg-white/90 mr-3">
+                            {career.icon}
+                          </div>
+                          <h3 className="text-2xl font-bold text-white">{career.title}</h3>
                         </div>
-                        <h2 className="text-2xl font-bold text-neutral-900">{career.title}</h2>
                       </div>
                       
-                      <p className="text-neutral-600 mb-6">{career.description}</p>
-                      
-                      <div className="space-y-4 mb-6">
-                        <div className="flex justify-between items-center">
-                          <span className="text-neutral-500 flex items-center">
-                            <DollarSign className="h-4 w-4 mr-2 text-green-500" />
-                            Átlagos fizetés
-                          </span>
-                          <span className="font-semibold">{career.averageSalary}</span>
+                      <div className="absolute top-4 right-4 flex space-x-0.5">
+                        {Array(5).fill(0).map((_, i) => (
+                          <Star 
+                            key={i} 
+                            className={`h-4 w-4 ${i < Math.floor(career.rating) ? "text-yellow-500 fill-yellow-500" : "text-neutral-300"}`} 
+                          />
+                        ))}
+                        <span className="ml-1 text-xs text-white font-medium">{career.rating}</span>
+                      </div>
+                    </div>
+                    
+                    <div className="p-6 flex-grow flex flex-col">
+                      <div className="flex justify-between items-center mb-4">
+                        <div className="flex items-center">
+                          <DollarSign className="h-5 w-5 text-green-500 mr-2" />
+                          <span className="font-semibold text-neutral-800">{career.averageSalary}</span>
                         </div>
-                        
-                        <div className="flex justify-between items-center">
-                          <span className="text-neutral-500 flex items-center">
-                            <TrendingUp className="h-4 w-4 mr-2 text-blue-500" />
-                            Munkaerőpiaci kilátások
-                          </span>
-                          <span className="font-semibold flex items-center">
-                            {career.jobOutlook}
-                            <Badge className="ml-2 bg-green-100 text-green-800 hover:bg-green-200">
-                              {career.growthRate}
-                            </Badge>
-                          </span>
-                        </div>
-                        
-                        <div className="flex justify-between items-center">
-                          <span className="text-neutral-500 flex items-center">
-                            <Clock className="h-4 w-4 mr-2 text-orange-500" />
-                            Képzés időtartama
-                          </span>
-                          <span className="font-semibold">{career.timeToComplete}</span>
-                        </div>
-                        
-                        <div className="flex justify-between items-center">
-                          <span className="text-neutral-500 flex items-center">
-                            <GraduationCap className="h-4 w-4 mr-2 text-purple-500" />
-                            Nehézségi szint
-                          </span>
-                          <span className="font-semibold">{career.difficulty}</span>
+                        <div className="flex items-center">
+                          <Clock className="h-4 w-4 mr-1 text-neutral-500" />
+                          <span className="text-neutral-600">{career.timeToComplete}</span>
                         </div>
                       </div>
                       
-                      <div className="mb-6">
-                        <h3 className="font-semibold mb-3 text-neutral-800">Előfeltételek</h3>
-                        <ul className="space-y-2">
-                          {career.prerequisites.map((prereq, index) => (
+                      <p className="text-neutral-600 mb-4">
+                        {career.description}
+                      </p>
+                      
+                      <div className="mb-4">
+                        <h4 className="font-semibold text-neutral-900 mb-2">Főbb előnyök:</h4>
+                        <ul className="space-y-1">
+                          {career.highlights.slice(0, 2).map((highlight, index) => (
                             <li key={index} className="flex items-start">
-                              <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                              <span className="text-neutral-600">{prereq}</span>
+                              <CheckCircle className="h-4 w-4 text-primary mr-2 flex-shrink-0 mt-0.5" />
+                              <span className="text-neutral-600 text-sm">{highlight}</span>
                             </li>
                           ))}
                         </ul>
                       </div>
                       
-                      <div>
-                        <h3 className="font-semibold mb-3 text-neutral-800">Megszerezhető készségek</h3>
+                      <div className="mb-4">
+                        <h4 className="font-semibold text-neutral-900 mb-2">Megszerezhető készségek:</h4>
                         <div className="flex flex-wrap gap-2">
-                          {career.skills.map((skill, index) => (
+                          {career.skills.slice(0, 4).map((skill, index) => (
                             <Badge key={index} className="bg-blue-100 text-blue-800 hover:bg-blue-200">
                               {skill}
                             </Badge>
                           ))}
+                          {career.skills.length > 4 && (
+                            <Badge className="bg-neutral-100 text-neutral-800">
+                              +{career.skills.length - 4}
+                            </Badge>
+                          )}
                         </div>
-                      </div>
-                    </div>
-                    
-                    {/* Testimonial */}
-                    <div className="bg-white rounded-xl border border-neutral-200 p-6 shadow-sm mt-6">
-                      <h3 className="font-semibold mb-4 text-neutral-800 flex items-center">
-                        <Star className="h-5 w-5 text-yellow-500 mr-2" />
-                        Sikertörténet
-                      </h3>
-                      <div className="flex items-start gap-4">
-                        <img 
-                          src={career.testimonial.image} 
-                          alt={career.testimonial.name} 
-                          className="w-16 h-16 rounded-full object-cover"
-                        />
-                        <div>
-                          <p className="text-neutral-600 italic mb-2">"{career.testimonial.quote}"</p>
-                          <p className="font-semibold text-neutral-800">{career.testimonial.name}</p>
-                          <p className="text-sm text-neutral-500">{career.testimonial.role}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                  
-                  {/* Career Learning Path */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.1 }}
-                    className="col-span-2"
-                  >
-                    <div className="bg-white rounded-xl border border-neutral-200 p-6 shadow-sm">
-                      <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-2xl font-bold text-neutral-900">Tanulási útiterv</h2>
-                        <Link href={`/course-track/${career.id}`}>
-                          <Button variant="outline" className="flex items-center gap-2">
-                            Teljes útiterv megtekintése
-                            <ArrowRight className="h-4 w-4" />
-                          </Button>
-                        </Link>
                       </div>
                       
-                      <div className="mb-8">
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="text-sm text-neutral-500">Haladás</span>
-                          <span className="text-sm font-medium text-neutral-700">25%</span>
+                      <div className="flex items-center justify-between mt-auto pt-4 border-t border-neutral-100">
+                        <div className="flex items-center">
+                          <Users className="h-4 w-4 mr-1 text-neutral-400" />
+                          <span className="text-sm text-neutral-500">{career.students.toLocaleString('hu-HU')} tanuló</span>
                         </div>
-                        <Progress value={25} className="h-2" />
-                      </div>
-                      
-                      <div className="space-y-6">
-                        {career.roadmap.map((stage) => (
-                          <div 
-                            key={stage.stage} 
-                            className={`rounded-lg border p-4 ${selectedStage === stage.stage ? 'border-primary bg-primary/5' : 'border-neutral-200'}`}
-                          >
-                            <div 
-                              className="flex items-center justify-between cursor-pointer" 
-                              onClick={() => setSelectedStage(stage.stage)}
-                            >
-                              <div className="flex items-center gap-3">
-                                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                                  selectedStage === stage.stage ? 'bg-primary text-white' : 'bg-neutral-100'
-                                }`}>
-                                  {stage.stage}
-                                </div>
-                                <h3 className="font-semibold text-lg text-neutral-900">{stage.title}</h3>
-                                <Badge className="bg-blue-100 text-blue-800">
-                                  {stage.courses.length} kurzus
-                                </Badge>
-                              </div>
-                              <ChevronRight className={`h-5 w-5 transform transition-transform ${
-                                selectedStage === stage.stage ? 'rotate-90' : ''
-                              }`} />
-                            </div>
-                            
-                            {selectedStage === stage.stage && (
-                              <motion.div 
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: 'auto' }}
-                                transition={{ duration: 0.3 }}
-                                className="mt-4 pt-4 border-t"
-                              >
-                                <div className="space-y-4">
-                                  {stage.courses.map((course, idx) => (
-                                    <div 
-                                      key={course.id} 
-                                      className="flex items-start justify-between p-3 rounded-lg hover:bg-neutral-50 transition-colors"
-                                    >
-                                      <div className="flex gap-3">
-                                        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-500">
-                                          {idx + 1}
-                                        </div>
-                                        <div>
-                                          <h4 className="font-medium text-neutral-900">{course.title}</h4>
-                                          <p className="text-sm text-neutral-500 flex items-center mt-1">
-                                            <Clock className="inline h-3 w-3 mr-1" />
-                                            {course.duration}
-                                          </p>
-                                        </div>
-                                      </div>
-                                      <div className="flex items-center gap-2">
-                                        <Button 
-                                          variant="outline" 
-                                          size="sm"
-                                          onClick={() => handleCoursePreview(course.id)}
-                                        >
-                                          Előnézet
-                                        </Button>
-                                        <Link href={`/course/${course.id}`}>
-                                          <Button size="sm">
-                                            {idx === 0 ? 'Elkezdem' : 'Iratkozz fel'}
-                                          </Button>
-                                        </Link>
-                                      </div>
-                                    </div>
-                                  ))}
-                                </div>
-                              </motion.div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                    
-                    {/* Career benefits */}
-                    <div className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl p-6 mt-6">
-                      <h3 className="text-xl font-bold mb-4 text-neutral-900">Miért válaszd ezt a karrierutat?</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="flex items-start gap-3">
-                          <div className="p-2 rounded-full bg-white text-primary">
-                            <Briefcase className="h-5 w-5" />
-                          </div>
-                          <div>
-                            <h4 className="font-semibold text-neutral-900">Magas kereseti potenciál</h4>
-                            <p className="text-neutral-600">A karrierút elvégzése után a kezdő fizetés is versenyképes.</p>
-                          </div>
-                        </div>
-                        <div className="flex items-start gap-3">
-                          <div className="p-2 rounded-full bg-white text-primary">
-                            <TrendingUp className="h-5 w-5" />
-                          </div>
-                          <div>
-                            <h4 className="font-semibold text-neutral-900">Növekvő kereslet</h4>
-                            <p className="text-neutral-600">Folyamatosan nő a kereslet szakképzett {career.title.toLowerCase()} szakemberek iránt.</p>
-                          </div>
-                        </div>
-                        <div className="flex items-start gap-3">
-                          <div className="p-2 rounded-full bg-white text-primary">
-                            <Zap className="h-5 w-5" />
-                          </div>
-                          <div>
-                            <h4 className="font-semibold text-neutral-900">Rugalmas munkalehetőségek</h4>
-                            <p className="text-neutral-600">Távmunka és szabadúszó lehetőségek széles skálája érhető el.</p>
-                          </div>
-                        </div>
-                        <div className="flex items-start gap-3">
-                          <div className="p-2 rounded-full bg-white text-primary">
-                            <Award className="h-5 w-5" />
-                          </div>
-                          <div>
-                            <h4 className="font-semibold text-neutral-900">Elismert tanúsítvány</h4>
-                            <p className="text-neutral-600">Az Academion által kiadott tanúsítványt a munkáltatók elismerik.</p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="mt-6 text-center">
-                        <Link href={`/course-track/${career.id}`}>
-                          <Button className="px-8">
-                            Beiratkozás a képzési programba
+                        <Link href={`/career/${career.id}`}>
+                          <Button className="bg-primary hover:bg-primary/90 text-white">
+                            Részletek
+                            <ChevronRight className="ml-1 h-4 w-4" />
                           </Button>
                         </Link>
                       </div>
                     </div>
                   </motion.div>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-neutral-50 rounded-xl p-8 text-center border border-neutral-200">
+                <p className="text-neutral-600 mb-4">
+                  Nincs találat a keresési feltételeknek megfelelően. Kérjük, próbáljon meg más keresési feltételeket.
+                </p>
+                <Button onClick={() => setSearchQuery("")}>
+                  Összes karrierút megtekintése
+                </Button>
+              </div>
+            )}
+          </div>
+          
+          {/* Why Choose a Career Path Section */}
+          <div className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl p-8 mb-12">
+            <h2 className="text-2xl font-bold mb-6 text-neutral-900">Miért válasszon karrierutat?</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="bg-white rounded-lg p-5 shadow-sm">
+                <div className="p-3 bg-blue-100 rounded-full w-12 h-12 flex items-center justify-center mb-4">
+                  <Briefcase className="h-6 w-6 text-blue-600" />
                 </div>
-              </TabsContent>
-            ))}
-          </Tabs>
+                <h3 className="font-bold text-lg mb-2">Strukturált tanulás</h3>
+                <p className="text-neutral-600">Lépésről lépésre haladhat a karriercéljai felé egy jól megtervezett tanulási útvonalon.</p>
+              </div>
+              
+              <div className="bg-white rounded-lg p-5 shadow-sm">
+                <div className="p-3 bg-green-100 rounded-full w-12 h-12 flex items-center justify-center mb-4">
+                  <DollarSign className="h-6 w-6 text-green-600" />
+                </div>
+                <h3 className="font-bold text-lg mb-2">Versenyképes fizetés</h3>
+                <p className="text-neutral-600">A karrierutakon megszerzett készségek a legkeresettebb és legjobban fizetett pozíciókra készítik fel.</p>
+              </div>
+              
+              <div className="bg-white rounded-lg p-5 shadow-sm">
+                <div className="p-3 bg-purple-100 rounded-full w-12 h-12 flex items-center justify-center mb-4">
+                  <Award className="h-6 w-6 text-purple-600" />
+                </div>
+                <h3 className="font-bold text-lg mb-2">Iparági tanúsítványok</h3>
+                <p className="text-neutral-600">A képzések során iparági tanúsítványokat szerezhet, amelyek növelik az elhelyezkedési esélyeit.</p>
+              </div>
+              
+              <div className="bg-white rounded-lg p-5 shadow-sm">
+                <div className="p-3 bg-orange-100 rounded-full w-12 h-12 flex items-center justify-center mb-4">
+                  <Zap className="h-6 w-6 text-orange-600" />
+                </div>
+                <h3 className="font-bold text-lg mb-2">Karrier mentorálás</h3>
+                <p className="text-neutral-600">Személyes mentorálást kap a karrierváltás teljes folyamata során, beleértve az álláskeresést is.</p>
+              </div>
+            </div>
+          </div>
+          
+          {/* Testimonials */}
+          <div className="mb-12">
+            <h2 className="text-2xl font-bold mb-8 text-neutral-900">Sikertörténetek</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {careerPaths.slice(0, 2).map(career => (
+                <div key={career.id} className="bg-white rounded-xl p-6 border border-neutral-200 shadow-sm">
+                  <div className="flex items-start gap-4">
+                    <img 
+                      src={career.testimonial.image} 
+                      alt={career.testimonial.name} 
+                      className="w-16 h-16 rounded-full object-cover"
+                    />
+                    <div>
+                      <p className="text-neutral-600 italic mb-4">"{career.testimonial.quote}"</p>
+                      <div>
+                        <p className="font-semibold text-neutral-800">{career.testimonial.name}</p>
+                        <p className="text-sm text-neutral-500">{career.testimonial.role}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {/* CTA Section */}
+          <div className="text-center bg-gradient-to-r from-primary to-primary/80 rounded-xl p-12 text-white">
+            <h2 className="text-3xl font-bold mb-4">Készen áll a karrierváltásra?</h2>
+            <p className="text-lg mb-8 max-w-2xl mx-auto">
+              Váltson karriert az Academion segítségével, és induljon el egy izgalmas, jól fizető szakmai úton. 
+              Minden szükséges támogatást megkap, hogy sikeres legyen az új területen.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button size="lg" className="bg-white text-primary hover:bg-neutral-100">
+                Ingyenes karrierkonzultáció
+              </Button>
+              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/20">
+                Kérdezzen szakértőinktől
+              </Button>
+            </div>
+          </div>
         </div>
-      </section>
+      </div>
       
       {/* Course Preview Modal */}
       {previewCourse && (
@@ -571,7 +435,7 @@ const CareerDevelopment: React.FC = () => {
           course={previewCourse}
         />
       )}
-    </div>
+    </Layout>
   );
 };
 
