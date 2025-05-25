@@ -15,6 +15,7 @@ import CategoryPage from "@/pages/CategoryPage";
 import CareerDevelopment from "@/pages/CareerDevelopment";
 import CareerDetail from "@/pages/CareerDetail";
 import CareerPathsAI from "@/pages/CareerPathsAI";
+import PremiumSubscription from "@/pages/PremiumSubscription";
 import NotFound from "@/pages/not-found";
 import Layout from "@/components/Layout";
 import ScrollToTop from "@/components/ui/ScrollToTop";
@@ -40,6 +41,7 @@ function Router() {
       <Route path="/career/:id" component={CareerDetail} />
       <Route path="/career-paths-ai" component={CareerPathsAI} />
       <Route path="/career-paths/:careerId" component={CareerPathsAI} />
+      <Route path="/premium" component={PremiumSubscription} />
       <Route component={NotFound} />
     </Switch>
   );
