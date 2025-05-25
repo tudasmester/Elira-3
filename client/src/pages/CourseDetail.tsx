@@ -1010,4 +1010,27 @@ const CourseDetail: React.FC = () => {
   );
 };
 
-export default CourseDetail;
+// Add the Course Preview Modal component
+const CourseDetailWithPreview: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const courseId = parseInt(id || "1");
+  const course = courses.find(course => course.id === courseId);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  
+  return (
+    <>
+      <CourseDetail />
+      
+      {/* Course Preview Modal */}
+      {course && (
+        <CoursePreviewModal 
+          isOpen={isPreviewOpen}
+          onClose={() => setIsPreviewOpen(false)}
+          course={course}
+        />
+      )}
+    </>
+  );
+};
+
+export default CourseDetailWithPreview;
