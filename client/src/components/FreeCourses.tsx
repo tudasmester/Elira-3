@@ -28,7 +28,12 @@ const freeCourses = [
     university: "Budapesti Műszaki és Gazdaságtudományi Egyetem",
     universityLogo: bmeImage,
     title: "Bevezetés a statisztikába",
+    description: "Sajátítsa el a statisztikai elemzés alapvető eszközeit és módszereit. A kurzus során megismerkedhet az adatok elemzésének és értelmezésének modern megközelítéseivel.",
+    imageUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300",
     image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300",
+    category: "Statisztika",
+    level: "Kezdő",
+    isFree: true,
     type: "Tanfolyam"
   },
   {
@@ -36,7 +41,12 @@ const freeCourses = [
     university: "Debreceni Egyetem",
     universityLogo: debreceniImage,
     title: "Angol a karrierfejlesztésért",
+    description: "Fejlessze angol nyelvtudását üzleti környezetben. Ez a kurzus a szakmai kommunikációra, tárgyalástechnikára és prezentációs készségekre összpontosít.",
+    imageUrl: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300",
     image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300",
+    category: "Nyelv",
+    level: "Középhaladó",
+    isFree: true,
     type: "Tanfolyam"
   },
   {
@@ -44,12 +54,29 @@ const freeCourses = [
     university: "Corvinus Egyetem",
     universityLogo: corvinusImage,
     title: "Üzleti analitika Excel segítségével: Alapfokoktól a haladóig",
+    description: "Tanulja meg az Excel haladó funkcióit az üzleti elemzéshez. A kurzus a kimutatásoktól a makrókig mindent lefed, amit egy adatelemzőnek tudnia kell.",
+    imageUrl: "https://images.unsplash.com/photo-1553484771-371a605b060b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300",
     image: "https://images.unsplash.com/photo-1553484771-371a605b060b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300",
+    category: "Üzleti",
+    level: "Haladó",
+    isFree: true,
     type: "Tanfolyam"
   }
 ];
 
 const FreeCourses: React.FC = () => {
+  const [previewCourse, setPreviewCourse] = useState<typeof freeCourses[0] | null>(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  
+  const openPreview = (course: typeof freeCourses[0]) => {
+    setPreviewCourse(course);
+    setIsPreviewOpen(true);
+  };
+
+  const closePreview = () => {
+    setIsPreviewOpen(false);
+  };
+  
   return (
     <section className="py-16 bg-gradient-to-b from-blue-50 to-white">
       <div className="max-w-7xl mx-auto px-4">
@@ -79,10 +106,24 @@ const FreeCourses: React.FC = () => {
                 }}
                 className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer relative"
               >
-                <div className="absolute top-3 right-3 z-10">
+                <div className="absolute top-3 right-3 z-10 flex gap-2">
                   <span className="bg-primary text-white text-xs px-2 py-1 rounded-full shadow-md">
                     Ingyenes
                   </span>
+                </div>
+                <div className="absolute top-3 left-3 z-10">
+                  <Button 
+                    size="sm" 
+                    variant="secondary" 
+                    className="bg-white/90 hover:bg-white text-primary rounded-full shadow-md h-8 w-8 p-0"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      openPreview(course);
+                    }}
+                  >
+                    <Eye className="h-4 w-4" />
+                  </Button>
                 </div>
                 
                 <div className="relative h-40">
@@ -154,6 +195,15 @@ const FreeCourses: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Course Preview Modal */}
+      {previewCourse && (
+        <CoursePreviewModal 
+          isOpen={isPreviewOpen}
+          onClose={closePreview}
+          course={previewCourse}
+        />
+      )}
     </section>
   );
 };
