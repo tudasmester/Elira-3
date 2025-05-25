@@ -1,473 +1,1074 @@
-import React, { useState, useEffect, useRef } from "react";
-import { motion } from "framer-motion";
+import React, { useState, useEffect } from "react";
+import { useParams, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { 
-  ChevronRight, 
-  BrainCircuit, 
-  Zap, 
-  BarChart, 
-  Award, 
-  BookOpen, 
+  Card, 
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle 
+} from "@/components/ui/card";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
+import { useToast } from "@/hooks/use-toast";
+import { motion } from "framer-motion";
+import {
   Briefcase,
-  ArrowRight,
-  Star,
+  CheckCircle2,
+  ChevronRight,
+  Code,
+  GraduationCap,
+  HelpCircle,
+  Lightbulb,
+  LineChart,
+  Loader2,
+  LucideIcon,
+  Map,
+  Sparkles,
+  Target,
   TrendingUp,
-  ArrowUpRight
+  Award
 } from "lucide-react";
-import { useLocation } from "wouter";
 
-// Career path data (this would normally come from an API connected to OpenAI)
-const careerPathsData = {
-  dataScience: {
-    title: "Adattudós",
-    description: "Ismerje meg az adatelemzés és a gépi tanulás világát",
-    currentLevel: "Kezdő",
-    levels: [
-      {
-        level: "Kezdő",
-        skills: ["Python alapok", "Adatelemzési alapok", "Statisztikai alapismeretek"],
-        courses: [
-          { id: 101, title: "Bevezetés a Python programozásba", university: "BME", duration: "6 hét" },
-          { id: 102, title: "Adatelemzés alapjai", university: "Corvinus", duration: "8 hét" }
-        ],
-        salary: "500,000 - 700,000 Ft",
-        demand: "Magas"
-      },
-      {
-        level: "Középhaladó",
-        skills: ["Adattisztítás", "Gépi tanulás alapok", "SQL", "Adatvizualizáció"],
-        courses: [
-          { id: 201, title: "Adattisztítás és -előkészítés", university: "ELTE", duration: "5 hét" },
-          { id: 202, title: "Gépi tanulás alapjai", university: "BME", duration: "10 hét" }
-        ],
-        salary: "800,000 - 1,100,000 Ft",
-        demand: "Nagyon magas"
-      },
-      {
-        level: "Haladó",
-        skills: ["Mély tanulás", "Natural Language Processing", "Big Data technológiák"],
-        courses: [
-          { id: 301, title: "Mély tanulás és neurális hálózatok", university: "BME", duration: "12 hét" },
-          { id: 302, title: "Nagy adathalmazok kezelése", university: "Corvinus", duration: "8 hét" }
-        ],
-        salary: "1,200,000 - 1,800,000 Ft",
-        demand: "Kiemelkedő"
-      }
-    ],
-    relatedRoles: ["Adatelemző", "Machine Learning mérnök", "Business Intelligence elemző"],
-    industries: ["Tech", "Pénzügy", "Egészségügy", "E-kereskedelem"],
-    growthRate: "+35% évente",
-    timeToAchieve: "1-2 év"
-  },
-  webDevelopment: {
-    title: "Webfejlesztő",
-    description: "Tanuljon meg modern weboldalakat és alkalmazásokat készíteni",
-    currentLevel: "Kezdő",
-    levels: [
-      {
-        level: "Kezdő",
-        skills: ["HTML", "CSS", "JavaScript alapok", "Reszponzív design"],
-        courses: [
-          { id: 103, title: "Web fejlesztés alapjai", university: "BME", duration: "8 hét" },
-          { id: 104, title: "JavaScript alapismeretek", university: "ELTE", duration: "6 hét" }
-        ],
-        salary: "450,000 - 650,000 Ft",
-        demand: "Magas"
-      },
-      {
-        level: "Középhaladó",
-        skills: ["Frontend keretrendszerek (React)", "API integrációk", "Git verziókezelés"],
-        courses: [
-          { id: 203, title: "Modern frontend fejlesztés", university: "BME", duration: "10 hét" },
-          { id: 204, title: "Verziókezelés és csapatmunka", university: "Corvinus", duration: "4 hét" }
-        ],
-        salary: "700,000 - 1,000,000 Ft",
-        demand: "Nagyon magas"
-      },
-      {
-        level: "Haladó",
-        skills: ["Fullstack fejlesztés", "Teljesítményoptimalizálás", "Biztonság", "DevOps alapok"],
-        courses: [
-          { id: 303, title: "Fullstack alkalmazásfejlesztés", university: "ELTE", duration: "12 hét" },
-          { id: 304, title: "Web alkalmazások biztonsága", university: "BME", duration: "6 hét" }
-        ],
-        salary: "900,000 - 1,500,000 Ft",
-        demand: "Kiemelkedő"
-      }
-    ],
-    relatedRoles: ["Frontend fejlesztő", "Fullstack fejlesztő", "UX/UI fejlesztő"],
-    industries: ["Tech", "Marketing", "E-kereskedelem", "Média"],
-    growthRate: "+25% évente",
-    timeToAchieve: "1-1.5 év"
-  },
-  digitalMarketing: {
-    title: "Digitális marketing szakértő",
-    description: "Fejlessze digitális marketing készségeit és növelje vállalkozások online jelenlétét",
-    currentLevel: "Kezdő",
-    levels: [
-      {
-        level: "Kezdő",
-        skills: ["Marketing alapelvek", "Social media alapok", "Tartalommarketing"],
-        courses: [
-          { id: 105, title: "Digitális marketing alapjai", university: "Corvinus", duration: "6 hét" },
-          { id: 106, title: "Közösségi média marketing", university: "BME", duration: "5 hét" }
-        ],
-        salary: "400,000 - 600,000 Ft",
-        demand: "Közepes"
-      },
-      {
-        level: "Középhaladó",
-        skills: ["SEO", "Google Ads", "Analytics eszközök", "Email marketing"],
-        courses: [
-          { id: 205, title: "Keresőoptimalizálás (SEO)", university: "ELTE", duration: "7 hét" },
-          { id: 206, title: "Google Ads és PPC kampányok", university: "Corvinus", duration: "6 hét" }
-        ],
-        salary: "600,000 - 900,000 Ft",
-        demand: "Magas"
-      },
-      {
-        level: "Haladó",
-        skills: ["Marketing stratégia", "Konverziós ráta optimalizálás", "Marketing automatizáció"],
-        courses: [
-          { id: 305, title: "Digitális marketing stratégia", university: "Corvinus", duration: "8 hét" },
-          { id: 306, title: "Marketing automatizáció", university: "BME", duration: "6 hét" }
-        ],
-        salary: "800,000 - 1,300,000 Ft",
-        demand: "Nagyon magas"
-      }
-    ],
-    relatedRoles: ["SEO specialista", "Social media menedzser", "PPC specialista"],
-    industries: ["Marketing", "E-kereskedelem", "Média", "Szórakoztatóipar"],
-    growthRate: "+20% évente",
-    timeToAchieve: "1-1.5 év"
-  }
-};
+interface CareerPathInfo {
+  title: string;
+  description: string;
+  keySkills: string[];
+  learningPath: {
+    beginner: string[];
+    intermediate: string[];
+    advanced: string[];
+  };
+  salaryRange: {
+    entry: string;
+    mid: string;
+    senior: string;
+  };
+  demandTrend: string;
+  recommendedCourses: {
+    title: string;
+    provider: string;
+    level: string;
+  }[];
+  relatedCareers: string[];
+}
 
-const careerPathOptions = [
-  { id: "dataScience", label: "Adattudós" },
-  { id: "webDevelopment", label: "Webfejlesztő" },
-  { id: "digitalMarketing", label: "Digitális marketing" }
-];
+interface SkillsAnalysis {
+  matchScore: number;
+  strengths: string[];
+  gaps: string[];
+  recommendations: string[];
+}
+
+interface CareerRecommendation {
+  careers: string[];
+  explanation: string;
+}
 
 interface AICareerPathVisualizationProps {
   initialCareerPath?: string;
 }
 
-const AICareerPathVisualization: React.FC<AICareerPathVisualizationProps> = ({ initialCareerPath = "dataScience" }) => {
-  const [selectedCareer, setSelectedCareer] = useState(initialCareerPath);
-  const [careerData, setCareerData] = useState(careerPathsData[selectedCareer as keyof typeof careerPathsData]);
-  const [expandedLevel, setExpandedLevel] = useState<string | null>("Kezdő");
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [, setLocation] = useLocation();
-  const pathRef = useRef<HTMLDivElement>(null);
+// Predefined career paths
+const popularCareerPaths = [
+  {
+    id: "adattudos",
+    name: "Adattudós",
+    icon: <LineChart className="h-5 w-5" />,
+    color: "bg-blue-100 text-blue-800",
+  },
+  {
+    id: "szoftverfejleszto",
+    name: "Szoftverfejlesztő",
+    icon: <Code className="h-5 w-5" />,
+    color: "bg-purple-100 text-purple-800",
+  },
+  {
+    id: "uzleti-elemzo",
+    name: "Üzleti elemző",
+    icon: <TrendingUp className="h-5 w-5" />,
+    color: "bg-green-100 text-green-800",
+  },
+  {
+    id: "projektmenedzser",
+    name: "Projektmenedzser",
+    icon: <Briefcase className="h-5 w-5" />,
+    color: "bg-amber-100 text-amber-800",
+  },
+  {
+    id: "ux-designer",
+    name: "UX Designer",
+    icon: <Sparkles className="h-5 w-5" />,
+    color: "bg-pink-100 text-pink-800",
+  },
+];
 
-  useEffect(() => {
-    setCareerData(careerPathsData[selectedCareer as keyof typeof careerPathsData]);
-  }, [selectedCareer]);
+// Helper component for section headers
+const SectionHeader = ({ 
+  icon, 
+  title, 
+  subtitle 
+}: { 
+  icon: React.ReactNode; 
+  title: string; 
+  subtitle?: string;
+}) => (
+  <div className="flex items-start mb-4">
+    <div className="mr-3 p-2 rounded-lg bg-indigo-100 text-indigo-700">
+      {icon}
+    </div>
+    <div>
+      <h3 className="text-lg font-semibold text-neutral-800">{title}</h3>
+      {subtitle && <p className="text-sm text-neutral-500">{subtitle}</p>}
+    </div>
+  </div>
+);
 
-  const handleCareerChange = (careerId: string) => {
-    setIsAnalyzing(true);
-    
-    // Simulating AI processing time
-    setTimeout(() => {
-      setSelectedCareer(careerId);
-      setIsAnalyzing(false);
-      setExpandedLevel("Kezdő");
-    }, 1500);
-  };
+// Progress stages component
+const ProgressStages = ({ 
+  stages, 
+  currentStage 
+}: { 
+  stages: string[]; 
+  currentStage: number;
+}) => (
+  <div className="mb-6">
+    <div className="w-full bg-neutral-100 h-2 rounded-full mb-2">
+      <div 
+        className="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full transition-all" 
+        style={{ width: `${(currentStage / (stages.length - 1)) * 100}%` }}
+      ></div>
+    </div>
+    <div className="flex justify-between">
+      {stages.map((stage, idx) => (
+        <div 
+          key={idx} 
+          className={`text-xs font-medium ${idx <= currentStage ? 'text-indigo-700' : 'text-neutral-400'}`}
+        >
+          {stage}
+        </div>
+      ))}
+    </div>
+  </div>
+);
 
-  const handleLevelClick = (level: string) => {
-    setExpandedLevel(expandedLevel === level ? null : level);
-  };
+// Learning path stage component
+const LearningPathStage = ({ 
+  title, 
+  items, 
+  icon 
+}: { 
+  title: string; 
+  items: string[]; 
+  icon: React.ReactNode;
+}) => (
+  <div className="mb-6">
+    <div className="flex items-center mb-2">
+      {icon}
+      <h4 className="font-medium ml-2 text-neutral-800">{title}</h4>
+    </div>
+    <ul className="space-y-2 pl-10">
+      {items.map((item, idx) => (
+        <motion.li 
+          key={idx} 
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: idx * 0.1 }}
+          className="flex items-start"
+        >
+          <CheckCircle2 className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
+          <span className="text-neutral-700">{item}</span>
+        </motion.li>
+      ))}
+    </ul>
+  </div>
+);
 
-  const scrollToPath = () => {
-    pathRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+// Skill match visualization component
+const SkillMatch = ({ matchScore }: { matchScore: number }) => {
+  const getColor = (score: number) => {
+    if (score < 30) return "text-red-500";
+    if (score < 60) return "text-amber-500";
+    return "text-green-500";
   };
 
   return (
-    <section className="py-16 bg-gradient-to-br from-indigo-50 via-white to-purple-50 relative overflow-hidden">
-      {/* Decorative elements */}
-      <div className="absolute top-20 right-10 w-80 h-80 bg-blue-400/5 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-20 left-10 w-80 h-80 bg-purple-400/5 rounded-full blur-3xl"></div>
+    <div className="mb-6">
+      <div className="flex justify-between mb-1">
+        <span className="text-sm font-medium text-neutral-700">Készség egyezés</span>
+        <span className={`text-sm font-bold ${getColor(matchScore)}`}>{matchScore}%</span>
+      </div>
+      <div className="w-full bg-neutral-100 rounded-full h-2.5">
+        <div 
+          className="h-2.5 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500" 
+          style={{ width: `${matchScore}%` }}
+        ></div>
+      </div>
+    </div>
+  );
+};
+
+const AICareerPathVisualization: React.FC<AICareerPathVisualizationProps> = ({ initialCareerPath }) => {
+  const { careerId } = useParams<{ careerId: string }>();
+  const [, setLocation] = useLocation();
+  const { toast } = useToast();
+  
+  // State for different modes
+  const [activeTab, setActiveTab] = useState<string>("explore");
+  const [currentStage, setCurrentStage] = useState<number>(0);
+  
+  // State for career path info
+  const [selectedCareer, setSelectedCareer] = useState<string>(careerId || initialCareerPath || "");
+  const [careerInfo, setCareerInfo] = useState<CareerPathInfo | null>(null);
+  const [loadingCareerInfo, setLoadingCareerInfo] = useState<boolean>(false);
+  
+  // State for skill analysis
+  const [userSkills, setUserSkills] = useState<string[]>([]);
+  const [currentSkill, setCurrentSkill] = useState<string>("");
+  const [skillsAnalysis, setSkillsAnalysis] = useState<SkillsAnalysis | null>(null);
+  const [loadingAnalysis, setLoadingAnalysis] = useState<boolean>(false);
+  
+  // State for career recommendation
+  const [interests, setInterests] = useState<string[]>([]);
+  const [currentInterest, setCurrentInterest] = useState<string>("");
+  const [background, setBackground] = useState<string>("");
+  const [recommendations, setRecommendations] = useState<CareerRecommendation | null>(null);
+  const [loadingRecommendations, setLoadingRecommendations] = useState<boolean>(false);
+
+  // Load career info when career ID changes
+  useEffect(() => {
+    if (careerId || initialCareerPath) {
+      const careerToLoad = careerId || initialCareerPath;
+      setSelectedCareer(careerToLoad || "");
+      fetchCareerInfo(careerToLoad || "");
+    }
+  }, [careerId, initialCareerPath]);
+
+  // Fetch career path information
+  const fetchCareerInfo = async (career: string) => {
+    if (!career) return;
+
+    setLoadingCareerInfo(true);
+    try {
+      const response = await fetch(`/api/career-paths/${encodeURIComponent(career)}`);
+      if (!response.ok) {
+        throw new Error("Nem sikerült betölteni a karrierút információkat");
+      }
       
+      const data = await response.json();
+      setCareerInfo(data);
+      
+      // If the URL doesn't already contain the career ID, update it
+      if (!careerId && career) {
+        setLocation(`/career-paths/${encodeURIComponent(career)}`);
+      }
+    } catch (error) {
+      console.error("Error fetching career info:", error);
+      toast({
+        title: "Hiba történt",
+        description: "Nem sikerült betölteni a karrierút információkat. Kérjük, próbálja újra később.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingCareerInfo(false);
+    }
+  };
+
+  // Submit skills for analysis
+  const submitSkillsAnalysis = async () => {
+    if (!selectedCareer || userSkills.length === 0) {
+      toast({
+        title: "Hiányzó adatok",
+        description: "Kérjük, válasszon karrierutat és adjon meg legalább egy készséget.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoadingAnalysis(true);
+    try {
+      const response = await fetch("/api/career-paths/skills-analysis", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          currentSkills: userSkills,
+          targetCareer: selectedCareer
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error("Nem sikerült elvégezni a készségelemzést");
+      }
+      
+      const data = await response.json();
+      setSkillsAnalysis(data);
+    } catch (error) {
+      console.error("Error analyzing skills:", error);
+      toast({
+        title: "Hiba történt",
+        description: "Nem sikerült elvégezni a készségelemzést. Kérjük, próbálja újra később.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingAnalysis(false);
+    }
+  };
+
+  // Submit interests for recommendations
+  const submitCareerRecommendations = async () => {
+    if (interests.length === 0 || !background) {
+      toast({
+        title: "Hiányzó adatok",
+        description: "Kérjük, adjon meg legalább egy érdeklődési kört és háttérinformációt.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoadingRecommendations(true);
+    try {
+      const response = await fetch("/api/career-paths/recommend", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          interests,
+          skills: userSkills,
+          background
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error("Nem sikerült generálni karrierút ajánlásokat");
+      }
+      
+      const data = await response.json();
+      setRecommendations(data);
+    } catch (error) {
+      console.error("Error generating recommendations:", error);
+      toast({
+        title: "Hiba történt",
+        description: "Nem sikerült generálni karrierút ajánlásokat. Kérjük, próbálja újra később.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingRecommendations(false);
+    }
+  };
+
+  // Add skill to the list
+  const addSkill = () => {
+    if (currentSkill.trim() && !userSkills.includes(currentSkill.trim())) {
+      setUserSkills([...userSkills, currentSkill.trim()]);
+      setCurrentSkill("");
+    }
+  };
+
+  // Add interest to the list
+  const addInterest = () => {
+    if (currentInterest.trim() && !interests.includes(currentInterest.trim())) {
+      setInterests([...interests, currentInterest.trim()]);
+      setCurrentInterest("");
+    }
+  };
+
+  // Remove skill from the list
+  const removeSkill = (skill: string) => {
+    setUserSkills(userSkills.filter(s => s !== skill));
+  };
+
+  // Remove interest from the list
+  const removeInterest = (interest: string) => {
+    setInterests(interests.filter(i => i !== interest));
+  };
+
+  return (
+    <section className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="text-center mb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium mb-4">
-              <BrainCircuit className="w-4 h-4 mr-2" />
-              AI-alapú karrier tervezés
-            </div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600">
-              Fedezze fel karrierútját
-            </h2>
-            <p className="text-neutral-600 max-w-3xl mx-auto text-lg">
-              Elemezze a lehetséges karrierutakat, szükséges készségeket és tanulási lehetőségeket AI segítségével
-            </p>
-          </motion.div>
+        <div className="mb-10">
+          <h2 className="text-3xl font-bold mb-6 text-center">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600">
+              AI-alapú karriertervezés
+            </span>
+          </h2>
+          <p className="text-lg text-neutral-600 text-center max-w-3xl mx-auto">
+            Fedezze fel részletesen a különböző karrierutakat, elemezze készségeit és kapjon 
+            személyre szabott ajánlásokat a jövőbeni szakmai fejlődéséhez.
+          </p>
         </div>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12" ref={pathRef}>
-          {/* Career path selector */}
-          <div className="lg:col-span-1">
-            <div className="bg-white/70 backdrop-blur-sm rounded-xl shadow-lg border border-indigo-100 p-6 sticky top-24">
-              <h3 className="text-lg font-semibold mb-4 text-neutral-800">Válasszon karrierutat</h3>
-              
-              <div className="space-y-3 mb-8">
-                {careerPathOptions.map((career) => (
-                  <motion.button
-                    key={career.id}
-                    onClick={() => handleCareerChange(career.id)}
-                    className={`w-full flex items-center justify-between p-4 rounded-lg transition-all ${
-                      selectedCareer === career.id
-                        ? "bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-200"
-                        : "bg-white border border-neutral-200 hover:border-indigo-200"
-                    }`}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <span className="font-medium">{career.label}</span>
-                    {selectedCareer === career.id && (
-                      <div className="h-6 w-6 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-white">
-                        <ChevronRight className="h-4 w-4" />
-                      </div>
-                    )}
-                  </motion.button>
-                ))}
-              </div>
-              
-              <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-100">
-                <div className="flex items-center mb-3">
-                  <Zap className="h-5 w-5 text-indigo-600 mr-2" />
-                  <h4 className="font-medium text-indigo-900">AI-alapú elemzés</h4>
-                </div>
-                <p className="text-sm text-neutral-600 mb-3">
-                  Mesterséges intelligencia elemzi a karrierutakat és azonosítja a legjobb képzéseket az Ön céljaihoz.
-                </p>
-                <Button 
-                  onClick={() => setLocation("/career-assessment")}
-                  className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white"
-                >
-                  Személyes karrierértékelés
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          </div>
-          
-          {/* Career path visualization */}
-          <div className="lg:col-span-2">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
-              className="bg-white/80 backdrop-blur-sm rounded-xl overflow-hidden border border-indigo-100 shadow-xl"
-            >
-              {isAnalyzing ? (
-                <div className="p-12 flex flex-col items-center justify-center min-h-[600px]">
-                  <div className="w-16 h-16 rounded-full border-4 border-indigo-200 border-t-indigo-600 animate-spin mb-6"></div>
-                  <h3 className="text-xl font-semibold text-neutral-800 mb-2">AI elemzi a karrierutat...</h3>
-                  <p className="text-neutral-600 text-center max-w-md">
-                    Azonosítjuk a szükséges készségeket, kurzusokat és karrierlehetőségeket
-                  </p>
-                </div>
-              ) : (
-                <>
-                  {/* Career header */}
-                  <div className="p-6 md:p-8 bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="text-2xl font-bold mb-2">{careerData.title}</h3>
-                        <p className="text-indigo-100">{careerData.description}</p>
-                      </div>
-                      <div className="bg-white/20 backdrop-blur-sm rounded-lg px-3 py-2 flex items-center">
-                        <TrendingUp className="h-4 w-4 mr-1 text-green-300" />
-                        <span className="text-sm font-medium">{careerData.growthRate}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <div>
-                        <div className="text-xs text-indigo-200 mb-1">Karrierút ideje</div>
-                        <div className="font-medium">{careerData.timeToAchieve}</div>
-                      </div>
-                      <div>
-                        <div className="text-xs text-indigo-200 mb-1">Népszerű iparágak</div>
-                        <div className="font-medium">{careerData.industries.slice(0, 2).join(", ")}</div>
-                      </div>
-                      <div>
-                        <div className="text-xs text-indigo-200 mb-1">Kapcsolódó munkakörök</div>
-                        <div className="font-medium">{careerData.relatedRoles.slice(0, 2).join(", ")}</div>
-                      </div>
-                      <div>
-                        <div className="text-xs text-indigo-200 mb-1">Jelenlegi szint</div>
-                        <div className="font-medium">{careerData.currentLevel}</div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Career path levels */}
-                  <div className="p-6 md:p-8">
-                    <h4 className="text-lg font-semibold mb-6 text-neutral-800">Karrierút lépései</h4>
-                    
-                    <div className="space-y-6">
-                      {careerData.levels.map((level, index) => (
-                        <div 
-                          key={level.level}
-                          className="relative"
+
+        <Tabs 
+          defaultValue={activeTab} 
+          onValueChange={setActiveTab}
+          className="w-full"
+        >
+          <TabsList className="grid grid-cols-3 max-w-2xl mx-auto mb-8">
+            <TabsTrigger value="explore">Karrierutak felfedezése</TabsTrigger>
+            <TabsTrigger value="skills">Készség elemzés</TabsTrigger>
+            <TabsTrigger value="recommend">Személyes ajánlások</TabsTrigger>
+          </TabsList>
+
+          {/* Career Path Exploration Tab */}
+          <TabsContent value="explore">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Career Selection Panel */}
+              <Card className="h-fit">
+                <CardHeader>
+                  <CardTitle>Válasszon karrierutat</CardTitle>
+                  <CardDescription>
+                    Fedezze fel a különböző karrierlehetőségeket és a hozzájuk vezető utakat
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="mb-6">
+                    <div className="font-medium text-sm mb-2 text-neutral-700">Népszerű karrierutak</div>
+                    <div className="space-y-2">
+                      {popularCareerPaths.map((career) => (
+                        <button
+                          key={career.id}
+                          onClick={() => {
+                            setSelectedCareer(career.name);
+                            fetchCareerInfo(career.name);
+                          }}
+                          className={`w-full flex items-center p-3 rounded-lg text-left transition duration-200 ${
+                            selectedCareer === career.name
+                              ? "bg-indigo-50 border border-indigo-200"
+                              : "bg-white border border-neutral-200 hover:bg-neutral-50"
+                          }`}
                         >
-                          {/* Connection line */}
-                          {index < careerData.levels.length - 1 && (
-                            <div className="absolute left-6 top-12 bottom-0 w-0.5 bg-indigo-100 z-0"></div>
-                          )}
-                          
-                          <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.4, delay: index * 0.1 }}
-                            className={`relative z-10 border rounded-xl overflow-hidden shadow-sm transition-all ${
-                              expandedLevel === level.level 
-                                ? "border-indigo-300 bg-white" 
-                                : "border-neutral-200 bg-white hover:border-indigo-200"
-                            }`}
-                          >
-                            {/* Level header */}
-                            <div 
-                              className={`p-4 flex items-center cursor-pointer ${
-                                expandedLevel === level.level 
-                                  ? "bg-gradient-to-r from-indigo-50 to-purple-50" 
-                                  : "bg-white"
-                              }`}
-                              onClick={() => handleLevelClick(level.level)}
-                            >
-                              <div className={`h-10 w-10 rounded-full flex items-center justify-center mr-4 ${
-                                expandedLevel === level.level
-                                  ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white"
-                                  : "bg-indigo-100 text-indigo-600"
-                              }`}>
-                                <span>{index + 1}</span>
-                              </div>
-                              
-                              <div className="flex-1">
-                                <h5 className="font-semibold text-neutral-800">{level.level} szint</h5>
-                                <div className="flex items-center text-sm text-neutral-500">
-                                  <span className="mr-3">{level.skills.length} készség</span>
-                                  <span>{level.courses.length} kurzus</span>
-                                </div>
-                              </div>
-                              
-                              <div className="text-right">
-                                <div className="text-sm text-neutral-600 mb-1">Átlagfizetés</div>
-                                <div className="text-indigo-600 font-medium">{level.salary}</div>
-                              </div>
-                              
-                              <ChevronRight className={`ml-3 h-5 w-5 text-neutral-400 transition-transform ${
-                                expandedLevel === level.level ? "rotate-90" : ""
-                              }`} />
-                            </div>
-                            
-                            {/* Expanded level details */}
-                            {expandedLevel === level.level && (
-                              <motion.div
-                                initial={{ height: 0, opacity: 0 }}
-                                animate={{ height: "auto", opacity: 1 }}
-                                exit={{ height: 0, opacity: 0 }}
-                                transition={{ duration: 0.3 }}
-                                className="border-t border-neutral-100 p-4"
-                              >
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                  {/* Skills */}
-                                  <div>
-                                    <h6 className="font-medium text-neutral-800 mb-3 flex items-center">
-                                      <Award className="h-4 w-4 mr-2 text-indigo-500" />
-                                      Szükséges készségek
-                                    </h6>
-                                    <div className="space-y-2">
-                                      {level.skills.map((skill) => (
-                                        <div 
-                                          key={skill}
-                                          className="flex items-center p-2 bg-gradient-to-r from-indigo-50 to-white rounded-lg"
-                                        >
-                                          <Star className="h-4 w-4 text-amber-500 mr-2" />
-                                          <span className="text-neutral-700">{skill}</span>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  </div>
-                                  
-                                  {/* Recommended courses */}
-                                  <div>
-                                    <h6 className="font-medium text-neutral-800 mb-3 flex items-center">
-                                      <BookOpen className="h-4 w-4 mr-2 text-indigo-500" />
-                                      Ajánlott kurzusok
-                                    </h6>
-                                    <div className="space-y-3">
-                                      {level.courses.map((course) => (
-                                        <motion.div
-                                          key={course.id}
-                                          whileHover={{ y: -2 }}
-                                          className="p-3 border border-indigo-100 rounded-lg bg-white hover:shadow-md transition-all cursor-pointer"
-                                          onClick={() => setLocation(`/course/${course.id}`)}
-                                        >
-                                          <div className="flex justify-between items-start">
-                                            <div>
-                                              <h6 className="font-medium text-neutral-800">{course.title}</h6>
-                                              <div className="flex items-center text-sm text-neutral-500 mt-1">
-                                                <span>{course.university}</span>
-                                                <span className="mx-2">•</span>
-                                                <span>{course.duration}</span>
-                                              </div>
-                                            </div>
-                                            <ArrowUpRight className="h-4 w-4 text-indigo-500" />
-                                          </div>
-                                        </motion.div>
-                                      ))}
-                                    </div>
-                                  </div>
-                                </div>
-                                
-                                <div className="mt-6 pt-4 border-t border-neutral-100">
-                                  <div className="flex items-center justify-between">
-                                    <div className="flex items-center text-neutral-700">
-                                      <Briefcase className="h-4 w-4 mr-2 text-indigo-500" />
-                                      <span>Munkaerőpiaci kereslet: </span>
-                                      <span className="font-medium ml-1 text-indigo-700">{level.demand}</span>
-                                    </div>
-                                    <Button
-                                      size="sm"
-                                      onClick={() => setLocation(`/career-paths/${selectedCareer}/${level.level.toLowerCase()}`)}
-                                      className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200"
-                                    >
-                                      Részletek
-                                      <ChevronRight className="ml-1 h-4 w-4" />
-                                    </Button>
-                                  </div>
-                                </div>
-                              </motion.div>
-                            )}
-                          </motion.div>
-                        </div>
+                          <div className={`p-2 rounded-full mr-3 ${career.color.split(" ")[0]}`}>
+                            {career.icon}
+                          </div>
+                          <div>
+                            <div className="font-medium">{career.name}</div>
+                          </div>
+                          <ChevronRight className="ml-auto h-5 w-5 text-neutral-400" />
+                        </button>
                       ))}
                     </div>
                   </div>
-                </>
-              )}
-            </motion.div>
-            
-            <div className="mt-6">
-              <Button
-                onClick={() => setLocation(`/career-paths/${selectedCareer}`)}
-                className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white"
-              >
-                Teljes karrier útmutató megtekintése
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
+
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t border-neutral-200" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-white px-2 text-neutral-500">vagy keresés</span>
+                    </div>
+                  </div>
+
+                  <div className="mt-6">
+                    <Select
+                      onValueChange={(value) => {
+                        setSelectedCareer(value);
+                        fetchCareerInfo(value);
+                      }}
+                      value={selectedCareer}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Karrierút keresése" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Adattudós">Adattudós</SelectItem>
+                        <SelectItem value="Szoftverfejlesztő">Szoftverfejlesztő</SelectItem>
+                        <SelectItem value="Projektmenedzser">Projektmenedzser</SelectItem>
+                        <SelectItem value="UX Designer">UX Designer</SelectItem>
+                        <SelectItem value="Üzleti elemző">Üzleti elemző</SelectItem>
+                        <SelectItem value="Marketing specialista">Marketing specialista</SelectItem>
+                        <SelectItem value="Mesterséges intelligencia mérnök">MI mérnök</SelectItem>
+                        <SelectItem value="DevOps mérnök">DevOps mérnök</SelectItem>
+                        <SelectItem value="Kiberbiztonségi szakértő">Kiberbiztonségi szakértő</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Career Information Panel */}
+              <Card className="lg:col-span-2">
+                <CardHeader>
+                  <CardTitle>
+                    {loadingCareerInfo ? (
+                      <div className="flex items-center">
+                        <Loader2 className="h-5 w-5 animate-spin mr-2" />
+                        Karrierút információk betöltése...
+                      </div>
+                    ) : (
+                      careerInfo?.title || "Válasszon karrierutat"
+                    )}
+                  </CardTitle>
+                  <CardDescription>
+                    {!loadingCareerInfo && careerInfo?.demandTrend}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {loadingCareerInfo ? (
+                    <div className="flex flex-col items-center justify-center py-10">
+                      <Loader2 className="h-10 w-10 animate-spin text-indigo-600 mb-4" />
+                      <p className="text-neutral-600">Karrierút információk betöltése...</p>
+                    </div>
+                  ) : careerInfo ? (
+                    <div>
+                      <div className="mb-8">
+                        <SectionHeader
+                          icon={<Briefcase className="h-5 w-5" />}
+                          title="Karrierút áttekintés"
+                          subtitle="Átfogó leírás a karrierútról és annak perspektíváiról"
+                        />
+                        <p className="text-neutral-700 mb-4">{careerInfo.description}</p>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                          <div className="bg-neutral-50 p-4 rounded-lg">
+                            <div className="text-sm text-neutral-500 mb-1">Junior fizetés</div>
+                            <div className="font-semibold text-lg">{careerInfo.salaryRange.entry}</div>
+                          </div>
+                          <div className="bg-neutral-50 p-4 rounded-lg">
+                            <div className="text-sm text-neutral-500 mb-1">Medior fizetés</div>
+                            <div className="font-semibold text-lg">{careerInfo.salaryRange.mid}</div>
+                          </div>
+                          <div className="bg-neutral-50 p-4 rounded-lg">
+                            <div className="text-sm text-neutral-500 mb-1">Senior fizetés</div>
+                            <div className="font-semibold text-lg">{careerInfo.salaryRange.senior}</div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="mb-8">
+                        <SectionHeader
+                          icon={<Target className="h-5 w-5" />}
+                          title="Kulcskészségek"
+                          subtitle="A sikerhez szükséges legfontosabb készségek"
+                        />
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          {careerInfo.keySkills.map((skill, idx) => (
+                            <Badge key={idx} className="bg-indigo-100 text-indigo-800 hover:bg-indigo-200">
+                              {skill}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="mb-8">
+                        <SectionHeader
+                          icon={<Map className="h-5 w-5" />}
+                          title="Tanulási útvonal"
+                          subtitle="Fejlődési lépések a karrierúton való előrehaladáshoz"
+                        />
+                        
+                        <ProgressStages 
+                          stages={["Kezdő", "Középhaladó", "Haladó"]}
+                          currentStage={currentStage}
+                        />
+                        
+                        <div className="space-y-4">
+                          <LearningPathStage 
+                            title="Kezdő szint" 
+                            items={careerInfo.learningPath.beginner}
+                            icon={<div className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-medium">1</div>}
+                          />
+                          
+                          <LearningPathStage 
+                            title="Középhaladó szint" 
+                            items={careerInfo.learningPath.intermediate}
+                            icon={<div className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-medium">2</div>}
+                          />
+                          
+                          <LearningPathStage 
+                            title="Haladó szint" 
+                            items={careerInfo.learningPath.advanced}
+                            icon={<div className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-medium">3</div>}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="mb-8">
+                        <SectionHeader
+                          icon={<GraduationCap className="h-5 w-5" />}
+                          title="Ajánlott kurzusok"
+                          subtitle="Képzések, amelyek segítenek a szükséges készségek megszerzésében"
+                        />
+                        
+                        <div className="space-y-3">
+                          {careerInfo.recommendedCourses.map((course, idx) => (
+                            <div key={idx} className="flex items-start p-3 border border-neutral-200 rounded-lg">
+                              <div className="p-2 rounded-full bg-green-100 text-green-700 mr-3">
+                                <Award className="h-5 w-5" />
+                              </div>
+                              <div className="flex-1">
+                                <div className="font-medium text-neutral-800">{course.title}</div>
+                                <div className="text-sm text-neutral-500">{course.provider}</div>
+                              </div>
+                              <Badge className="ml-2 bg-blue-100 text-blue-800">{course.level}</Badge>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {careerInfo.relatedCareers.length > 0 && (
+                        <div>
+                          <SectionHeader
+                            icon={<Briefcase className="h-5 w-5" />}
+                            title="Kapcsolódó karrierutak"
+                            subtitle="További karrierlehetőségek, amelyek érdekelhetik"
+                          />
+                          
+                          <div className="flex flex-wrap gap-2">
+                            {careerInfo.relatedCareers.map((career, idx) => (
+                              <button
+                                key={idx}
+                                onClick={() => {
+                                  setSelectedCareer(career);
+                                  fetchCareerInfo(career);
+                                }}
+                                className="inline-flex items-center px-3 py-1.5 rounded-full bg-neutral-100 text-neutral-800 hover:bg-neutral-200 transition duration-200"
+                              >
+                                {career}
+                                <ChevronRight className="ml-1 h-4 w-4" />
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-10 text-center">
+                      <HelpCircle className="h-16 w-16 text-neutral-300 mb-4" />
+                      <h3 className="text-xl font-medium text-neutral-700 mb-2">Válasszon karrierutat</h3>
+                      <p className="text-neutral-500 max-w-md">
+                        Válasszon egyet a népszerű karrierutak közül, vagy keressen specifikus karrierlehetőséget
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
             </div>
-          </div>
-        </div>
+          </TabsContent>
+
+          {/* Skills Analysis Tab */}
+          <TabsContent value="skills">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Skills Input Panel */}
+              <Card className="h-fit">
+                <CardHeader>
+                  <CardTitle>Készségek elemzése</CardTitle>
+                  <CardDescription>
+                    Elemezze meglévő készségeit egy adott karrierúthoz viszonyítva
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="mb-6">
+                    <label className="block text-sm font-medium text-neutral-700 mb-1">
+                      Válasszon karrierutat
+                    </label>
+                    <Select
+                      onValueChange={(value) => setSelectedCareer(value)}
+                      value={selectedCareer}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Karrierút kiválasztása" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Adattudós">Adattudós</SelectItem>
+                        <SelectItem value="Szoftverfejlesztő">Szoftverfejlesztő</SelectItem>
+                        <SelectItem value="Projektmenedzser">Projektmenedzser</SelectItem>
+                        <SelectItem value="UX Designer">UX Designer</SelectItem>
+                        <SelectItem value="Üzleti elemző">Üzleti elemző</SelectItem>
+                        <SelectItem value="Marketing specialista">Marketing specialista</SelectItem>
+                        <SelectItem value="Mesterséges intelligencia mérnök">MI mérnök</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="mb-6">
+                    <label className="block text-sm font-medium text-neutral-700 mb-1">
+                      Adja meg jelenlegi készségeit
+                    </label>
+                    <div className="flex gap-2 mb-2">
+                      <Input
+                        value={currentSkill}
+                        onChange={(e) => setCurrentSkill(e.target.value)}
+                        placeholder="Pl. Python programozás"
+                        onKeyPress={(e) => e.key === "Enter" && addSkill()}
+                      />
+                      <Button 
+                        type="button" 
+                        onClick={addSkill}
+                        size="sm"
+                        className="shrink-0"
+                      >
+                        Hozzáadás
+                      </Button>
+                    </div>
+                    
+                    {userSkills.length > 0 && (
+                      <div className="mt-4">
+                        <div className="text-sm font-medium text-neutral-700 mb-2">Megadott készségek:</div>
+                        <div className="flex flex-wrap gap-2">
+                          {userSkills.map((skill, idx) => (
+                            <Badge 
+                              key={idx} 
+                              className="bg-indigo-100 text-indigo-800 hover:bg-indigo-200 cursor-pointer"
+                              onClick={() => removeSkill(skill)}
+                            >
+                              {skill} ✕
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <Button 
+                    onClick={submitSkillsAnalysis} 
+                    className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
+                    disabled={loadingAnalysis || userSkills.length === 0 || !selectedCareer}
+                  >
+                    {loadingAnalysis ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Elemzés...
+                      </>
+                    ) : (
+                      <>Készségek elemzése</>
+                    )}
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* Skills Analysis Results Panel */}
+              <Card className="lg:col-span-2">
+                <CardHeader>
+                  <CardTitle>Készség elemzés eredménye</CardTitle>
+                  <CardDescription>
+                    Értékelés és ajánlások a karriercéljaihoz
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {loadingAnalysis ? (
+                    <div className="flex flex-col items-center justify-center py-10">
+                      <Loader2 className="h-10 w-10 animate-spin text-indigo-600 mb-4" />
+                      <p className="text-neutral-600">Készségek elemzése folyamatban...</p>
+                    </div>
+                  ) : skillsAnalysis ? (
+                    <div>
+                      <div className="mb-8">
+                        <SectionHeader
+                          icon={<Target className="h-5 w-5" />}
+                          title={`Készség elemzés: ${selectedCareer}`}
+                          subtitle="Az Ön készségeinek megfelelése a választott karrierúthoz"
+                        />
+                        
+                        <SkillMatch matchScore={skillsAnalysis.matchScore} />
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                          <div>
+                            <h4 className="font-medium text-neutral-800 mb-2 flex items-center">
+                              <CheckCircle2 className="h-5 w-5 text-green-500 mr-1" />
+                              Erősségek
+                            </h4>
+                            <ul className="space-y-2">
+                              {skillsAnalysis.strengths.map((strength, idx) => (
+                                <motion.li 
+                                  key={idx}
+                                  initial={{ opacity: 0, x: -10 }}
+                                  animate={{ opacity: 1, x: 0 }}
+                                  transition={{ delay: idx * 0.1 }}
+                                  className="bg-green-50 border border-green-100 rounded-md p-2 text-green-800"
+                                >
+                                  {strength}
+                                </motion.li>
+                              ))}
+                            </ul>
+                          </div>
+                          
+                          <div>
+                            <h4 className="font-medium text-neutral-800 mb-2 flex items-center">
+                              <HelpCircle className="h-5 w-5 text-amber-500 mr-1" />
+                              Fejlesztendő területek
+                            </h4>
+                            <ul className="space-y-2">
+                              {skillsAnalysis.gaps.map((gap, idx) => (
+                                <motion.li 
+                                  key={idx}
+                                  initial={{ opacity: 0, x: -10 }}
+                                  animate={{ opacity: 1, x: 0 }}
+                                  transition={{ delay: idx * 0.1 }}
+                                  className="bg-amber-50 border border-amber-100 rounded-md p-2 text-amber-800"
+                                >
+                                  {gap}
+                                </motion.li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                        
+                        <div className="mt-8">
+                          <h4 className="font-medium text-neutral-800 mb-3 flex items-center">
+                            <Lightbulb className="h-5 w-5 text-blue-500 mr-1" />
+                            Fejlődési javaslatok
+                          </h4>
+                          <ul className="space-y-3">
+                            {skillsAnalysis.recommendations.map((recommendation, idx) => (
+                              <motion.li 
+                                key={idx}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: idx * 0.1 }}
+                                className="bg-blue-50 border border-blue-100 rounded-md p-3 text-blue-800"
+                              >
+                                {recommendation}
+                              </motion.li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                      
+                      <div className="mt-6 flex justify-center">
+                        <Button
+                          onClick={() => setActiveTab("explore")}
+                          variant="outline"
+                          className="mr-2"
+                        >
+                          Karrierút részletek megtekintése
+                        </Button>
+                        <Button
+                          onClick={() => setActiveTab("recommend")}
+                        >
+                          Személyes ajánlások kérése
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-10 text-center">
+                      <Target className="h-16 w-16 text-neutral-300 mb-4" />
+                      <h3 className="text-xl font-medium text-neutral-700 mb-2">Készség elemzés</h3>
+                      <p className="text-neutral-500 max-w-md">
+                        Adja meg jelenlegi készségeit és válasszon karrierutat a készségek elemzéséhez
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* Career Recommendation Tab */}
+          <TabsContent value="recommend">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Recommendation Input Panel */}
+              <Card className="h-fit">
+                <CardHeader>
+                  <CardTitle>Karrierút ajánlások</CardTitle>
+                  <CardDescription>
+                    Személyre szabott karrierút javaslatok az Ön érdeklődési köre és háttere alapján
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="mb-6">
+                    <label className="block text-sm font-medium text-neutral-700 mb-1">
+                      Érdeklődési körök
+                    </label>
+                    <div className="flex gap-2 mb-2">
+                      <Input
+                        value={currentInterest}
+                        onChange={(e) => setCurrentInterest(e.target.value)}
+                        placeholder="Pl. adatelemzés"
+                        onKeyPress={(e) => e.key === "Enter" && addInterest()}
+                      />
+                      <Button 
+                        type="button" 
+                        onClick={addInterest}
+                        size="sm"
+                        className="shrink-0"
+                      >
+                        Hozzáadás
+                      </Button>
+                    </div>
+                    
+                    {interests.length > 0 && (
+                      <div className="mt-4">
+                        <div className="text-sm font-medium text-neutral-700 mb-2">Megadott érdeklődési körök:</div>
+                        <div className="flex flex-wrap gap-2">
+                          {interests.map((interest, idx) => (
+                            <Badge 
+                              key={idx} 
+                              className="bg-purple-100 text-purple-800 hover:bg-purple-200 cursor-pointer"
+                              onClick={() => removeInterest(interest)}
+                            >
+                              {interest} ✕
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {userSkills.length > 0 && (
+                    <div className="mb-6">
+                      <div className="text-sm font-medium text-neutral-700 mb-2">Felhasználható készségek:</div>
+                      <div className="flex flex-wrap gap-2">
+                        {userSkills.map((skill, idx) => (
+                          <Badge 
+                            key={idx} 
+                            className="bg-indigo-100 text-indigo-800"
+                          >
+                            {skill}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="mb-6">
+                    <label className="block text-sm font-medium text-neutral-700 mb-1">
+                      Háttér információk
+                    </label>
+                    <Textarea
+                      value={background}
+                      onChange={(e) => setBackground(e.target.value)}
+                      placeholder="Röviden írja le tanulmányi és szakmai hátterét, valamint karriercéljait..."
+                      rows={4}
+                    />
+                  </div>
+
+                  <Button 
+                    onClick={submitCareerRecommendations} 
+                    className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
+                    disabled={loadingRecommendations || interests.length === 0 || !background}
+                  >
+                    {loadingRecommendations ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Ajánlások generálása...
+                      </>
+                    ) : (
+                      <>Karrierút ajánlások kérése</>
+                    )}
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* Recommendation Results Panel */}
+              <Card className="lg:col-span-2">
+                <CardHeader>
+                  <CardTitle>Személyre szabott ajánlások</CardTitle>
+                  <CardDescription>
+                    Az Ön profiljához illeszkedő karrierlehetőségek
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {loadingRecommendations ? (
+                    <div className="flex flex-col items-center justify-center py-10">
+                      <Loader2 className="h-10 w-10 animate-spin text-indigo-600 mb-4" />
+                      <p className="text-neutral-600">Személyre szabott ajánlások generálása...</p>
+                    </div>
+                  ) : recommendations ? (
+                    <div>
+                      <div className="mb-8">
+                        <SectionHeader
+                          icon={<Sparkles className="h-5 w-5" />}
+                          title="Ajánlott karrierutak"
+                          subtitle="Az Ön profiljához legjobban illeszkedő karrierlehetőségek"
+                        />
+                        
+                        <p className="text-neutral-700 mb-6">{recommendations.explanation}</p>
+                        
+                        <div className="space-y-4">
+                          {recommendations.careers.map((career, idx) => (
+                            <motion.div
+                              key={idx}
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: idx * 0.1 }}
+                              className="p-4 border border-indigo-100 rounded-lg bg-gradient-to-r from-indigo-50 to-transparent"
+                            >
+                              <div className="flex items-center mb-2">
+                                <Briefcase className="h-5 w-5 text-indigo-600 mr-2" />
+                                <h4 className="font-medium text-lg text-neutral-800">{career}</h4>
+                              </div>
+                              <div className="flex mt-2">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="mr-2 text-indigo-600 border-indigo-200"
+                                  onClick={() => {
+                                    setSelectedCareer(career);
+                                    fetchCareerInfo(career);
+                                    setActiveTab("explore");
+                                  }}
+                                >
+                                  Részletek megtekintése
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  className="bg-indigo-600 hover:bg-indigo-700"
+                                  onClick={() => {
+                                    setSelectedCareer(career);
+                                    setActiveTab("skills");
+                                  }}
+                                >
+                                  Készségek elemzése
+                                </Button>
+                              </div>
+                            </motion.div>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      <Separator className="my-6" />
+                      
+                      <div className="flex flex-col items-center text-center">
+                        <Lightbulb className="h-8 w-8 text-amber-500 mb-3" />
+                        <h4 className="font-medium text-lg text-neutral-800 mb-2">Következő lépések</h4>
+                        <p className="text-neutral-600 mb-4 max-w-md">
+                          Fedezze fel részletesebben a javasolt karrierutakat, elemezze készségeit és 
+                          tekintse meg a kapcsolódó kurzusajánlatokat.
+                        </p>
+                        <div className="flex flex-wrap justify-center gap-3">
+                          <Button
+                            onClick={() => setActiveTab("explore")}
+                            variant="outline"
+                          >
+                            Karrierutak felfedezése
+                          </Button>
+                          <Button
+                            onClick={() => setActiveTab("skills")}
+                          >
+                            Készségek elemzése
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-10 text-center">
+                      <Sparkles className="h-16 w-16 text-neutral-300 mb-4" />
+                      <h3 className="text-xl font-medium text-neutral-700 mb-2">Karrierút ajánlások</h3>
+                      <p className="text-neutral-500 max-w-md">
+                        Adja meg érdeklődési köreit és háttér információit a személyre szabott ajánlásokhoz
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </section>
   );

@@ -145,6 +145,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // AI Career Path routes
+  apiRouter.get("/career-paths/:career", async (req: Request, res: Response) => {
+    try {
+      const career = req.params.career;
+      const careerInfo = await generateCareerPathInfo(career);
+      res.json(careerInfo);
+    } catch (error) {
+      console.error("Error fetching career path info:", error);
+      res.status(500).json({ message: "Hiba történt a karrierút információk lekérdezésekor" });
+    }
+  });
+
+  apiRouter.post("/career-paths/recommend", async (req: Request, res: Response) => {
+    try {
+      const { interests, skills, background } = req.body;
+      
+      if (!Array.isArray(interests) || !Array.isArray(skills) || !background) {
+        return res.status(400).json({ 
+          message: "Érdeklődési körök, készségek és háttér megadása kötelező" 
+        });
+      }
+      
+      const recommendations = await getCareerRecommendation(interests, skills, background);
+      res.json(recommendations);
+    } catch (error) {
+      console.error("Error generating career recommendations:", error);
+      res.status(500).json({ message: "Hiba történt a karrierút ajánlások generálásakor" });
+    }
+  });
+
+  apiRouter.post("/career-paths/skills-analysis", async (req: Request, res: Response) => {
+    try {
+      const { currentSkills, targetCareer } = req.body;
+      
+      if (!Array.isArray(currentSkills) || !targetCareer) {
+        return res.status(400).json({ 
+          message: "Jelenlegi készségek és célkarrier megadása kötelező" 
+        });
+      }
+      
+      const analysis = await generateSkillsAnalysis(currentSkills, targetCareer);
+      res.json(analysis);
+    } catch (error) {
+      console.error("Error generating skills analysis:", error);
+      res.status(500).json({ message: "Hiba történt a készség elemzés generálásakor" });
+    }
+  });
+
   // Mount the API router
   // Add enrollment routes
   app.use("/api", apiRouter);
