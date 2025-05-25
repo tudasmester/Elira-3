@@ -187,7 +187,7 @@ const Home: React.FC = () => {
               <div className="relative">
                 <div className="absolute -top-6 -left-6 w-24 h-24 bg-primary/10 rounded-full"></div>
                 <img 
-                  src="../images/interactive-learning.svg" 
+                  src="/interactive-learning.svg" 
                   alt="Interaktív tanulási felület" 
                   className="rounded-xl shadow-xl relative z-10 w-full bg-white"
                 />
@@ -241,7 +241,7 @@ const Home: React.FC = () => {
               <div className="relative">
                 <div className="absolute -top-6 -right-6 w-24 h-24 bg-secondary/10 rounded-full"></div>
                 <img 
-                  src="../images/ai-learning-assistant.svg" 
+                  src="/ai-learning-assistant.svg" 
                   alt="AI-alapú tanulási segéd" 
                   className="rounded-xl shadow-xl relative z-10 w-full bg-white"
                 />
@@ -295,7 +295,7 @@ const Home: React.FC = () => {
               <div className="relative">
                 <div className="absolute -top-6 -left-6 w-24 h-24 bg-blue-100/30 rounded-full"></div>
                 <img 
-                  src="../images/certificate-template.svg" 
+                  src="/certificate-template.svg" 
                   alt="Szakmai bizonyítványok" 
                   className="rounded-xl shadow-xl relative z-10 w-full bg-white"
                 />
