@@ -76,7 +76,7 @@ const Navbar: React.FC = () => {
             </Link>
             
             {/* Mobile menu button */}
-            {isMobile ? (
+            {isMobile && (
               <button 
                 onClick={toggleMenu}
                 className="ml-4 p-2 rounded-md text-neutral-700 hover:bg-neutral-100"
@@ -87,29 +87,6 @@ const Navbar: React.FC = () => {
                   <Menu className="h-6 w-6" />
                 )}
               </button>
-            ) : (
-              <div className="relative ml-6">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button className="flex items-center text-neutral-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition duration-200">
-                      <span>Kategóriák</span>
-                      <ChevronDown className="ml-1 h-4 w-4" />
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-64">
-                    <DropdownMenuGroup>
-                      {courseCategories.map((category) => (
-                        <DropdownMenuItem key={category.slug} asChild>
-                          <Link href={`/category/${category.slug}`} className="flex items-center cursor-pointer">
-                            {category.icon}
-                            <span>{category.name}</span>
-                          </Link>
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuGroup>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
             )}
             
             {!isMobile && (
