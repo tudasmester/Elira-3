@@ -291,13 +291,13 @@ const Hero: React.FC = () => {
                 <div className="text-xs font-medium mb-2 text-neutral-500">Partneregyetemek</div>
                 <div className="flex space-x-2">
                   <div className="w-8 h-8 rounded bg-neutral-100 flex items-center justify-center p-1">
-                    <img src="../assets/bme.png" alt="BME" className="w-full h-full object-contain" />
+                    <img src="@assets/bme.png" alt="BME" className="w-full h-full object-contain" />
                   </div>
                   <div className="w-8 h-8 rounded bg-neutral-100 flex items-center justify-center p-1">
-                    <img src="../assets/corvinus_logo_angol_sz_transparent.png" alt="Corvinus" className="w-full h-full object-contain" />
+                    <img src="@assets/corvinus_logo_angol_sz_transparent.png" alt="Corvinus" className="w-full h-full object-contain" />
                   </div>
                   <div className="w-8 h-8 rounded bg-neutral-100 flex items-center justify-center p-1">
-                    <img src="../assets/OTP_Bank_logo.svg.png" alt="OTP" className="w-full h-full object-contain" />
+                    <img src="@assets/miskolci_egyetem.png" alt="Miskolci Egyetem" className="w-full h-full object-contain" />
                   </div>
                 </div>
               </motion.div>
