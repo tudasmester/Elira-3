@@ -7,6 +7,7 @@ import Home from "@/pages/Home";
 import Onboarding from "@/pages/Onboarding";
 import Dashboard from "@/pages/Dashboard";
 import CourseDetail from "@/pages/CourseDetail";
+import Trending from "@/pages/Trending";
 import NotFound from "@/pages/not-found";
 import Layout from "@/components/Layout";
 
@@ -22,6 +23,7 @@ function Router() {
       <Route path="/onboarding" component={Onboarding} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/course/:id" component={CourseDetail} />
+      <Route path="/trending" component={Trending} />
       <Route component={NotFound} />
     </Switch>
   );
