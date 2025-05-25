@@ -1,6 +1,7 @@
 import elteImage from "../assets/ELTE.png";
 import bmeImage from "../assets/bme.png";
 import debreceniImage from "../assets/debreceni.png";
+import corvinusImage from "../assets/corvinus_logo_angol_sz_transparent.png";
 
 export const courses = [
   {
@@ -12,7 +13,12 @@ export const courses = [
     universityLogo: elteImage,
     isFree: true,
     level: "Kezdő",
-    category: "Pénzügy"
+    category: "Üzlet és Menedzsment",
+    price: 45000,
+    duration: "8 hét",
+    students: 1243,
+    rating: 4.7,
+    tags: ["Pénzügy", "Befektetés", "Tőzsde"]
   },
   {
     id: 2,
@@ -23,7 +29,12 @@ export const courses = [
     universityLogo: bmeImage,
     isFree: true,
     level: "Kezdő",
-    category: "Adattudomány"
+    category: "Statisztika",
+    price: 0,
+    duration: "6 hét",
+    students: 2518,
+    rating: 4.8,
+    tags: ["Statisztika", "Adatelemzés", "Excel"]
   },
   {
     id: 3,
@@ -34,7 +45,12 @@ export const courses = [
     universityLogo: debreceniImage,
     isFree: true,
     level: "Kezdő",
-    category: "Nyelv"
+    category: "Nyelvek",
+    price: 0,
+    duration: "10 hét",
+    students: 3421,
+    rating: 4.9,
+    tags: ["Angol", "Üzleti nyelv", "Kommunikáció"]
   },
   {
     id: 4,
@@ -42,9 +58,142 @@ export const courses = [
     description: "Sajátítsa el az Excel alapvető és haladó technikáit az üzleti elemzések hatékony elvégzéséhez.",
     imageUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500",
     university: "Corvinus Egyetem",
-    universityLogo: elteImage, // Using ELTE image temporarily
-    isFree: true,
+    universityLogo: corvinusImage,
+    isFree: false,
     level: "Minden szint",
-    category: "Üzlet"
+    category: "Üzlet és Menedzsment",
+    price: 39000,
+    duration: "8 hét",
+    students: 1876,
+    rating: 4.6,
+    tags: ["Excel", "Adatelemzés", "Üzleti intelligencia"]
+  },
+  {
+    id: 5,
+    title: "Python programozás adattudósoknak",
+    description: "Sajátítsa el a Python programozási nyelv alapjait, és használja fel adatelemzéshez és vizualizációhoz.",
+    imageUrl: "https://images.unsplash.com/photo-1555952517-2e8e729e0b44?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500",
+    university: "Budapesti Műszaki és Gazdaságtudományi Egyetem",
+    universityLogo: bmeImage,
+    isFree: false,
+    level: "Középhaladó",
+    category: "Informatika és Programozás",
+    price: 52000,
+    duration: "12 hét",
+    students: 2134,
+    rating: 4.9,
+    tags: ["Python", "Adattudomány", "Programozás"]
+  },
+  {
+    id: 6,
+    title: "Digitális marketing alapok",
+    description: "Ismerje meg a digitális marketing alapelveit, a közösségi média marketinget és a keresőoptimalizálást.",
+    imageUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500",
+    university: "Corvinus Egyetem",
+    universityLogo: corvinusImage,
+    isFree: false,
+    level: "Kezdő",
+    category: "Üzlet és Menedzsment",
+    price: 42000,
+    duration: "6 hét",
+    students: 1532,
+    rating: 4.7,
+    tags: ["Marketing", "Digitális", "SEO"]
+  },
+  {
+    id: 7,
+    title: "Gépi tanulás mérnököknek",
+    description: "Ismerje meg a gépi tanulás matematikai alapjait és alkalmazásait mérnöki problémákra.",
+    imageUrl: "https://images.unsplash.com/photo-1580894732930-0babd100d356?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500",
+    university: "Budapesti Műszaki és Gazdaságtudományi Egyetem",
+    universityLogo: bmeImage,
+    isFree: false,
+    level: "Haladó",
+    category: "Adattudomány",
+    price: 58000,
+    duration: "14 hét",
+    students: 873,
+    rating: 4.8,
+    tags: ["Gépi tanulás", "AI", "Adattudomány"]
+  },
+  {
+    id: 8,
+    title: "Modern web fejlesztés: React alapok",
+    description: "Tanuljon meg modern webalkalmazásokat fejleszteni a React keretrendszerrel.",
+    imageUrl: "https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500",
+    university: "Eötvös Loránd Tudományegyetem",
+    universityLogo: elteImage,
+    isFree: false,
+    level: "Középhaladó",
+    category: "Informatika és Programozás",
+    price: 49000,
+    duration: "10 hét",
+    students: 1245,
+    rating: 4.7,
+    tags: ["React", "JavaScript", "Web fejlesztés"]
+  },
+  {
+    id: 9,
+    title: "Egészségügyi adatelemzés",
+    description: "Ismerje meg az egészségügyi adatok elemzésének módszereit és eszközeit.",
+    imageUrl: "https://images.unsplash.com/photo-1504439468489-c8920d796a29?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500",
+    university: "Debreceni Egyetem",
+    universityLogo: debreceniImage,
+    isFree: false,
+    level: "Középhaladó",
+    category: "Egészségügy",
+    price: 45000,
+    duration: "8 hét",
+    students: 743,
+    rating: 4.6,
+    tags: ["Egészségügy", "Adatelemzés", "Orvostudomány"]
+  },
+  {
+    id: 10,
+    title: "Tantervfejlesztés a modern oktatásban",
+    description: "Tanuljon meg hatékony tanterveket fejleszteni a modern oktatási módszerek alkalmazásával.",
+    imageUrl: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500",
+    university: "Eötvös Loránd Tudományegyetem",
+    universityLogo: elteImage,
+    isFree: true,
+    level: "Haladó",
+    category: "Oktatás",
+    price: 0,
+    duration: "6 hét",
+    students: 912,
+    rating: 4.5,
+    tags: ["Oktatás", "Tanterv", "Pedagógia"]
+  },
+  {
+    id: 11,
+    title: "Matematikai módszerek a fizikában",
+    description: "Ismerje meg a fizikai problémák megoldásához szükséges matematikai eszközöket.",
+    imageUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500",
+    university: "Budapesti Műszaki és Gazdaságtudományi Egyetem",
+    universityLogo: bmeImage,
+    isFree: false,
+    level: "Haladó",
+    category: "Matematika",
+    price: 48000,
+    duration: "12 hét",
+    students: 632,
+    rating: 4.8,
+    tags: ["Matematika", "Fizika", "Differenciálegyenletek"]
+  },
+  {
+    id: 12,
+    title: "Német nyelv üzleti környezetben",
+    description: "Fejlessze német nyelvtudását és sajátítsa el az üzleti terminológiát.",
+    imageUrl: "https://images.unsplash.com/photo-1599789201689-c8ba6aa7637f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500",
+    university: "Corvinus Egyetem",
+    universityLogo: corvinusImage,
+    isFree: false,
+    level: "Középhaladó",
+    category: "Nyelvek",
+    price: 42000,
+    duration: "10 hét",
+    students: 854,
+    rating: 4.6,
+    tags: ["Német", "Üzleti nyelv", "Kommunikáció"]
   }
 ];
