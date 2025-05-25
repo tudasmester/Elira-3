@@ -36,6 +36,7 @@ const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [location] = useLocation();
   const isMobile = useIsMobile();
+  const { user, isAuthenticated, isLoading } = useAuth();
   
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -139,16 +140,55 @@ const Navbar: React.FC = () => {
           )}
           
           <div className="flex items-center space-x-1 md:space-x-4">
-            {!isMobile && (
+            {!isMobile && !isLoading && (
               <>
-                <Link href="/login" className="text-neutral-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
-                  Bejelentkezés
-                </Link>
-                <Link href="/signup">
-                  <Button className="bg-primary hover:bg-primary/90 text-white">
-                    Csatlakozzon ingyen
-                  </Button>
-                </Link>
+                {isAuthenticated ? (
+                  <div className="flex items-center">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button className="flex items-center gap-2 text-neutral-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
+                          {user?.profileImageUrl ? (
+                            <img 
+                              src={user.profileImageUrl} 
+                              alt="Profile" 
+                              className="h-8 w-8 rounded-full object-cover"
+                            />
+                          ) : (
+                            <UserCircle className="h-6 w-6" />
+                          )}
+                          <span>{user?.firstName || 'Felhasználó'}</span>
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-56">
+                        <DropdownMenuGroup>
+                          <DropdownMenuItem asChild>
+                            <Link href="/dashboard" className="flex items-center cursor-pointer">
+                              <UserCircle className="h-4 w-4 mr-2" />
+                              <span>Profilom</span>
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <a href="/api/logout" className="flex items-center cursor-pointer text-red-500">
+                              <LogOut className="h-4 w-4 mr-2" />
+                              <span>Kijelentkezés</span>
+                            </a>
+                          </DropdownMenuItem>
+                        </DropdownMenuGroup>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                ) : (
+                  <>
+                    <a href="/api/login" className="text-neutral-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
+                      Bejelentkezés
+                    </a>
+                    <a href="/api/login">
+                      <Button className="bg-primary hover:bg-primary/90 text-white">
+                        Csatlakozzon ingyen
+                      </Button>
+                    </a>
+                  </>
+                )}
               </>
             )}
             {isMobile && !isOpen && (
@@ -207,16 +247,50 @@ const Navbar: React.FC = () => {
             </nav>
             
             <div className="pt-2 flex flex-col space-y-3">
-              <Link href="/login">
-                <Button variant="outline" className="w-full justify-center">
-                  Bejelentkezés
-                </Button>
-              </Link>
-              <Link href="/signup">
-                <Button className="w-full justify-center bg-primary hover:bg-primary/90 text-white">
-                  Csatlakozzon ingyen
-                </Button>
-              </Link>
+              {isAuthenticated ? (
+                <>
+                  <div className="flex items-center space-x-3 px-3 py-2 mb-2">
+                    {user?.profileImageUrl ? (
+                      <img 
+                        src={user.profileImageUrl} 
+                        alt="Profile" 
+                        className="h-10 w-10 rounded-full object-cover"
+                      />
+                    ) : (
+                      <UserCircle className="h-10 w-10 text-neutral-500" />
+                    )}
+                    <div>
+                      <p className="font-medium text-neutral-800">{user?.firstName || 'Felhasználó'}</p>
+                      <p className="text-xs text-neutral-500">{user?.email}</p>
+                    </div>
+                  </div>
+                  <Link href="/dashboard">
+                    <Button variant="outline" className="w-full justify-center">
+                      <UserCircle className="mr-2 h-4 w-4" />
+                      Profilom
+                    </Button>
+                  </Link>
+                  <a href="/api/logout">
+                    <Button className="w-full justify-center bg-red-50 hover:bg-red-100 text-red-600 border border-red-200">
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Kijelentkezés
+                    </Button>
+                  </a>
+                </>
+              ) : (
+                <>
+                  <a href="/api/login">
+                    <Button variant="outline" className="w-full justify-center">
+                      Bejelentkezés
+                    </Button>
+                  </a>
+                  <a href="/api/login">
+                    <Button className="w-full justify-center bg-primary hover:bg-primary/90 text-white">
+                      Csatlakozzon ingyen
+                    </Button>
+                  </a>
+                </>
+              )}
             </div>
           </div>
         )}
