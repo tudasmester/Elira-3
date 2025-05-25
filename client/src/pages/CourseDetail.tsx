@@ -15,9 +15,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import CoursePreviewModal from "@/components/CoursePreviewModal2";
-
-import { usePreviewModal } from "@/hooks/usePreviewModal";
+import CoursePreviewModal2 from "@/components/CoursePreviewModal2";
 
 const CourseDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -28,7 +26,7 @@ const CourseDetail: React.FC = () => {
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { openPreview } = usePreviewModal();
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   
   // Find the course with the matching ID
   const course = courses.find(course => course.id === courseId);
@@ -336,7 +334,7 @@ const CourseDetail: React.FC = () => {
                     <Button 
                       variant="outline" 
                       className="w-full border-white text-white hover:bg-white/20 py-6 text-lg font-medium"
-                      onClick={() => usePreviewModal().openPreview(courseId)}
+                      onClick={() => setIsPreviewOpen(true)}
                     >
                       <Eye className="h-5 w-5 mr-2" />
                       Előnézet megtekintése
@@ -1008,6 +1006,15 @@ const CourseDetail: React.FC = () => {
           </div>
         </div>
       </div>
+      
+      {/* Course Preview Modal */}
+      {course && (
+        <CoursePreviewModal2
+          isOpen={isPreviewOpen}
+          onClose={() => setIsPreviewOpen(false)}
+          course={course}
+        />
+      )}
     </div>
   );
 };
