@@ -1,0 +1,163 @@
+/* 
+  Academion Design System Extensions
+  This file extends the base design system with additional variables
+  and utility classes for consistent premium visual elements
+*/
+
+:root {
+  /* Extended Color Palette - Domain-specific colors */
+  --business: 41 100% 60%; /* Golden yellow for business courses */
+  --technology: 235 75% 59%; /* Rich blue for tech courses */
+  --healthcare: 162 94% 43%; /* Teal for healthcare courses */
+  --arts: 354 100% 70%; /* Pinkish red for creative courses */
+  --science: 270 76% 53%; /* Purple for science courses */
+  
+  /* Premium Gradient Variables */
+  --premium-gradient-1: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
+  --premium-gradient-2: linear-gradient(135deg, hsl(var(--tertiary)) 0%, hsl(var(--primary)) 100%);
+  --premium-gradient-3: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(var(--secondary)) 100%);
+  
+  /* Subtle background patterns */
+  --dot-pattern: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='1'/%3E%3Ccircle cx='13' cy='13' r='1'/%3E%3C/g%3E%3C/svg%3E");
+  --grid-pattern: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'%3E%3Cpath d='M0 0h40v40H0V0zm1 1h38v38H1V1z'/%3E%3C/g%3E%3C/svg%3E");
+  --wave-pattern: url("data:image/svg+xml,%3Csvg width='100' height='20' viewBox='0 0 100 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M21.184 20c.357-.13.72-.264 1.088-.402l1.768-.661C33.64 15.347 39.647 14 50 14c10.271 0 15.362 1.222 24.629 4.928.955.383 1.869.74 2.75 1.072h6.225c-2.51-.73-5.139-1.691-8.233-2.928C65.888 13.278 60.562 12 50 12c-10.626 0-16.855 1.397-26.66 5.063l-1.767.662c-2.475.923-4.66 1.674-6.724 2.275h6.335zm0-20C13.258 2.892 8.077 4 0 4V2c5.744 0 9.951-.574 14.85-2h6.334zM77.38 0C85.239 2.966 90.502 4 100 4V2c-6.842 0-11.386-.542-16.396-2h-6.225zM0 14c8.44 0 13.718-1.21 22.272-4.402l1.768-.661C33.64 5.347 39.647 4 50 4c10.271 0 15.362 1.222 24.629 4.928C84.112 12.722 89.438 14 100 14v-2c-10.271 0-15.362-1.222-24.629-4.928C65.888 3.278 60.562 2 50 2 39.374 2 33.145 3.397 23.34 7.063l-1.767.662C13.223 10.84 8.163 12 0 12v2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+  
+  /* Shadow Variables for Depth */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  
+  /* Glassmorphism Variables */
+  --glass-blur-sm: blur(4px);
+  --glass-blur-md: blur(8px);
+  --glass-blur-lg: blur(16px);
+  --glass-bg-light: rgba(255, 255, 255, 0.2);
+  --glass-bg-dark: rgba(0, 0, 0, 0.2);
+  --glass-border-light: rgba(255, 255, 255, 0.1);
+  --glass-border-dark: rgba(255, 255, 255, 0.05);
+}
+
+.dark {
+  /* Adjust dark mode colors */
+  --glass-bg-light: rgba(255, 255, 255, 0.05);
+  --glass-bg-dark: rgba(0, 0, 0, 0.3);
+}
+
+/* Utility Classes */
+
+/* Premium Gradients */
+.bg-premium-gradient-1 {
+  background: var(--premium-gradient-1);
+}
+
+.bg-premium-gradient-2 {
+  background: var(--premium-gradient-2);
+}
+
+.bg-premium-gradient-3 {
+  background: var(--premium-gradient-3);
+}
+
+.text-premium-gradient {
+  background: var(--premium-gradient-1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Background Patterns */
+.bg-pattern-dots {
+  background-image: var(--dot-pattern);
+}
+
+.bg-pattern-grid {
+  background-image: var(--grid-pattern);
+}
+
+.bg-pattern-waves {
+  background-image: var(--wave-pattern);
+}
+
+/* Glassmorphism */
+.glass {
+  background: var(--glass-bg-light);
+  backdrop-filter: var(--glass-blur-md);
+  -webkit-backdrop-filter: var(--glass-blur-md);
+  border: 1px solid var(--glass-border-light);
+}
+
+.glass-dark {
+  background: var(--glass-bg-dark);
+  backdrop-filter: var(--glass-blur-md);
+  -webkit-backdrop-filter: var(--glass-blur-md);
+  border: 1px solid var(--glass-border-dark);
+}
+
+.glass-light {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: var(--glass-blur-sm);
+  -webkit-backdrop-filter: var(--glass-blur-sm);
+}
+
+.glass-strong {
+  backdrop-filter: var(--glass-blur-lg);
+  -webkit-backdrop-filter: var(--glass-blur-lg);
+}
+
+/* Premium Badge */
+.premium-badge {
+  position: relative;
+  overflow: hidden;
+}
+
+.premium-badge::after {
+  content: "Prémium";
+  position: absolute;
+  top: 8px;
+  right: -30px;
+  background: var(--premium-gradient-2);
+  color: white;
+  padding: 2px 30px;
+  transform: rotate(45deg);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Micro-animations */
+@keyframes subtle-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.02);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-subtle-pulse {
+  animation: subtle-pulse 3s infinite ease-in-out;
+}
+
+@keyframes highlight-border {
+  0% {
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  50% {
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+  100% {
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.animate-highlight-border {
+  animation: highlight-border 2s infinite ease-in-out;
+}

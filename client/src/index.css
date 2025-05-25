@@ -3,6 +3,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import design system extensions */
+@import './styles/design-system.css';
+
 :root {
   /* Base Colors */
   --background: 0 0% 100%;
