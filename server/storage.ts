@@ -1,8 +1,11 @@
 import { 
   User, InsertUser, Course, InsertCourse,
   University, InsertUniversity, Degree, InsertDegree,
-  Subscriber, InsertSubscriber
+  Subscriber, InsertSubscriber,
+  users, courses, universities, degrees, subscribers
 } from "@shared/schema";
+import { db } from "./db";
+import { eq, and } from "drizzle-orm";
 
 export interface IStorage {
   // User operations
@@ -36,180 +39,142 @@ export interface IStorage {
   getAllSubscribers(): Promise<Subscriber[]>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private courses: Map<number, Course>;
-  private universities: Map<number, University>;
-  private degrees: Map<number, Degree>;
-  private subscribers: Map<number, Subscriber>;
-  
-  private userIdCounter: number;
-  private courseIdCounter: number;
-  private universityIdCounter: number;
-  private degreeIdCounter: number;
-  private subscriberIdCounter: number;
-
-  constructor() {
-    this.users = new Map();
-    this.courses = new Map();
-    this.universities = new Map();
-    this.degrees = new Map();
-    this.subscribers = new Map();
-    
-    this.userIdCounter = 1;
-    this.courseIdCounter = 1;
-    this.universityIdCounter = 1;
-    this.degreeIdCounter = 1;
-    this.subscriberIdCounter = 1;
-    
-    // Initialize with some sample data
-    this.initializeData();
-  }
-  
-  private initializeData() {
-    // Add some initial universities
-    const bme = this.createUniversity({
-      name: "Budapesti Műszaki és Gazdaságtudományi Egyetem",
-      description: "Magyarország vezető műszaki egyeteme",
-      logoUrl: "https://pixabay.com/get/g29baaa3b40bdd5c7ad38226a85a0fcc24fde8d64aade6e9548243db4599904ef03d40a4ec3cb0f191af374a69f2f49c6e56273e3ead50cd5895300b96e86ba3d_1280.jpg",
-      country: "Magyarország"
-    });
-    
-    const elte = this.createUniversity({
-      name: "Eötvös Loránd Tudományegyetem",
-      description: "Magyarország egyik legrégebbi és legrangosabb egyeteme",
-      logoUrl: "https://pixabay.com/get/g29baaa3b40bdd5c7ad38226a85a0fcc24fde8d64aade6e9548243db4599904ef03d40a4ec3cb0f191af374a69f2f49c6e56273e3ead50cd5895300b96e86ba3d_1280.jpg",
-      country: "Magyarország"
-    });
-    
-    const corvinus = this.createUniversity({
-      name: "Corvinus Egyetem",
-      description: "Vezető gazdasági és üzleti képzések",
-      logoUrl: "https://pixabay.com/get/g29baaa3b40bdd5c7ad38226a85a0fcc24fde8d64aade6e9548243db4599904ef03d40a4ec3cb0f191af374a69f2f49c6e56273e3ead50cd5895300b96e86ba3d_1280.jpg",
-      country: "Magyarország"
-    });
-  }
-
+export class DatabaseStorage implements IStorage {
   // User operations
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    const results = await db.select().from(users).where(eq(users.id, id)).limit(1);
+    return results.length > 0 ? results[0] : undefined;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+    const results = await db.select().from(users).where(eq(users.username, username)).limit(1);
+    return results.length > 0 ? results[0] : undefined;
   }
   
   async getUserByEmail(email: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.email === email,
-    );
+    const results = await db.select().from(users).where(eq(users.email, email)).limit(1);
+    return results.length > 0 ? results[0] : undefined;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.userIdCounter++;
-    const createdAt = new Date();
-    const user: User = { ...insertUser, id, createdAt };
-    this.users.set(id, user);
-    return user;
+    const results = await db.insert(users).values(insertUser).returning();
+    return results[0];
   }
   
   // Course operations
   async getCourse(id: number): Promise<Course | undefined> {
-    return this.courses.get(id);
+    const results = await db.select().from(courses).where(eq(courses.id, id)).limit(1);
+    return results.length > 0 ? results[0] : undefined;
   }
   
   async getAllCourses(): Promise<Course[]> {
-    return Array.from(this.courses.values());
+    return await db.select().from(courses);
   }
   
   async getCoursesByCategory(category: string): Promise<Course[]> {
-    return Array.from(this.courses.values()).filter(
-      (course) => course.category === category
-    );
+    return await db.select().from(courses).where(eq(courses.category, category));
   }
   
   async getCoursesByUniversity(universityId: number): Promise<Course[]> {
-    return Array.from(this.courses.values()).filter(
-      (course) => course.universityId === universityId
-    );
+    return await db.select().from(courses).where(eq(courses.universityId, universityId));
   }
   
   async getFreeCourses(): Promise<Course[]> {
-    return Array.from(this.courses.values()).filter(
-      (course) => course.isFree === 1
-    );
+    return await db.select().from(courses).where(eq(courses.isFree, 1));
   }
   
   async createCourse(insertCourse: InsertCourse): Promise<Course> {
-    const id = this.courseIdCounter++;
-    const createdAt = new Date();
     // Ensure isFree is always set to a number
-    const isFree = insertCourse.isFree ?? 0;
-    const course: Course = { ...insertCourse, id, createdAt, isFree };
-    this.courses.set(id, course);
-    return course;
+    const courseToInsert = {
+      ...insertCourse,
+      isFree: insertCourse.isFree ?? 0
+    };
+    const results = await db.insert(courses).values(courseToInsert).returning();
+    return results[0];
   }
   
   // University operations
   async getUniversity(id: number): Promise<University | undefined> {
-    return this.universities.get(id);
+    const results = await db.select().from(universities).where(eq(universities.id, id)).limit(1);
+    return results.length > 0 ? results[0] : undefined;
   }
   
   async getAllUniversities(): Promise<University[]> {
-    return Array.from(this.universities.values());
+    return await db.select().from(universities);
   }
   
   async createUniversity(insertUniversity: InsertUniversity): Promise<University> {
-    const id = this.universityIdCounter++;
-    const createdAt = new Date();
-    const university: University = { ...insertUniversity, id, createdAt };
-    this.universities.set(id, university);
-    return university;
+    const results = await db.insert(universities).values(insertUniversity).returning();
+    return results[0];
   }
   
   // Degree operations
   async getDegree(id: number): Promise<Degree | undefined> {
-    return this.degrees.get(id);
+    const results = await db.select().from(degrees).where(eq(degrees.id, id)).limit(1);
+    return results.length > 0 ? results[0] : undefined;
   }
   
   async getAllDegrees(): Promise<Degree[]> {
-    return Array.from(this.degrees.values());
+    return await db.select().from(degrees);
   }
   
   async getDegreesByUniversity(universityId: number): Promise<Degree[]> {
-    return Array.from(this.degrees.values()).filter(
-      (degree) => degree.universityId === universityId
-    );
+    return await db.select().from(degrees).where(eq(degrees.universityId, universityId));
   }
   
   async createDegree(insertDegree: InsertDegree): Promise<Degree> {
-    const id = this.degreeIdCounter++;
-    const createdAt = new Date();
-    const degree: Degree = { ...insertDegree, id, createdAt };
-    this.degrees.set(id, degree);
-    return degree;
+    const results = await db.insert(degrees).values(insertDegree).returning();
+    return results[0];
   }
   
   // Newsletter subscriber operations
   async addSubscriber(insertSubscriber: InsertSubscriber): Promise<Subscriber> {
-    const id = this.subscriberIdCounter++;
-    const createdAt = new Date();
-    const subscriber: Subscriber = { ...insertSubscriber, id, createdAt };
-    this.subscribers.set(id, subscriber);
-    return subscriber;
+    const results = await db.insert(subscribers).values(insertSubscriber).returning();
+    return results[0];
   }
   
   async getSubscriberByEmail(email: string): Promise<Subscriber | undefined> {
-    return Array.from(this.subscribers.values()).find(
-      (subscriber) => subscriber.email === email
-    );
+    const results = await db.select().from(subscribers).where(eq(subscribers.email, email)).limit(1);
+    return results.length > 0 ? results[0] : undefined;
   }
   
   async getAllSubscribers(): Promise<Subscriber[]> {
-    return Array.from(this.subscribers.values());
+    return await db.select().from(subscribers);
+  }
+
+  // Initialize database with sample data if needed
+  async initializeData() {
+    const existingUniversities = await this.getAllUniversities();
+    
+    if (existingUniversities.length === 0) {
+      await this.createUniversity({
+        name: "Budapesti Műszaki és Gazdaságtudományi Egyetem",
+        description: "Magyarország vezető műszaki egyeteme",
+        logoUrl: "https://pixabay.com/get/g29baaa3b40bdd5c7ad38226a85a0fcc24fde8d64aade6e9548243db4599904ef03d40a4ec3cb0f191af374a69f2f49c6e56273e3ead50cd5895300b96e86ba3d_1280.jpg",
+        country: "Magyarország"
+      });
+      
+      await this.createUniversity({
+        name: "Eötvös Loránd Tudományegyetem",
+        description: "Magyarország egyik legrégebbi és legrangosabb egyeteme",
+        logoUrl: "https://pixabay.com/get/g29baaa3b40bdd5c7ad38226a85a0fcc24fde8d64aade6e9548243db4599904ef03d40a4ec3cb0f191af374a69f2f49c6e56273e3ead50cd5895300b96e86ba3d_1280.jpg",
+        country: "Magyarország"
+      });
+      
+      await this.createUniversity({
+        name: "Corvinus Egyetem",
+        description: "Vezető gazdasági és üzleti képzések",
+        logoUrl: "https://pixabay.com/get/g29baaa3b40bdd5c7ad38226a85a0fcc24fde8d64aade6e9548243db4599904ef03d40a4ec3cb0f191af374a69f2f49c6e56273e3ead50cd5895300b96e86ba3d_1280.jpg",
+        country: "Magyarország"
+      });
+    }
   }
 }
 
-export const storage = new MemStorage();
+// Create database storage instance
+export const storage = new DatabaseStorage();
+
+// Initialize database with sample data
+storage.initializeData().catch(err => {
+  console.error("Failed to initialize database with sample data:", err);
+});
