@@ -350,7 +350,7 @@ export const courses = [
   {
     id: 12,
     title: "Német nyelv üzleti környezetben",
-    description: "Fejlessze német nyelvtudását és sajátítsa el az üzleti terminológiát.",
+    description: "Fejlessze német nyelvtudását és sajátítsa el az üzleti terminológiát az európai piacokon való sikeres kommunikációhoz. Ez a kurzus a német üzleti nyelv gyakorlati alkalmazására helyezi a hangsúlyt, valós üzleti szituációk, tárgyalások és prezentációk szimulálásával.",
     imageUrl: "https://images.unsplash.com/photo-1599789201689-c8ba6aa7637f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=500",
     university: "Corvinus Egyetem",
     universityLogo: corvinusImage,
@@ -361,6 +361,37 @@ export const courses = [
     duration: "10 hét",
     students: 854,
     rating: 4.6,
-    tags: ["Német", "Üzleti nyelv", "Kommunikáció"]
+    tags: ["Német", "Üzleti nyelv", "Kommunikáció", "B2-C1 szint", "Tárgyalástechnika", "Szakmai szókincs"],
+    highlights: [
+      "Autentikus német üzleti környezet szimulációja és szerepjátékok",
+      "Valódi német vállalati dokumentumok és esettanulmányok feldolgozása",
+      "Anyanyelvi oktatók által vezetett beszédgyakorlatok és kiejtésjavítás",
+      "Üzleti levelezés, jelentések és prezentációk szakmai német nyelven",
+      "Interkulturális kommunikáció és üzleti etikett német nyelvterületen"
+    ],
+    requirements: [
+      "B1-B2 szintű német nyelvtudás",
+      "Alapvető üzleti fogalmak ismerete",
+      "Heti 5-7 óra önálló tanulásra fordítható idő"
+    ],
+    targetAudience: [
+      "Nemzetközi cégeknél dolgozó szakemberek",
+      "Német nyelvterületen munkát vállalni szándékozók",
+      "Német partnerekkel együttműködő vállalkozók",
+      "Gazdasági és üzleti tanulmányokat folytató hallgatók"
+    ],
+    businessTopics: [
+      "Üzleti tárgyalások és szerződéskötés",
+      "Marketing és értékesítési kommunikáció",
+      "Emberi erőforrás menedzsment és szervezeti kommunikáció",
+      "Pénzügyi jelentések és gazdasági elemzések",
+      "Projekttervezés és projektmenedzsment"
+    ],
+    certification: [
+      "Corvinus Egyetem hivatalos bizonyítvány",
+      "Goethe-Institut Wirtschaftsdeutsch felkészítő kurzus",
+      "Teljesítményfüggő ajánlólevél partnervállalatoktól"
+    ],
+    partnerVállalatok: ["Deutsche Telekom", "Audi Hungaria", "Bosch Magyarország"]
   }
 ];

@@ -272,6 +272,15 @@ const CourseDetail: React.FC = () => {
                     <PlayCircle className="h-16 w-16 text-white" />
                   </motion.div>
                 </div>
+                {course.tags && course.tags.length > 0 && (
+                  <div className="absolute bottom-4 left-4 right-4 flex flex-wrap gap-2">
+                    {course.tags.map((tag, index) => (
+                      <Badge key={index} className="bg-black/60 text-white backdrop-blur-sm">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
               </div>
               
               <div className="mt-6 bg-white/10 backdrop-blur-md rounded-xl p-5 border border-white/10">
@@ -368,24 +377,41 @@ const CourseDetail: React.FC = () => {
                 >
                   <div className="flex items-center mb-4">
                     <Sparkles className="h-6 w-6 text-primary mr-3" />
-                    <h2 className="text-2xl font-bold text-neutral-800">Mit fog megtanulni</h2>
+                    <h2 className="text-2xl font-bold text-neutral-800">Kiemelések</h2>
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {learningOutcomes.map((item, index) => (
-                      <motion.div 
-                        key={index}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.1 }}
-                        className="flex items-start bg-neutral-50 p-4 rounded-lg border border-neutral-100"
-                      >
-                        <div className="bg-primary/10 rounded-full p-2 text-primary mr-3 flex-shrink-0">
-                          <Check className="h-5 w-5" />
-                        </div>
-                        <p className="text-neutral-700">{item}</p>
-                      </motion.div>
-                    ))}
+                    {course.highlights ? (
+                      course.highlights.map((item, index) => (
+                        <motion.div 
+                          key={index}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.1 }}
+                          className="flex items-start bg-neutral-50 p-4 rounded-lg border border-neutral-100"
+                        >
+                          <div className="bg-primary/10 rounded-full p-2 text-primary mr-3 flex-shrink-0">
+                            <Check className="h-5 w-5" />
+                          </div>
+                          <p className="text-neutral-700">{item}</p>
+                        </motion.div>
+                      ))
+                    ) : (
+                      learningOutcomes.map((item, index) => (
+                        <motion.div 
+                          key={index}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.1 }}
+                          className="flex items-start bg-neutral-50 p-4 rounded-lg border border-neutral-100"
+                        >
+                          <div className="bg-primary/10 rounded-full p-2 text-primary mr-3 flex-shrink-0">
+                            <Check className="h-5 w-5" />
+                          </div>
+                          <p className="text-neutral-700">{item}</p>
+                        </motion.div>
+                      ))
+                    )}
                   </div>
                 </motion.div>
                 
