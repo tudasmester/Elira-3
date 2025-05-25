@@ -175,6 +175,7 @@ const FreeCourses: React.FC = () => {
                 variant="default" 
                 size="lg" 
                 className="bg-primary hover:bg-primary/90 text-white rounded-md shadow-md px-6"
+                onClick={() => window.location.href = '/courses?filter=free'}
               >
                 További 8 megtekintése
               </Button>
@@ -187,6 +188,7 @@ const FreeCourses: React.FC = () => {
                 variant="outline" 
                 size="lg" 
                 className="text-primary border-primary hover:bg-teal-50 rounded-md px-6"
+                onClick={() => window.location.href = '/courses'}
               >
                 Az összes megtekintése
                 <ArrowRight className="ml-2 h-4 w-4" />

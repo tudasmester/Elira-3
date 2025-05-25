@@ -17,19 +17,19 @@ const Footer: React.FC = () => {
             <h2 className="text-2xl font-bold font-heading mb-4">Academion</h2>
             <p className="text-neutral-400 mb-6">Tanuljon korlátok nélkül világszínvonalú egyetemek és vállalatok kurzusaival.</p>
             <div className="flex space-x-4">
-              <a href="#" className="text-white hover:text-tertiary transition duration-200">
+              <a href="https://facebook.com/academion" target="_blank" rel="noopener noreferrer" className="text-white hover:text-tertiary transition duration-200">
                 <Facebook className="h-5 w-5" />
               </a>
-              <a href="#" className="text-white hover:text-tertiary transition duration-200">
+              <a href="https://twitter.com/academion" target="_blank" rel="noopener noreferrer" className="text-white hover:text-tertiary transition duration-200">
                 <Twitter className="h-5 w-5" />
               </a>
-              <a href="#" className="text-white hover:text-tertiary transition duration-200">
+              <a href="https://linkedin.com/company/academion" target="_blank" rel="noopener noreferrer" className="text-white hover:text-tertiary transition duration-200">
                 <Linkedin className="h-5 w-5" />
               </a>
-              <a href="#" className="text-white hover:text-tertiary transition duration-200">
+              <a href="https://instagram.com/academion" target="_blank" rel="noopener noreferrer" className="text-white hover:text-tertiary transition duration-200">
                 <Instagram className="h-5 w-5" />
               </a>
-              <a href="#" className="text-white hover:text-tertiary transition duration-200">
+              <a href="https://youtube.com/academion" target="_blank" rel="noopener noreferrer" className="text-white hover:text-tertiary transition duration-200">
                 <Youtube className="h-5 w-5" />
               </a>
             </div>
@@ -38,33 +38,33 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="text-lg font-bold mb-4">Academion</h3>
             <ul className="space-y-2">
-              <li><a href="#" className="text-neutral-400 hover:text-white transition duration-200">Rólunk</a></li>
-              <li><a href="#" className="text-neutral-400 hover:text-white transition duration-200">Mi működik</a></li>
-              <li><a href="#" className="text-neutral-400 hover:text-white transition duration-200">Karrier</a></li>
-              <li><a href="#" className="text-neutral-400 hover:text-white transition duration-200">Katalógus</a></li>
-              <li><a href="#" className="text-neutral-400 hover:text-white transition duration-200">Kurzusok</a></li>
+              <li><Link href="/about" className="text-neutral-400 hover:text-white transition duration-200">Rólunk</Link></li>
+              <li><Link href="/how-it-works" className="text-neutral-400 hover:text-white transition duration-200">Mi működik</Link></li>
+              <li><Link href="/careers" className="text-neutral-400 hover:text-white transition duration-200">Karrier</Link></li>
+              <li><Link href="/catalog" className="text-neutral-400 hover:text-white transition duration-200">Katalógus</Link></li>
+              <li><Link href="/courses" className="text-neutral-400 hover:text-white transition duration-200">Kurzusok</Link></li>
             </ul>
           </div>
           
           <div>
             <h3 className="text-lg font-bold mb-4">Közösség</h3>
             <ul className="space-y-2">
-              <li><a href="#" className="text-neutral-400 hover:text-white transition duration-200">Tanulók</a></li>
-              <li><a href="#" className="text-neutral-400 hover:text-white transition duration-200">Partnerek</a></li>
-              <li><a href="#" className="text-neutral-400 hover:text-white transition duration-200">Fejlesztők</a></li>
-              <li><a href="#" className="text-neutral-400 hover:text-white transition duration-200">Oktatók</a></li>
-              <li><a href="#" className="text-neutral-400 hover:text-white transition duration-200">Blog</a></li>
+              <li><Link href="/students" className="text-neutral-400 hover:text-white transition duration-200">Tanulók</Link></li>
+              <li><Link href="/partners" className="text-neutral-400 hover:text-white transition duration-200">Partnerek</Link></li>
+              <li><Link href="/developers" className="text-neutral-400 hover:text-white transition duration-200">Fejlesztők</Link></li>
+              <li><Link href="/instructors" className="text-neutral-400 hover:text-white transition duration-200">Oktatók</Link></li>
+              <li><Link href="/blog" className="text-neutral-400 hover:text-white transition duration-200">Blog</Link></li>
             </ul>
           </div>
           
           <div>
             <h3 className="text-lg font-bold mb-4">Támogatás</h3>
             <ul className="space-y-2">
-              <li><a href="#" className="text-neutral-400 hover:text-white transition duration-200">Súgó központ</a></li>
-              <li><a href="#" className="text-neutral-400 hover:text-white transition duration-200">Kapcsolat</a></li>
-              <li><a href="#" className="text-neutral-400 hover:text-white transition duration-200">Adatvédelem</a></li>
-              <li><a href="#" className="text-neutral-400 hover:text-white transition duration-200">Feltételek</a></li>
-              <li><a href="#" className="text-neutral-400 hover:text-white transition duration-200">Hozzáférhetőség</a></li>
+              <li><Link href="/help" className="text-neutral-400 hover:text-white transition duration-200">Súgó központ</Link></li>
+              <li><Link href="/contact" className="text-neutral-400 hover:text-white transition duration-200">Kapcsolat</Link></li>
+              <li><Link href="/privacy" className="text-neutral-400 hover:text-white transition duration-200">Adatvédelem</Link></li>
+              <li><Link href="/terms" className="text-neutral-400 hover:text-white transition duration-200">Feltételek</Link></li>
+              <li><Link href="/accessibility" className="text-neutral-400 hover:text-white transition duration-200">Hozzáférhetőség</Link></li>
             </ul>
           </div>
         </div>
@@ -72,9 +72,9 @@ const Footer: React.FC = () => {
         <div className="border-t border-neutral-800 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-neutral-500 text-sm mb-4 md:mb-0">© 2025 Elira Inc. Minden jog fenntartva.</p>
           <div className="flex flex-wrap items-center gap-4">
-            <a href="#" className="text-neutral-500 hover:text-white text-sm transition duration-200">Adatvédelmi irányelvek</a>
-            <a href="#" className="text-neutral-500 hover:text-white text-sm transition duration-200">Használati feltételek</a>
-            <a href="#" className="text-neutral-500 hover:text-white text-sm transition duration-200">Cookie-beállítások</a>
+            <Link href="/privacy-policy" className="text-neutral-500 hover:text-white text-sm transition duration-200">Adatvédelmi irányelvek</Link>
+            <Link href="/terms-of-service" className="text-neutral-500 hover:text-white text-sm transition duration-200">Használati feltételek</Link>
+            <Link href="/cookie-settings" className="text-neutral-500 hover:text-white text-sm transition duration-200">Cookie-beállítások</Link>
             <div className="flex items-center space-x-2">
               <span className="text-neutral-500 text-sm">Nyelv:</span>
               <select className="bg-neutral-800 text-neutral-400 text-sm py-1 px-2 rounded border border-neutral-700 focus:outline-none">
