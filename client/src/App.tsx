@@ -13,6 +13,7 @@ import Degrees from "@/pages/Degrees";
 import CategoryPage from "@/pages/CategoryPage";
 import NotFound from "@/pages/not-found";
 import Layout from "@/components/Layout";
+import ScrollToTop from "@/components/ui/ScrollToTop";
 
 function Router() {
   const [location] = useLocation();
@@ -42,6 +43,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
+        <ScrollToTop />
         <Router />
       </TooltipProvider>
     </QueryClientProvider>

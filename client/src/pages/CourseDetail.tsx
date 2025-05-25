@@ -336,7 +336,7 @@ const CourseDetail: React.FC = () => {
                     <Button 
                       variant="outline" 
                       className="w-full border-white text-white hover:bg-white/20 py-6 text-lg font-medium"
-                      onClick={() => usePreviewModal().openPreview()}
+                      onClick={() => usePreviewModal().openPreview(courseId)}
                     >
                       <Eye className="h-5 w-5 mr-2" />
                       Előnézet megtekintése

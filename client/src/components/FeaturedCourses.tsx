@@ -5,7 +5,7 @@ import { courses } from "@/data/courses";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
 import { Badge } from "@/components/ui/badge";
-import CoursePreviewModal from "./CoursePreviewModal2";
+import CoursePreviewModal2 from "./CoursePreviewModal2";
 
 const FeaturedCourses: React.FC = () => {
   const [previewCourse, setPreviewCourse] = useState<typeof courses[0] | null>(null);
@@ -209,7 +209,7 @@ const FeaturedCourses: React.FC = () => {
 
       {/* Course Preview Modal */}
       {previewCourse && (
-        <CoursePreviewModal 
+        <CoursePreviewModal2 
           isOpen={isPreviewOpen}
           onClose={closePreview}
           course={previewCourse}
