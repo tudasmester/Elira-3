@@ -521,62 +521,6 @@ const CareerDevelopment: React.FC = () => {
           )}
         </div>
         
-        {/* Career Recommendation Quiz */}
-        <div className="mb-12">
-          <h2 className="text-2xl font-bold text-neutral-900 mb-6">Személyre szabott karrierút ajánló</h2>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div>
-              <CareerRecommendationQuiz />
-            </div>
-            <div className="flex flex-col justify-center">
-              <h3 className="text-xl font-bold text-neutral-900 mb-4">Találja meg az ideális karrierutat</h3>
-              <p className="text-neutral-700 mb-6">
-                Használja interaktív karrierút ajánlónkat, amely az Ön készségei, érdeklődési köre és céljai alapján 
-                személyre szabott javaslatokat kínál. A kvíz segít azonosítani a legalkalmasabb karrierlehetőségeket 
-                az Ön számára.
-              </p>
-              
-              <div className="space-y-4 mb-8">
-                <div className="flex items-start">
-                  <div className="p-2 bg-primary/10 rounded-full mr-3 flex-shrink-0">
-                    <CheckCircle className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-neutral-800">Személyre szabott ajánlatok</h4>
-                    <p className="text-neutral-600 text-sm">
-                      A válaszai alapján egyedi karrierút javaslatokat kap, amelyek megfelelnek az Ön érdeklődésének.
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start">
-                  <div className="p-2 bg-primary/10 rounded-full mr-3 flex-shrink-0">
-                    <CheckCircle className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-neutral-800">Készségprofil elemzés</h4>
-                    <p className="text-neutral-600 text-sm">
-                      Megmutatjuk, mely készségei teszik alkalmassá bizonyos karrierutakra, és hol érdemes fejlődnie.
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start">
-                  <div className="p-2 bg-primary/10 rounded-full mr-3 flex-shrink-0">
-                    <CheckCircle className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-neutral-800">Azonnali visszajelzés</h4>
-                    <p className="text-neutral-600 text-sm">
-                      Mindössze 5 rövid kérdés megválaszolása után azonnal megkapja a személyre szabott ajánlásokat.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        
         {/* Why Choose a Career Path Section */}
         <div className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl p-8 mb-12">
           <h2 className="text-2xl font-bold mb-6 text-neutral-900">Miért válasszon karrierutat?</h2>
