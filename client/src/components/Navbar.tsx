@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { 
@@ -19,6 +19,9 @@ import {
 import logo from "../assets/academion2.png";
 import { Badge } from "@/components/ui/badge";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useSearch } from "@/hooks/useSearch";
+import SearchResults from "@/components/SearchResults";
+import { AnimatePresence } from "framer-motion";
 
 // Define course categories
 const courseCategories = [
@@ -37,6 +40,8 @@ const Navbar: React.FC = () => {
   const [location] = useLocation();
   const isMobile = useIsMobile();
   const { user, isAuthenticated, isLoading } = useAuth();
+  const { query, setQuery, results, isLoading: searchLoading, isSearchOpen, setIsSearchOpen, closeSearch } = useSearch();
+  const searchRef = useRef<HTMLDivElement>(null);
   
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -45,6 +50,20 @@ const Navbar: React.FC = () => {
   const isActive = (path: string) => {
     return location === path;
   };
+  
+  // Close search results when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setIsSearchOpen(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [setIsSearchOpen]);
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-40">
@@ -126,15 +145,37 @@ const Navbar: React.FC = () => {
           
           {!isMobile && (
             <div className="flex-1 max-w-xl px-6">
-              <div className="relative">
+              <div className="relative" ref={searchRef}>
                 <Input
                   type="text"
                   placeholder="Mit szeretne tanulni?"
                   className="w-full pl-10 pr-4 py-2 rounded-full border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  onFocus={() => setIsSearchOpen(true)}
                 />
                 <span className="absolute left-3 top-2.5 text-neutral-500">
                   <Search className="h-4 w-4" />
                 </span>
+                {query && (
+                  <button 
+                    className="absolute right-3 top-2.5 text-neutral-400 hover:text-neutral-600"
+                    onClick={() => setQuery('')}
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+                
+                <AnimatePresence>
+                  {isSearchOpen && (
+                    <SearchResults 
+                      results={results} 
+                      query={query} 
+                      isLoading={searchLoading} 
+                      onResultClick={closeSearch}
+                    />
+                  )}
+                </AnimatePresence>
               </div>
             </div>
           )}
@@ -192,7 +233,12 @@ const Navbar: React.FC = () => {
               </>
             )}
             {isMobile && !isOpen && (
-              <Button size="sm" variant="ghost" className="p-2">
+              <Button 
+                size="sm" 
+                variant="ghost" 
+                className="p-2"
+                onClick={toggleMenu}
+              >
                 <Search className="h-5 w-5" />
               </Button>
             )}
