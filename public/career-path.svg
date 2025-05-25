@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800px" height="600px" viewBox="0 0 800 600" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Career Path</title>
+    <defs>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="gradientPrimary">
+            <stop stop-color="#0f766d" offset="0%"></stop>
+            <stop stop-color="#0d9488" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="gradientSecondary">
+            <stop stop-color="#7e22ce" offset="0%"></stop>
+            <stop stop-color="#a855f7" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="gradientTertiary">
+            <stop stop-color="#0284c7" offset="0%"></stop>
+            <stop stop-color="#38bdf8" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <!-- Background -->
+        <rect fill="#f8fafc" x="0" y="0" width="800" height="600"></rect>
+        
+        <!-- Career Path -->
+        <g transform="translate(100, 300)">
+            <!-- Path Line -->
+            <path d="M0,0 C100,-50 150,50 250,0 C350,-50 400,50 500,0 C600,-50 650,50 600,0" stroke="url(#gradientPrimary)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"></path>
+            
+            <!-- Start Point -->
+            <circle cx="0" cy="0" r="15" fill="#ffffff" stroke="url(#gradientPrimary)" stroke-width="3"></circle>
+            <text x="0" y="5" font-family="Arial" font-size="12" fill="#0f172a" text-anchor="middle">1</text>
+            
+            <!-- Milestone 1 -->
+            <circle cx="250" cy="0" r="15" fill="#ffffff" stroke="url(#gradientSecondary)" stroke-width="3"></circle>
+            <text x="250" y="5" font-family="Arial" font-size="12" fill="#0f172a" text-anchor="middle">2</text>
+            
+            <!-- Milestone 2 -->
+            <circle cx="500" cy="0" r="15" fill="#ffffff" stroke="url(#gradientTertiary)" stroke-width="3"></circle>
+            <text x="500" y="5" font-family="Arial" font-size="12" fill="#0f172a" text-anchor="middle">3</text>
+            
+            <!-- End Point -->
+            <circle cx="600" cy="0" r="20" fill="#ffffff" stroke="url(#gradientPrimary)" stroke-width="3"></circle>
+            <text x="600" y="5" font-family="Arial" font-size="14" fill="#0f172a" text-anchor="middle">✓</text>
+        </g>
+        
+        <!-- Career Stages -->
+        <g transform="translate(100, 150)">
+            <!-- Junior Stage -->
+            <rect x="-50" y="0" width="120" height="100" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"></rect>
+            <text x="10" y="30" font-family="Arial" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">Junior</text>
+            <text x="10" y="60" font-family="Arial" font-size="12" fill="#64748b" text-anchor="middle">Alapvető készségek</text>
+            <text x="10" y="80" font-family="Arial" font-size="12" fill="#64748b" text-anchor="middle">elsajátítása</text>
+        </g>
+        
+        <g transform="translate(350, 150)">
+            <!-- Mid-Level Stage -->
+            <rect x="-50" y="0" width="120" height="100" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"></rect>
+            <text x="10" y="30" font-family="Arial" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">Medior</text>
+            <text x="10" y="60" font-family="Arial" font-size="12" fill="#64748b" text-anchor="middle">Szakmai</text>
+            <text x="10" y="80" font-family="Arial" font-size="12" fill="#64748b" text-anchor="middle">fejlődés</text>
+        </g>
+        
+        <g transform="translate(600, 150)">
+            <!-- Senior Stage -->
+            <rect x="-50" y="0" width="120" height="100" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"></rect>
+            <text x="10" y="30" font-family="Arial" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">Senior</text>
+            <text x="10" y="60" font-family="Arial" font-size="12" fill="#64748b" text-anchor="middle">Vezetői</text>
+            <text x="10" y="80" font-family="Arial" font-size="12" fill="#64748b" text-anchor="middle">készségek</text>
+        </g>
+        
+        <!-- Skills Acquired -->
+        <g transform="translate(100, 350)">
+            <!-- Junior Skills -->
+            <g transform="translate(-40, 50)">
+                <rect width="100" height="30" rx="15" fill="#ffffff" stroke="url(#gradientPrimary)" stroke-width="2"></rect>
+                <text x="50" y="20" font-family="Arial" font-size="12" fill="#0f172a" text-anchor="middle">HTML/CSS</text>
+            </g>
+            
+            <g transform="translate(-20, 90)">
+                <rect width="100" height="30" rx="15" fill="#ffffff" stroke="url(#gradientPrimary)" stroke-width="2"></rect>
+                <text x="50" y="20" font-family="Arial" font-size="12" fill="#0f172a" text-anchor="middle">JavaScript</text>
+            </g>
+        </g>
+        
+        <g transform="translate(350, 350)">
+            <!-- Mid-Level Skills -->
+            <g transform="translate(-40, 50)">
+                <rect width="100" height="30" rx="15" fill="#ffffff" stroke="url(#gradientSecondary)" stroke-width="2"></rect>
+                <text x="50" y="20" font-family="Arial" font-size="12" fill="#0f172a" text-anchor="middle">React</text>
+            </g>
+            
+            <g transform="translate(-20, 90)">
+                <rect width="100" height="30" rx="15" fill="#ffffff" stroke="url(#gradientSecondary)" stroke-width="2"></rect>
+                <text x="50" y="20" font-family="Arial" font-size="12" fill="#0f172a" text-anchor="middle">Node.js</text>
+            </g>
+        </g>
+        
+        <g transform="translate(600, 350)">
+            <!-- Senior Skills -->
+            <g transform="translate(-40, 50)">
+                <rect width="100" height="30" rx="15" fill="#ffffff" stroke="url(#gradientTertiary)" stroke-width="2"></rect>
+                <text x="50" y="20" font-family="Arial" font-size="12" fill="#0f172a" text-anchor="middle">Architect</text>
+            </g>
+            
+            <g transform="translate(-20, 90)">
+                <rect width="100" height="30" rx="15" fill="#ffffff" stroke="url(#gradientTertiary)" stroke-width="2"></rect>
+                <text x="50" y="20" font-family="Arial" font-size="12" fill="#0f172a" text-anchor="middle">Leadership</text>
+            </g>
+        </g>
+        
+        <!-- Title -->
+        <text x="400" y="50" font-family="Arial" font-size="24" font-weight="bold" fill="#0f172a" text-anchor="middle">Karrier Útvonal</text>
+        <text x="400" y="80" font-family="Arial" font-size="16" fill="#64748b" text-anchor="middle">Építse fel szakmai karrierjét lépésről lépésre</text>
+    </g>
+</svg>
