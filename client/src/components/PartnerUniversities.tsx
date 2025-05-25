@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import elteImage from "../assets/ELTE.png";
 import corvinusImage from "../assets/corvinus_logo_angol_sz_transparent.png";
 import bmeImage from "../assets/bme.png";
+import miskolciImage from "../assets/miskolci.png";
+import otpBankImage from "../assets/otp_bank.png";
 
 const PartnerUniversities: React.FC = () => {
   return (
@@ -29,13 +31,16 @@ const PartnerUniversities: React.FC = () => {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.1 }}
               whileHover={{ scale: 1.1 }}
-              className="cursor-pointer"
+              className="cursor-pointer rounded-lg bg-white/20 backdrop-blur-sm p-2 flex items-center justify-center"
+              style={{ height: "44px" }}
             >
-              <img 
-                src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" 
-                alt="Google logó" 
-                className="h-7 object-contain brightness-200"
-              />
+              <div className="bg-white rounded-md px-3 py-1.5 flex items-center justify-center">
+                <img 
+                  src={miskolciImage} 
+                  alt="Miskolci Egyetem logó" 
+                  className="h-8 object-contain"
+                />
+              </div>
             </motion.div>
             <motion.div
               initial={{ opacity: 0 }}
@@ -74,13 +79,16 @@ const PartnerUniversities: React.FC = () => {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.4 }}
               whileHover={{ scale: 1.1 }}
-              className="cursor-pointer"
+              className="cursor-pointer rounded-lg bg-white/20 backdrop-blur-sm p-2 flex items-center justify-center"
+              style={{ height: "44px" }}
             >
-              <img 
-                src="https://upload.wikimedia.org/wikipedia/commons/5/51/IBM_logo.svg" 
-                alt="IBM logó" 
-                className="h-7 object-contain brightness-200"
-              />
+              <div className="bg-white rounded-md px-3 py-1.5 flex items-center justify-center">
+                <img 
+                  src={otpBankImage} 
+                  alt="OTP Bank logó" 
+                  className="h-8 object-contain"
+                />
+              </div>
             </motion.div>
           </div>
         </motion.div>
