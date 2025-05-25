@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import elteImage from "../assets/ELTE.png";
 import bmeImage from "../assets/bme.png";
+import corvinusImage from "../assets/corvinus_logo_angol_sz_transparent.png";
 
 const degreePrograms = [
   {
@@ -33,7 +34,7 @@ const degreePrograms = [
   {
     id: 4,
     university: "Corvinus Egyetem",
-    universityLogo: "https://www.uni-corvinus.hu/wp-content/uploads/2020/02/corvinus-logo.png",
+    universityLogo: corvinusImage,
     title: "MSc Vezetés és Szervezés",
     image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300",
     type: "Diploma"
