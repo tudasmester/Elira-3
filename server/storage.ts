@@ -41,17 +41,13 @@ export interface IStorage {
 
 export class DatabaseStorage implements IStorage {
   // User operations
-  async getUser(id: number): Promise<User | undefined> {
+  async getUser(id: string): Promise<User | undefined> {
     const results = await db.select().from(users).where(eq(users.id, id)).limit(1);
-    return results.length > 0 ? results[0] : undefined;
-  }
-
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    const results = await db.select().from(users).where(eq(users.username, username)).limit(1);
     return results.length > 0 ? results[0] : undefined;
   }
   
   async getUserByEmail(email: string): Promise<User | undefined> {
+    if (!email) return undefined;
     const results = await db.select().from(users).where(eq(users.email, email)).limit(1);
     return results.length > 0 ? results[0] : undefined;
   }
@@ -59,6 +55,21 @@ export class DatabaseStorage implements IStorage {
   async createUser(insertUser: InsertUser): Promise<User> {
     const results = await db.insert(users).values(insertUser).returning();
     return results[0];
+  }
+  
+  async upsertUser(userData: UpsertUser): Promise<User> {
+    const [user] = await db
+      .insert(users)
+      .values(userData)
+      .onConflictDoUpdate({
+        target: users.id,
+        set: {
+          ...userData,
+          updatedAt: new Date(),
+        },
+      })
+      .returning();
+    return user;
   }
   
   // Course operations

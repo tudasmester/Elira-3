@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button";
 import { 
   ChevronDown, Search, BookOpen, GraduationCap, 
   BarChart, Code, Database, School, HeartPulse, 
-  Briefcase, Menu, X, Globe, Calculator
+  Briefcase, Menu, X, Globe, Calculator, UserCircle,
+  LogOut
 } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 import { Input } from "@/components/ui/input";
 import { 
   DropdownMenu,
