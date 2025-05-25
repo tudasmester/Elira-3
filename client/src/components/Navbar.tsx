@@ -37,7 +37,8 @@ const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto">
         {/* Main Navigation */}
         <div className="flex items-center justify-between px-4 py-3">
-          <div className="flex items-center">
+          {/* Logo */}
+          <div className="flex-shrink-0">
             <Link href="/" className="flex items-center">
               <img src={logo} alt="Academion logo" className="h-8" />
             </Link>
@@ -55,9 +56,12 @@ const Navbar: React.FC = () => {
                 )}
               </button>
             )}
-            
-            {!isMobile && (
-              <nav className="ml-6 hidden md:flex space-x-1">
+          </div>
+          
+          {/* Centered Navigation */}
+          {!isMobile && (
+            <div className="flex-1 flex justify-center">
+              <nav className="flex space-x-1">
                 <Link href="/courses" className={`flex items-center px-3 py-2 rounded-md text-sm font-medium ${
                   isActive("/courses") 
                     ? "text-primary bg-primary/5" 
@@ -101,10 +105,11 @@ const Navbar: React.FC = () => {
                   <Badge className="ml-2 bg-purple-100 text-purple-800 text-[10px] py-0 px-1.5">Új</Badge>
                 </Link>
               </nav>
-            )}
-          </div>
+            </div>
+          )}
           
-          <div className="flex items-center space-x-1 md:space-x-4">
+          {/* Right Side Auth Buttons */}
+          <div className="flex-shrink-0 flex items-center space-x-1 md:space-x-4">
             {!isMobile && !isLoading && (
               <>
                 {isAuthenticated ? (
