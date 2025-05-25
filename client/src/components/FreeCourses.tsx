@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import elteImage from "../assets/ELTE.png";
 import bmeImage from "../assets/bme.png";
+import { Link } from "wouter";
 
 const freeCourses = [
   {
@@ -101,13 +102,15 @@ const FreeCourses: React.FC = () => {
                       {course.type}
                     </span>
                     
-                    <motion.div
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                      className="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center cursor-pointer"
-                    >
-                      <ArrowRight className="h-4 w-4 text-primary" />
-                    </motion.div>
+                    <Link href={`/course/${course.id}`}>
+                      <motion.div
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        className="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center cursor-pointer"
+                      >
+                        <ArrowRight className="h-4 w-4 text-primary" />
+                      </motion.div>
+                    </Link>
                   </div>
                 </div>
               </motion.div>

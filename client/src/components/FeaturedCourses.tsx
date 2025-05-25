@@ -3,6 +3,7 @@ import { ChevronRight, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { courses } from "@/data/courses";
 import { motion } from "framer-motion";
+import { Link } from "wouter";
 
 const FeaturedCourses: React.FC = () => {
   return (
@@ -34,10 +35,10 @@ const FeaturedCourses: React.FC = () => {
                 </div>
                 <h3 className="text-lg font-bold text-neutral-800 mb-2">{course.title}</h3>
                 <p className="text-sm text-neutral-500 mb-4">Tanfolyam</p>
-                <a href="#" className="inline-flex items-center font-medium text-primary hover:underline text-sm">
+                <Link href={`/course/${course.id}`} className="inline-flex items-center font-medium text-primary hover:underline text-sm">
                   További részletek
                   <ChevronRight className="ml-1 h-3 w-3" />
-                </a>
+                </Link>
               </div>
             </motion.div>
           ))}

@@ -27,7 +27,7 @@ const NewsletterCTA: React.FC = () => {
   };
 
   return (
-    <section className="bg-gradient-to-r from-primary to-secondary py-16">
+    <section className="bg-gradient-to-r from-primary to-teal-600 py-16">
       <div className="max-w-4xl mx-auto px-4 text-center text-white">
         <motion.h2 
           initial={{ opacity: 0, y: 20 }}
