@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import elteImage from "../assets/ELTE.png";
 import corvinusImage from "../assets/corvinus_logo_angol_sz_transparent.png";
 import bmeImage from "../assets/bme.png";
-import miskolciImage from "../assets/miskolci.png";
+import miskolciImage from "../assets/miskolci_new.png";
 import otpBankImage from "../assets/otp_bank.png";
 
 const PartnerUniversities: React.FC = () => {
