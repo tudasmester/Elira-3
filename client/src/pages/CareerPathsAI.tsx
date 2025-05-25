@@ -1,5 +1,4 @@
 import React from "react";
-import Layout from "@/components/Layout";
 import AICareerPathVisualization from "@/components/AICareerPathVisualization";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
@@ -10,7 +9,7 @@ const CareerPathsAI: React.FC = () => {
   const [, setLocation] = useLocation();
 
   return (
-    <Layout>
+    <>
       {/* Hero Section */}
       <section className="pt-24 pb-12 bg-gradient-to-br from-indigo-50 via-white to-purple-50 relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-indigo-900/5 to-transparent"></div>
@@ -122,7 +121,7 @@ const CareerPathsAI: React.FC = () => {
       </div>
       
       {/* Additional content could be added here */}
-    </Layout>
+    </>
   );
 };
 
