@@ -31,7 +31,8 @@ import {
 import bmeImage from "../assets/bme.png";
 import elteImage from "../assets/ELTE.png";
 import corvinusImage from "../assets/corvinus_logo_angol_sz_transparent.png";
-import academionImage from "../assets/academion (3).png";
+// Using a placeholder for the Academion logo
+const academionImage = "https://placehold.co/200x200/teal/white?text=A";
 
 // Define trending topics
 const trendingTopics = [
