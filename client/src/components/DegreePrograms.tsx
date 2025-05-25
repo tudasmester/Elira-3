@@ -3,12 +3,13 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import elteImage from "../assets/ELTE.png";
+import bmeImage from "../assets/bme.png";
 
 const degreePrograms = [
   {
     id: 1,
     university: "Budapesti Műszaki és Gazdaságtudományi Egyetem",
-    universityLogo: "https://www.bme.hu/sites/default/files/hirek/BME-logo-2022-HU-blue.png",
+    universityLogo: bmeImage,
     title: "BSc Gazdasági Informatika",
     image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300",
     type: "Diploma"
@@ -16,7 +17,7 @@ const degreePrograms = [
   {
     id: 2,
     university: "Budapesti Műszaki és Gazdaságtudományi Egyetem",
-    universityLogo: "https://www.bme.hu/sites/default/files/hirek/BME-logo-2022-HU-blue.png",
+    universityLogo: bmeImage,
     title: "BSc Számítógépes Tudományok",
     image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300",
     type: "Diploma"
@@ -24,7 +25,7 @@ const degreePrograms = [
   {
     id: 3,
     university: "Eötvös Loránd Tudományegyetem",
-    universityLogo: "https://www.elte.hu/media/d3/03/8414d9b52afbc0ec63c2198c2c0cda24df9c02d3e21cce1320a9a71eee17/elte_cimer_color.svg",
+    universityLogo: elteImage,
     title: "BSc Marketing",
     image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300",
     type: "Diploma"
@@ -50,8 +51,8 @@ const DegreePrograms: React.FC = () => {
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
           >
-            <h3 className="text-sm text-indigo-600 font-medium mb-2">Diplomát adó programok</h3>
-            <h2 className="text-2xl md:text-3xl font-bold text-indigo-900 mb-4">Találja meg az Önnek megfelelő felsőfokú végzettséget</h2>
+            <h3 className="text-sm text-primary font-medium mb-2">Diplomát adó programok</h3>
+            <h2 className="text-2xl md:text-3xl font-bold text-primary-900 mb-4">Találja meg az Önnek megfelelő felsőfokú végzettséget</h2>
             <p className="text-neutral-600 mb-8">Verhetetlen árak a legjobb egyetemek 100%-ban online diplomáira.</p>
           </motion.div>
           
