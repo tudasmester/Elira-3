@@ -51,7 +51,7 @@ const Hero: React.FC = () => {
                   onClick={handleJoinClick}
                   variant="default" 
                   size="lg" 
-                  className="text-base font-medium bg-gradient-to-r from-primary to-purple-600 text-white hover:opacity-90 shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="text-base font-medium bg-gradient-to-r from-primary to-teal-500 text-white hover:opacity-90 shadow-lg hover:shadow-xl transition-all duration-300"
                 >
                   Csatlakozzon ingyen
                 </Button>
@@ -95,7 +95,7 @@ const Hero: React.FC = () => {
                 initial={{ opacity: 0, x: -30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.6, duration: 0.5 }}
-                className="absolute top-10 -left-8 z-30 bg-gradient-to-r from-purple-500 to-purple-400 text-white p-4 rounded-xl shadow-lg"
+                className="absolute top-10 -left-8 z-30 bg-gradient-to-r from-teal-600 to-teal-500 text-white p-4 rounded-xl shadow-lg"
                 whileHover={{ 
                   scale: 1.05,
                   rotate: -2 
@@ -126,7 +126,7 @@ const Hero: React.FC = () => {
                   {[40, 65, 30, 85, 55, 70, 20, 90, 45, 60].map((height, i) => (
                     <div 
                       key={i} 
-                      className="w-1.5 bg-indigo-600 rounded-full"
+                      className="w-1.5 bg-primary rounded-full"
                       style={{ height: `${height}%` }}
                     ></div>
                   ))}
