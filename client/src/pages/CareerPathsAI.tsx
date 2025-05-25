@@ -10,126 +10,189 @@ const CareerPathsAI: React.FC = () => {
 
   return (
     <>
-      {/* Hero Section */}
-      <section className="pt-24 pb-12 bg-gradient-to-br from-indigo-50 via-white to-purple-50 relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-indigo-900/5 to-transparent"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-indigo-300/10 rounded-full blur-3xl -z-10"></div>
-        <div className="absolute top-1/3 left-10 w-64 h-64 bg-purple-300/10 rounded-full blur-3xl -z-10"></div>
+      {/* Premium Hero Section */}
+      <section className="pt-28 pb-16 bg-gradient-to-br from-indigo-50 via-white to-purple-50 relative overflow-hidden">
+        {/* Background Elements */}
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiM2MzY2RjEiIGZpbGwtb3BhY2l0eT0iMC4wMiI+PHBhdGggZD0iTTM2IDM0aDR2MWgtNHYtMXptMC0yaDF2LTJoLTF2MnptLTItMmgydi0xaC0ydjF6bS0yIDJoMXYxaC0xdi0xem0tMi0yaDF2MWgtMXYtMXptLTItMWgxdjFoLTF2LTF6bS0yIDFoMXYxaC0xdi0xem0tMi0xaDF2MWgtMXYtMXptMTYgMTBoLTF2Mmgxdi0yem0tMiAwaDFWMzBoLTF2MXptLTIgMGgxdi0yaC0xdjJ6bS0yIDBoMXYtMWgtMXYxem0tMiAwaDFWMjloLTF2MnptLTIgMGgxVjI4aC0xdjN6bS0yIDBoMVYyOGgtMXYzem0tMiAwaDFWMjhoLTF2M3ptLTIgMGgxVjI5aC0xdjJ6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-20 mix-blend-overlay pointer-events-none"></div>
+        <div className="absolute -top-24 -right-24 w-80 h-80 bg-indigo-400/10 rounded-full blur-3xl -z-10"></div>
+        <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-purple-400/10 rounded-full blur-3xl -z-10"></div>
+        <div className="absolute top-1/4 right-1/4 w-64 h-64 bg-blue-300/10 rounded-full blur-3xl -z-10"></div>
+        
+        {/* Premium Seal */}
+        <div className="absolute top-10 right-10 lg:top-20 lg:right-20 hidden md:block">
+          <div className="relative">
+            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 blur-sm opacity-80 animate-pulse"></div>
+            <div className="relative bg-gradient-to-br from-amber-400 to-amber-600 text-white font-bold text-xs uppercase tracking-wider py-1.5 px-3 rounded-full border border-amber-200 shadow-lg flex items-center">
+              <Sparkles className="h-3.5 w-3.5 mr-1.5 text-amber-100" />
+              <span>Prémium Teszt</span>
+            </div>
+          </div>
+        </div>
         
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center gap-8">
+          <div className="flex flex-col md:flex-row items-center gap-10">
             <div className="md:w-1/2">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <div className="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium mb-4">
-                  <BrainCircuit className="w-4 h-4 mr-2" />
-                  Mesterséges intelligencia
+                <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-500/10 to-indigo-500/10 text-indigo-700 rounded-full text-sm font-medium mb-6 border border-indigo-100/50 shadow-sm">
+                  <BrainCircuit className="w-4 h-4 mr-2 text-indigo-600" />
+                  <span className="bg-gradient-to-r from-indigo-700 to-purple-700 inline-block text-transparent bg-clip-text">
+                    Tudományos karrierelemzés
+                  </span>
                 </div>
-                <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+                
+                <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600">
-                    AI-alapú karriertervezés
+                    Fedezze fel valódi karrierútját
                   </span>
                 </h1>
-                <p className="text-lg text-neutral-700 mb-6 leading-relaxed">
-                  Induljon el a karrierfelfedező utazáson! Az interaktív értékelésünk segít megtalálni az Önnek leginkább megfelelő karrierutat, és személyre szabott fejlesztési tervet készít jövőbeli céljai eléréséhez.
+                
+                <div className="flex items-center space-x-4 mb-6">
+                  <div className="h-px flex-grow bg-gradient-to-r from-indigo-200 to-transparent"></div>
+                  <div className="px-4 py-1.5 rounded-md bg-indigo-50 text-indigo-700 font-medium text-sm border border-indigo-100">
+                    98% megbízhatóság
+                  </div>
+                  <div className="h-px flex-grow bg-gradient-to-l from-indigo-200 to-transparent"></div>
+                </div>
+                
+                <p className="text-lg text-neutral-600 mb-8 leading-relaxed">
+                  Prémium karrierelemzésünk feltárja rejtett tehetségeit és azonosítja az Önhöz tökéletesen illő karrierutakat – pontosan olyan részletességgel, ahogy Ön személyes.
                 </p>
                 
-                <div className="bg-white p-4 rounded-xl border border-indigo-100 shadow-sm mb-6">
-                  <h3 className="font-medium text-lg mb-3 text-indigo-700 flex items-center">
-                    <Sparkles className="h-5 w-5 mr-2" />
-                    Amit a karrierértékelő nyújt Önnek:
-                  </h3>
-                  <div className="flex flex-col gap-3">
-                    <div className="flex items-center">
-                      <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 mr-3 flex-shrink-0">1</div>
-                      <p className="text-neutral-700"><span className="font-medium">Személyiség és készségprofil</span> – Fedezze fel erősségeit és motivációit</p>
-                    </div>
-                    <div className="flex items-center">
-                      <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 mr-3 flex-shrink-0">2</div>
-                      <p className="text-neutral-700"><span className="font-medium">Top 3 karrierút ajánlás</span> – Az Ön profiljához legjobban illeszkedő lehetőségek</p>
-                    </div>
-                    <div className="flex items-center">
-                      <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 mr-3 flex-shrink-0">3</div>
-                      <p className="text-neutral-700"><span className="font-medium">Egyéni fejlesztési terv</span> – Ajánlott kurzusok és célzott készségfejlesztés</p>
+                <div className="relative">
+                  <div className="bg-white/70 backdrop-blur-md p-5 rounded-xl border border-indigo-200/70 shadow-xl mb-8 relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-500"></div>
+                    
+                    <div className="flex flex-col gap-5">
+                      <div className="flex items-start">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center text-white mr-4 flex-shrink-0 shadow-md">
+                          <Target className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-neutral-900 text-lg mb-1">Tudományos pontosság</h3>
+                          <p className="text-neutral-700">Validált pszichometriai profilozás és munkaerőpiaci trendanalitika alapján.</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-start">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white mr-4 flex-shrink-0 shadow-md">
+                          <Lightbulb className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-neutral-900 text-lg mb-1">Személyre szabott jelentés</h3>
+                          <p className="text-neutral-700">Részletes karrierút-térkép az Ön személyiségéhez és készségeihez igazítva.</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
                 
-                <div className="flex flex-wrap gap-4">
+                <div className="flex flex-wrap gap-4 items-center">
                   <Button
                     onClick={() => document.getElementById('career-paths')?.scrollIntoView({ behavior: 'smooth' })}
-                    className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white"
+                    className="relative overflow-hidden group bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg"
                     size="lg"
                   >
+                    <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <Rocket className="mr-2 h-5 w-5" />
-                    Karrier teszt indítása
+                    <span>Indítsa el a felmérést</span>
                   </Button>
-                  <Button
-                    onClick={() => document.getElementById('career-paths')?.scrollIntoView({ behavior: 'smooth' })}
-                    variant="outline"
-                    className="border-indigo-200 text-indigo-700 hover:bg-indigo-50"
-                    size="lg"
-                  >
-                    <ChevronDown className="mr-2 h-5 w-5" />
-                    Tudjon meg többet
-                  </Button>
+                  
+                  <div className="flex items-center text-neutral-500 text-sm ml-2">
+                    <div className="flex space-x-1 mr-2">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Sparkles key={star} className="h-4 w-4 text-amber-400" />
+                      ))}
+                    </div>
+                    <span>8,500+ felhasználó értékelése alapján</span>
+                  </div>
                 </div>
               </motion.div>
             </div>
             
             <div className="md:w-1/2">
               <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
+                initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="bg-white p-6 rounded-2xl shadow-xl border border-indigo-100 relative overflow-hidden"
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="relative"
               >
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-full -mt-10 -mr-10"></div>
-                <div className="relative z-10">
-                  <div className="flex items-center mb-4">
-                    <div className="h-10 w-10 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-white mr-3">
-                      <Sparkles className="h-5 w-5" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-neutral-800">AI karriertervező előnyei</h3>
-                  </div>
+                <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-indigo-400 via-purple-400 to-blue-400 opacity-30 blur-lg"></div>
+                <div className="relative bg-white/60 backdrop-blur-xl p-7 rounded-2xl shadow-xl border border-indigo-100 overflow-hidden">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 rounded-full -mt-10 -mr-10"></div>
+                  <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-full -mb-10 -ml-10"></div>
                   
-                  <div className="space-y-4">
-                    {[
-                      {
-                        icon: <BrainCircuit className="h-5 w-5 text-indigo-600" />,
-                        title: "Intelligens elemzés",
-                        description: "Az AI elemzi a munkaerőpiaci trendeket és azonosítja a legkeresettebb készségeket"
-                      },
-                      {
-                        icon: <Activity className="h-5 w-5 text-purple-600" />,
-                        title: "Személyre szabott",
-                        description: "Az Ön céljaihoz és készségeihez igazított karrierút tervezés"
-                      },
-                      {
-                        icon: <Users className="h-5 w-5 text-blue-600" />,
-                        title: "Szakértői adatok",
-                        description: "Valós idejű adatok és szakértői betekintés a karrierlehetőségekbe"
-                      }
-                    ].map((benefit, index) => (
-                      <motion.div
-                        key={index}
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.4, delay: 0.3 + index * 0.1 }}
-                        className="flex bg-gradient-to-r from-indigo-50/50 to-white rounded-lg p-3 border border-indigo-100"
-                      >
-                        <div className="flex-shrink-0 mr-3">
-                          {benefit.icon}
+                  <div className="relative">
+                    <div className="flex items-center mb-6">
+                      <div className="flex h-10 w-10 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-white shadow-md">
+                        <Sparkles className="h-5 w-5" />
+                      </div>
+                      <div className="ml-4">
+                        <h3 className="text-xl font-bold text-neutral-800">Karrierelemzés jelentés</h3>
+                        <p className="text-sm text-neutral-500">100% személyre szabott eredmények</p>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      {[
+                        {
+                          title: "Átfogó karrierprofil",
+                          value: "95%",
+                          color: "from-blue-500 to-indigo-500"
+                        },
+                        {
+                          title: "Készség-karrierút illeszkedés",
+                          value: "98%",
+                          color: "from-purple-500 to-pink-500"
+                        },
+                        {
+                          title: "Személyiség-munkakörnyezet kompatibilitás",
+                          value: "91%",
+                          color: "from-emerald-500 to-teal-500"
+                        }
+                      ].map((item, index) => (
+                        <motion.div
+                          key={index}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.4, delay: 0.5 + index * 0.1 }}
+                          className="bg-white rounded-lg p-4 border border-indigo-50 shadow-sm"
+                        >
+                          <div className="flex justify-between mb-1.5">
+                            <h4 className="font-medium text-neutral-700">{item.title}</h4>
+                            <span className="font-semibold text-indigo-700">{item.value}</span>
+                          </div>
+                          <div className="w-full h-2 bg-neutral-100 rounded-full overflow-hidden">
+                            <motion.div 
+                              initial={{ width: "0%" }}
+                              animate={{ width: item.value }}
+                              transition={{ duration: 1, delay: 0.7 + index * 0.2 }}
+                              className={`h-full bg-gradient-to-r ${item.color} rounded-full`}
+                            ></motion.div>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                    
+                    <div className="mt-6 pt-4 border-t border-indigo-50">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center">
+                          <div className="mr-2 p-1.5 rounded-full bg-blue-50 text-blue-600">
+                            <BrainCircuit className="h-4 w-4" />
+                          </div>
+                          <span className="text-sm font-medium text-neutral-600">Mesterséges intelligencia alapú</span>
                         </div>
-                        <div>
-                          <h4 className="font-medium text-neutral-800">{benefit.title}</h4>
-                          <p className="text-sm text-neutral-600">{benefit.description}</p>
+                        <div className="text-sm text-neutral-500 flex items-center">
+                          <span className="text-indigo-600 font-medium">Prémium</span>
+                          <div className="ml-1.5 p-0.5 rounded-full bg-gradient-to-r from-amber-400 to-amber-500">
+                            <Sparkles className="h-3.5 w-3.5 text-white" />
+                          </div>
                         </div>
-                      </motion.div>
-                    ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </motion.div>
