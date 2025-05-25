@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button-variant";
 import { motion, useAnimation } from "framer-motion";
 import { useLocation } from "wouter";
 import heroImage from "@assets/academion (3).png";
-import { Check, ArrowRight, Play, Sparkles, GraduationCap } from "lucide-react";
+import { Check, ArrowRight, Play, Sparkles, GraduationCap, Clock, Users } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
 const Hero: React.FC = () => {
@@ -34,17 +34,21 @@ const Hero: React.FC = () => {
   };
 
   return (
-    <section className="bg-gradient-to-br from-teal-50 via-blue-50 to-teal-50 text-neutral-900 relative overflow-hidden pt-10 pb-24 md:pt-16 md:pb-32">
+    <section className="relative overflow-hidden pt-10 pb-24 md:pt-16 md:pb-32">
       {/* Background decorative elements */}
       <div className="absolute inset-0 w-full h-full z-0">
-        <div className="absolute right-0 w-3/4 h-3/4 bg-gradient-to-bl from-blue-100/30 to-transparent rounded-full blur-3xl transform translate-x-1/4 -translate-y-1/4"></div>
-        <div className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-gradient-to-tr from-teal-100/20 to-transparent rounded-full blur-3xl"></div>
-        <div className="absolute top-1/4 left-1/4 w-24 h-24 bg-yellow-100/20 rounded-full blur-2xl"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-32 h-32 bg-purple-100/20 rounded-full blur-2xl"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-primary/10 to-teal-500/10 opacity-80"></div>
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQ0MCIgaGVpZ2h0PSI0MDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiIGlkPSJhIj48c3RvcCBzdG9wLWNvbG9yPSIjRkZGIiBvZmZzZXQ9IjAlIi8+PHN0b3Agc3RvcC1jb2xvcj0iI0ZGRiIgc3RvcC1vcGFjaXR5PSIwIiBvZmZzZXQ9IjEwMCUiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cGF0aCBkPSJNMCAwaDcyMHY0MDBIMHoiIGZpbGw9InVybCgjYSkiIGZpbGwtcnVsZT0iZXZlbm9kZCIgZmlsbC1vcGFjaXR5PSIuMDUiLz48L3N2Zz4=')] bg-center bg-no-repeat opacity-100"></div>
+        
+        {/* Main decorative blurs */}
+        <div className="absolute -top-64 -right-24 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-64 -left-24 w-[600px] h-[600px] bg-teal-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/3 w-32 h-32 bg-yellow-400/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/3 right-1/4 w-48 h-48 bg-purple-500/10 rounded-full blur-3xl"></div>
         
         {/* Floating decorative elements */}
         <motion.div 
-          className="absolute top-20 left-[20%] w-8 h-8 bg-primary/10 rounded-full"
+          className="absolute top-20 left-[20%] w-10 h-10 bg-primary/10 rounded-full"
           animate={{ 
             y: [0, -15, 0],
             opacity: [0.5, 1, 0.5]
@@ -56,7 +60,7 @@ const Hero: React.FC = () => {
           }}
         />
         <motion.div 
-          className="absolute bottom-32 right-[15%] w-6 h-6 bg-secondary/10 rounded-full"
+          className="absolute bottom-32 right-[15%] w-8 h-8 bg-teal-500/10 rounded-full"
           animate={{ 
             y: [0, -12, 0],
             opacity: [0.7, 1, 0.7]
@@ -68,6 +72,37 @@ const Hero: React.FC = () => {
             delay: 1 
           }}
         />
+        
+        {/* Animated accent lines */}
+        <div className="absolute top-1/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent">
+          <motion.div 
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/40 to-transparent"
+            animate={{
+              opacity: [0, 1, 0],
+              x: [-100, 0, 100]
+            }}
+            transition={{
+              repeat: Infinity,
+              duration: 5,
+              ease: "linear"
+            }}
+          />
+        </div>
+        <div className="absolute bottom-1/3 left-0 w-full h-px bg-gradient-to-r from-transparent via-teal-500/20 to-transparent">
+          <motion.div 
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-teal-500/40 to-transparent"
+            animate={{
+              opacity: [0, 1, 0],
+              x: [-100, 0, 100]
+            }}
+            transition={{
+              repeat: Infinity,
+              duration: 6,
+              ease: "linear",
+              delay: 2
+            }}
+          />
+        </div>
       </div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -76,19 +111,23 @@ const Hero: React.FC = () => {
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.6 }}
-          className="bg-white/80 backdrop-blur-sm border border-neutral-200/50 rounded-full p-2 mb-12 shadow-lg max-w-3xl mx-auto flex flex-wrap justify-center sm:justify-between items-center"
+          className="bg-white/90 backdrop-blur-md border border-neutral-200/50 rounded-2xl p-3 mb-12 shadow-xl max-w-3xl mx-auto flex flex-wrap justify-center sm:justify-between items-center"
         >
           <div className="flex items-center space-x-6 px-4">
             <div className="flex items-center text-sm">
-              <Sparkles className="h-4 w-4 text-yellow-500 mr-2" />
-              <span className="font-medium">500+ kurzus</span>
+              <div className="bg-amber-100 p-2 rounded-full">
+                <Sparkles className="h-4 w-4 text-amber-500" />
+              </div>
+              <span className="font-medium ml-2">500+ kurzus</span>
             </div>
             <div className="flex items-center text-sm">
-              <GraduationCap className="h-4 w-4 text-primary mr-2" />
-              <span className="font-medium">5 partneri egyetem</span>
+              <div className="bg-primary/10 p-2 rounded-full">
+                <GraduationCap className="h-4 w-4 text-primary" />
+              </div>
+              <span className="font-medium ml-2">5 partneri egyetem</span>
             </div>
           </div>
-          <div className="text-xs bg-green-100 text-green-800 rounded-full px-3 py-1 font-medium">
+          <div className="text-sm bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-full px-4 py-1.5 font-medium shadow-sm">
             Új: AI-alapú tanulási segéd most elérhető!
           </div>
         </motion.div>
@@ -100,36 +139,57 @@ const Hero: React.FC = () => {
             animate={controls}
             className="lg:w-1/2 lg:pr-6"
           >
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-neutral-900">
-              Tanulás a<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-teal-500">
-                jövő számára
-              </span>
-            </h1>
+            <div className="relative">
+              <div className="absolute -left-8 -top-8 w-16 h-16 bg-blue-200/30 rounded-full blur-xl"></div>
+              <div className="absolute -right-8 -bottom-4 w-24 h-24 bg-primary/20 rounded-full blur-xl"></div>
+              
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-8 text-neutral-900">
+                <span className="relative inline-block">
+                  Tanulás a
+                  <div className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-blue-300 to-primary/30 rounded-full"></div>
+                </span>
+                <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-primary to-teal-500">
+                  jövő számára
+                </span>
+              </h1>
+            </div>
             
-            <p className="text-lg mb-6 max-w-lg text-neutral-700 leading-relaxed">
+            <p className="text-lg mb-8 max-w-lg text-neutral-700 leading-relaxed">
               Az Academion összeköti Önt Magyarország vezető egyetemeivel és oktatóival. 
               Fedezzen fel szakértői tudást, szerezzen elismert képesítéseket, és fejlessze karrierjét.
             </p>
             
             {/* Features list */}
-            <div className="mb-8 space-y-3">
+            <div className="mb-8 space-y-4">
               {[
-                "Elismert magyar egyetemek által hitelesített bizonyítványok",
-                "Személyre szabott tanulási tapasztalat",
-                "Rugalmas tanulási ütemterv az Ön időbeosztásához igazítva"
+                {
+                  text: "Elismert magyar egyetemek által hitelesített bizonyítványok",
+                  icon: <GraduationCap className="h-5 w-5" />
+                },
+                {
+                  text: "Személyre szabott tanulási tapasztalat",
+                  icon: <Sparkles className="h-5 w-5" />
+                },
+                {
+                  text: "Rugalmas tanulási ütemterv az Ön időbeosztásához igazítva",
+                  icon: <Clock className="h-5 w-5" />
+                }
               ].map((feature, index) => (
                 <motion.div 
                   key={index}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.1 * index + 0.5 }}
-                  className="flex items-start"
+                  whileHover={{ x: 3 }}
+                  className="flex items-start p-3 bg-white/70 backdrop-blur-sm rounded-xl border border-neutral-100 shadow-sm hover:shadow-md transition-all duration-300"
                 >
-                  <div className="flex-shrink-0 mt-1">
-                    <Check className="h-5 w-5 text-primary" />
+                  <div className="flex-shrink-0 mr-3 h-10 w-10 bg-gradient-to-br from-primary/20 to-blue-500/20 rounded-full flex items-center justify-center">
+                    <div className="text-primary">
+                      {feature.icon}
+                    </div>
                   </div>
-                  <p className="ml-3 text-neutral-700">{feature}</p>
+                  <p className="text-neutral-700 font-medium mt-1">{feature.text}</p>
                 </motion.div>
               ))}
             </div>
@@ -139,15 +199,19 @@ const Hero: React.FC = () => {
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                className="relative"
               >
+                {/* Decorative animation behind primary button */}
+                <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-primary/50 to-blue-500/50 blur-lg opacity-70 animate-pulse"></div>
+                
                 <Button 
                   onClick={handleJoinClick}
                   variant="default" 
                   size="lg" 
-                  className="text-base font-medium bg-gradient-to-r from-primary to-teal-500 text-white hover:opacity-90 shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="relative text-base font-medium bg-gradient-to-r from-primary to-blue-600 text-white hover:opacity-90 shadow-lg hover:shadow-xl transition-all duration-300 border-0 py-6 px-8"
                 >
                   {isAuthenticated ? "Irányítópult" : "Csatlakozzon ingyen"}
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </motion.div>
               
@@ -159,22 +223,22 @@ const Hero: React.FC = () => {
                   onClick={handleExploreClick}
                   variant="outline" 
                   size="lg" 
-                  className="text-base font-medium border-neutral-300 text-neutral-700 hover:bg-neutral-50 transition-all duration-300"
+                  className="text-base font-medium bg-white/80 backdrop-blur-sm border-neutral-200 text-neutral-800 hover:bg-white hover:border-primary/50 hover:text-primary transition-all duration-300 py-6 px-8"
                 >
                   Kurzusok böngészése
                 </Button>
               </motion.div>
               
               <motion.button
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setIsVideoModalOpen(true)}
-                className="flex items-center text-primary font-medium hover:text-primary-dark transition-colors duration-200"
+                className="flex items-center text-primary font-medium hover:text-blue-600 transition-colors duration-200"
               >
-                <div className="bg-white p-2 rounded-full shadow-md mr-2 border border-neutral-100">
-                  <Play className="h-5 w-5 text-primary" />
+                <div className="bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-md mr-3 border border-neutral-100 hover:shadow-lg transition-all duration-300">
+                  <Play className="h-5 w-5 text-primary" fill="currentColor" />
                 </div>
-                <span>Hogyan működik?</span>
+                <span className="text-base">Hogyan működik?</span>
               </motion.button>
             </div>
             
@@ -183,19 +247,36 @@ const Hero: React.FC = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1, duration: 0.8 }}
-              className="mt-8 pt-6 border-t border-neutral-200 flex items-center"
+              className="mt-8 pt-6 border-t border-neutral-100 flex flex-col sm:flex-row sm:items-center bg-white/50 backdrop-blur-sm p-4 rounded-xl shadow-sm"
             >
-              <div className="text-sm text-neutral-500 mr-4">Több mint 50 000 tanuló megbízik bennünk</div>
-              <div className="flex -space-x-2">
-                {[1, 2, 3, 4, 5].map(i => (
-                  <div key={i} className="w-8 h-8 rounded-full bg-neutral-200 border-2 border-white overflow-hidden">
-                    <img 
-                      src={`https://randomuser.me/api/portraits/men/${i + 10}.jpg`} 
-                      alt="User" 
-                      className="w-full h-full object-cover" 
-                    />
-                  </div>
-                ))}
+              <div className="flex items-center mb-3 sm:mb-0">
+                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 mr-3">
+                  <Users className="h-5 w-5 text-blue-600" />
+                </div>
+                <div className="text-sm font-medium text-neutral-700">Több mint <span className="text-blue-600 font-bold text-base">50,000</span> tanuló megbízik bennünk</div>
+              </div>
+              <div className="sm:ml-auto flex items-center">
+                <div className="flex -space-x-2 mr-3">
+                  {[1, 2, 3, 4, 5].map(i => (
+                    <motion.div 
+                      key={i} 
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ delay: 1 + i * 0.1, duration: 0.3 }}
+                      whileHover={{ y: -3, zIndex: 10 }}
+                      className="w-8 h-8 rounded-full bg-neutral-200 border-2 border-white overflow-hidden shadow-sm relative z-0 hover:z-10"
+                    >
+                      <img 
+                        src={`https://randomuser.me/api/portraits/men/${i + 10}.jpg`} 
+                        alt="User" 
+                        className="w-full h-full object-cover" 
+                      />
+                    </motion.div>
+                  ))}
+                </div>
+                <span className="text-xs font-medium bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+                  +14.8K ezen a héten
+                </span>
               </div>
             </motion.div>
           </motion.div>
