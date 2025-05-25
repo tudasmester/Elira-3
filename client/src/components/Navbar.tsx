@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import logo from "../assets/3.png";
 
 const Navbar: React.FC = () => {
   return (
@@ -22,7 +23,7 @@ const Navbar: React.FC = () => {
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center">
             <Link href="/" className="flex items-center">
-              <span className="text-primary text-3xl font-bold font-heading">Elira</span>
+              <img src={logo} alt="Academion logo" className="h-8" />
             </Link>
             <div className="relative ml-6">
               <button className="flex items-center text-neutral-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition duration-200">

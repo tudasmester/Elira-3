@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import elteImage from "../assets/ELTE.png";
+import bmeImage from "../assets/bme.png";
 
 const freeCourses = [
   {
@@ -16,7 +17,7 @@ const freeCourses = [
   {
     id: 2,
     university: "Budapesti Műszaki és Gazdaságtudományi Egyetem",
-    universityLogo: "https://www.bme.hu/sites/default/files/hirek/BME-logo-2022-HU-blue.png",
+    universityLogo: bmeImage,
     title: "Bevezetés a statisztikába",
     image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=300",
     type: "Tanfolyam"
