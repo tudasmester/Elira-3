@@ -1,9 +1,9 @@
 import React from "react";
-import AICareerPathVisualization from "@/components/AICareerPathVisualization";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
 import { motion } from "framer-motion";
-import { BrainCircuit, Sparkles, Activity, Users, Lightbulb, Target, Rocket } from "lucide-react";
+import { BrainCircuit, Sparkles, Activity, Users, Lightbulb, Target, Rocket, ChevronDown } from "lucide-react";
+import CareerQuestionnaire from "@/components/CareerQuestionnaire";
 
 const CareerPathsAI: React.FC = () => {
   const [, setLocation] = useLocation();
@@ -34,23 +34,26 @@ const CareerPathsAI: React.FC = () => {
                   </span>
                 </h1>
                 <p className="text-lg text-neutral-700 mb-6 leading-relaxed">
-                  Találja meg az Önnek leginkább megfelelő karrierutat mindössze <span className="font-semibold text-indigo-700">3 egyszerű lépésben</span>!
-                  A mesterséges intelligencia segítségével személyre szabott ajánlásokat kap, amelyek figyelembe veszik készségeit, érdeklődését és céljait.
+                  Induljon el a karrierfelfedező utazáson! Az interaktív értékelésünk segít megtalálni az Önnek leginkább megfelelő karrierutat, és személyre szabott fejlesztési tervet készít jövőbeli céljai eléréséhez.
                 </p>
                 
                 <div className="bg-white p-4 rounded-xl border border-indigo-100 shadow-sm mb-6">
+                  <h3 className="font-medium text-lg mb-3 text-indigo-700 flex items-center">
+                    <Sparkles className="h-5 w-5 mr-2" />
+                    Amit a karrierértékelő nyújt Önnek:
+                  </h3>
                   <div className="flex flex-col gap-3">
                     <div className="flex items-center">
                       <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 mr-3 flex-shrink-0">1</div>
-                      <p className="text-neutral-700"><span className="font-medium">Adja meg készségeit és érdeklődési köreit</span> – minél részletesebben, annál pontosabb lesz az eredmény</p>
+                      <p className="text-neutral-700"><span className="font-medium">Személyiség és készségprofil</span> – Fedezze fel erősségeit és motivációit</p>
                     </div>
                     <div className="flex items-center">
                       <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 mr-3 flex-shrink-0">2</div>
-                      <p className="text-neutral-700"><span className="font-medium">Fedezze fel a javasolt karrierlehetőségeket</span> – ismerje meg a legfrissebb munkaerőpiaci trendeket</p>
+                      <p className="text-neutral-700"><span className="font-medium">Top 3 karrierút ajánlás</span> – Az Ön profiljához legjobban illeszkedő lehetőségek</p>
                     </div>
                     <div className="flex items-center">
                       <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 mr-3 flex-shrink-0">3</div>
-                      <p className="text-neutral-700"><span className="font-medium">Kapjon személyre szabott tanulási tervet</span> – részletes útmutató a sikeres karrierhez</p>
+                      <p className="text-neutral-700"><span className="font-medium">Egyéni fejlesztési terv</span> – Ajánlott kurzusok és célzott készségfejlesztés</p>
                     </div>
                   </div>
                 </div>
@@ -62,16 +65,16 @@ const CareerPathsAI: React.FC = () => {
                     size="lg"
                   >
                     <Rocket className="mr-2 h-5 w-5" />
-                    Karriertervező indítása
+                    Karrier teszt indítása
                   </Button>
                   <Button
-                    onClick={() => document.getElementById('recommended-tab')?.click()}
+                    onClick={() => document.getElementById('career-paths')?.scrollIntoView({ behavior: 'smooth' })}
                     variant="outline"
                     className="border-indigo-200 text-indigo-700 hover:bg-indigo-50"
                     size="lg"
                   >
-                    <Lightbulb className="mr-2 h-5 w-5" />
-                    Személyes ajánlások
+                    <ChevronDown className="mr-2 h-5 w-5" />
+                    Tudjon meg többet
                   </Button>
                 </div>
               </motion.div>
@@ -135,9 +138,9 @@ const CareerPathsAI: React.FC = () => {
         </div>
       </section>
 
-      {/* AI Career Path Visualization */}
+      {/* Career Questionnaire */}
       <div id="career-paths">
-        <AICareerPathVisualization />
+        <CareerQuestionnaire />
       </div>
       
       {/* Additional content could be added here */}
