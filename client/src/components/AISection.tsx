@@ -31,7 +31,10 @@ const AISection: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.4 }}
             >
-              <Button className="inline-flex items-center">
+              <Button 
+                className="inline-flex items-center"
+                onClick={() => window.location.href = '/courses?category=ai'}
+              >
                 Összes GenAI megtekintése
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>

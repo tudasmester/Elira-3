@@ -42,10 +42,15 @@ const BusinessSolutions: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
               >
-                <Button className="mb-4 bg-primary hover:bg-primary/90 text-white">Fedezze fel az Academion for Business-t</Button>
+                <Button 
+                  className="mb-4 bg-primary hover:bg-primary/90 text-white"
+                  onClick={() => window.location.href = '/business'}
+                >
+                  Fedezze fel az Academion for Business-t
+                </Button>
                 <p className="text-sm text-neutral-600">
                   Egy kis csapatot szeretne továbbképezni? 
-                  <a href="#" className="text-primary hover:underline ml-1">Az Academion for Teams megtekintése</a>
+                  <a href="/teams" className="text-primary hover:underline ml-1">Az Academion for Teams megtekintése</a>
                 </p>
               </motion.div>
             </div>

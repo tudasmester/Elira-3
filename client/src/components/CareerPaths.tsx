@@ -98,6 +98,7 @@ const CareerPaths: React.FC = () => {
                 <motion.div 
                   whileHover={{ scale: 1.03, y: -5 }}
                   className="bg-gradient-to-br from-blue-700 to-indigo-600 rounded-lg overflow-hidden flex cursor-pointer shadow-lg"
+                  onClick={() => window.location.href = '/certificate/ibm-data-science'}
                 >
                   <div className="w-2/5">
                     <img 
@@ -126,6 +127,7 @@ const CareerPaths: React.FC = () => {
                 <motion.div 
                   whileHover={{ scale: 1.03, y: -5 }}
                   className="bg-gradient-to-br from-blue-700 to-indigo-600 rounded-lg overflow-hidden flex cursor-pointer shadow-lg"
+                  onClick={() => window.location.href = '/certificate/microsoft-azure-data-scientist'}
                 >
                   <div className="w-2/5">
                     <img 
