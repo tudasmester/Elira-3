@@ -39,6 +39,7 @@ import {
   TabsList, 
   TabsTrigger 
 } from "@/components/ui/tabs";
+import SkillRadarChart from "@/components/SkillRadarChart";
 
 // Import career paths data
 import { careerPaths, careerCategories, difficultyLevels } from '@/data/careers';
@@ -398,6 +399,9 @@ const CareerDetail: React.FC = () => {
                         </Badge>
                       ))}
                     </div>
+
+                    {/* Skill Radar Chart */}
+                    <SkillRadarChart careerSkills={career.skills} className="mb-8" />
                     
                     <h3 className="text-xl font-bold text-neutral-900 mb-3">Vezető vállalatok</h3>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
