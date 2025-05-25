@@ -85,7 +85,7 @@ const DegreePrograms: React.FC = () => {
                   </div>
                   <h3 className="font-bold text-lg mb-3">{program.title}</h3>
                   
-                  <div className="flex items-center text-indigo-600 text-sm font-medium">
+                  <div className="flex items-center text-primary text-sm font-medium">
                     <svg className="w-4 h-4 mr-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                       <path d="M16.28 13.61C15.15 14.74 13.53 15.09 12.1 14.64L9.51001 17.22C9.33001 17.41 8.96001 17.53 8.69001 17.49L7.49001 17.33C7.09001 17.28 6.73001 16.9 6.67001 16.51L6.51001 15.31C6.47001 15.04 6.60001 14.68 6.78001 14.49L9.36001 11.91C8.92001 10.48 9.26001 8.86001 10.39 7.73001C12.01 6.11001 14.65 6.11001 16.28 7.73001C17.9 9.34001 17.9 11.98 16.28 13.61Z" stroke="currentColor" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
@@ -95,7 +95,7 @@ const DegreePrograms: React.FC = () => {
                     Szerezzen diplomát
                   </div>
                   <div className="mt-4">
-                    <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+                    <span className="inline-block bg-teal-100 text-primary text-xs px-2 py-1 rounded-full">
                       {program.type}
                     </span>
                   </div>
@@ -112,7 +112,7 @@ const DegreePrograms: React.FC = () => {
               <Button 
                 variant="default" 
                 size="lg" 
-                className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-md shadow-md px-6"
+                className="bg-primary hover:bg-primary/90 text-white rounded-md shadow-md px-6"
               >
                 További 8 megtekintése
               </Button>
@@ -124,7 +124,7 @@ const DegreePrograms: React.FC = () => {
               <Button 
                 variant="outline" 
                 size="lg" 
-                className="text-indigo-600 border-indigo-600 hover:bg-indigo-50 rounded-md px-6"
+                className="text-primary border-primary hover:bg-teal-50 rounded-md px-6"
               >
                 Az összes megtekintése
                 <ArrowRight className="ml-2 h-4 w-4" />

@@ -3,7 +3,7 @@ import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import logo from "../assets/5.png";
+import logo from "../assets/academion2.png";
 
 const Navbar: React.FC = () => {
   return (
