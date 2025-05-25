@@ -46,7 +46,7 @@ const CareerPaths: React.FC = () => {
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
                   >
-                    <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white rounded-md w-full shadow-lg hover:shadow-xl transition-all duration-300">
+                    <Button className="bg-gradient-to-r from-primary to-teal-500 hover:from-primary hover:to-teal-600 text-white rounded-md w-full shadow-lg hover:shadow-xl transition-all duration-300">
                       Projektmenedzser képzés
                     </Button>
                   </motion.div>
@@ -64,7 +64,7 @@ const CareerPaths: React.FC = () => {
                 {/* Certificate Card 1 */}
                 <motion.div 
                   whileHover={{ scale: 1.03, y: -5 }}
-                  className="bg-gradient-to-br from-indigo-800 to-indigo-950 rounded-lg overflow-hidden flex cursor-pointer shadow-lg"
+                  className="bg-gradient-to-br from-teal-700 to-primary rounded-lg overflow-hidden flex cursor-pointer shadow-lg"
                 >
                   <div className="w-2/5">
                     <img 
@@ -74,9 +74,9 @@ const CareerPaths: React.FC = () => {
                     />
                   </div>
                   <div className="w-3/5 p-3">
-                    <div className="text-xs text-blue-300">Google</div>
+                    <div className="text-xs text-teal-300">Google</div>
                     <div className="text-sm font-medium text-white">Google Projektmenedzsment: Szakmai tanúsítvány</div>
-                    <div className="mt-2 flex items-center text-xs text-blue-300">
+                    <div className="mt-2 flex items-center text-xs text-teal-300">
                       <span className="mr-2">4.9</span>
                       <div className="flex">
                         {[1, 2, 3, 4, 5].map((star) => (
@@ -92,7 +92,7 @@ const CareerPaths: React.FC = () => {
                 {/* Certificate Card 2 */}
                 <motion.div 
                   whileHover={{ scale: 1.03, y: -5 }}
-                  className="bg-gradient-to-br from-indigo-800 to-indigo-950 rounded-lg overflow-hidden flex cursor-pointer shadow-lg"
+                  className="bg-gradient-to-br from-teal-700 to-primary rounded-lg overflow-hidden flex cursor-pointer shadow-lg"
                 >
                   <div className="w-2/5">
                     <img 
@@ -102,9 +102,9 @@ const CareerPaths: React.FC = () => {
                     />
                   </div>
                   <div className="w-3/5 p-3">
-                    <div className="text-xs text-blue-300">Google</div>
+                    <div className="text-xs text-teal-300">Google</div>
                     <div className="text-sm font-medium text-white">Google IT-támogatás: Szakmai tanúsítvány</div>
-                    <div className="mt-2 flex items-center text-xs text-blue-300">
+                    <div className="mt-2 flex items-center text-xs text-teal-300">
                       <span className="mr-2">4.8</span>
                       <div className="flex">
                         {[1, 2, 3, 4, 5].map((star) => (
