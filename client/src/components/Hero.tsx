@@ -22,7 +22,7 @@ const Hero: React.FC = () => {
   };
 
   return (
-    <section className="bg-gradient-to-br from-blue-50 to-purple-50 text-neutral-900 relative overflow-hidden py-12 md:py-24">
+    <section className="bg-gradient-to-br from-teal-50 to-blue-50 text-neutral-900 relative overflow-hidden py-12 md:py-24">
       <div className="absolute inset-0 w-full h-full z-0">
         <div className="absolute right-0 w-3/4 h-3/4 bg-gradient-to-bl from-blue-100/30 to-transparent rounded-full blur-3xl transform translate-x-1/4 -translate-y-1/4"></div>
         <div className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-gradient-to-tr from-purple-100/20 to-transparent rounded-full blur-3xl"></div>
@@ -35,9 +35,9 @@ const Hero: React.FC = () => {
             animate={controls}
             className="lg:w-1/2 mb-10 lg:mb-0 lg:pr-10"
           >
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-indigo-900">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-primary-900">
               Tanuljon<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-600">korlátok nélkül</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-teal-400">korlátok nélkül</span>
             </h1>
             <p className="text-lg mb-8 max-w-lg text-neutral-700">
               Teljes körű digitális szolgáltatást nyújtunk, amely magával ragadó felhasználói élményt épít. Tanuljon korlátok nélkül a legjobb hazai és nemzetközi szakértőktől.

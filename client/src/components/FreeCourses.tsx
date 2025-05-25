@@ -51,8 +51,8 @@ const FreeCourses: React.FC = () => {
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
           >
-            <h3 className="text-sm text-indigo-600 font-medium mb-2">100%-ban ingyenes</h3>
-            <h2 className="text-2xl md:text-3xl font-bold text-indigo-900 mb-4">Kezdje el a tanulást ingyenes tanfolyamokkal</h2>
+            <h3 className="text-sm text-primary font-medium mb-2">100%-ban ingyenes</h3>
+            <h2 className="text-2xl md:text-3xl font-bold text-primary-900 mb-4">Kezdje el a tanulást ingyenes tanfolyamokkal</h2>
             <p className="text-neutral-600 mb-8">Fedezze fel a világ legjobb egyetemeinek és vállalatainak ingyenes online kurzusait.</p>
           </motion.div>
           
@@ -71,7 +71,7 @@ const FreeCourses: React.FC = () => {
                 className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer relative"
               >
                 <div className="absolute top-3 right-3 z-10">
-                  <span className="bg-indigo-600 text-white text-xs px-2 py-1 rounded-full shadow-md">
+                  <span className="bg-primary text-white text-xs px-2 py-1 rounded-full shadow-md">
                     Ingyenes
                   </span>
                 </div>
@@ -97,16 +97,16 @@ const FreeCourses: React.FC = () => {
                   <h3 className="font-bold text-lg mb-3">{course.title}</h3>
                   
                   <div className="mt-4 flex justify-between items-center">
-                    <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+                    <span className="inline-block bg-teal-100 text-primary text-xs px-2 py-1 rounded-full">
                       {course.type}
                     </span>
                     
                     <motion.div
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
-                      className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center cursor-pointer"
+                      className="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center cursor-pointer"
                     >
-                      <ArrowRight className="h-4 w-4 text-indigo-600" />
+                      <ArrowRight className="h-4 w-4 text-primary" />
                     </motion.div>
                   </div>
                 </div>
@@ -122,7 +122,7 @@ const FreeCourses: React.FC = () => {
               <Button 
                 variant="default" 
                 size="lg" 
-                className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-md shadow-md px-6"
+                className="bg-primary hover:bg-primary/90 text-white rounded-md shadow-md px-6"
               >
                 További 8 megtekintése
               </Button>
@@ -134,7 +134,7 @@ const FreeCourses: React.FC = () => {
               <Button 
                 variant="outline" 
                 size="lg" 
-                className="text-indigo-600 border-indigo-600 hover:bg-indigo-50 rounded-md px-6"
+                className="text-primary border-primary hover:bg-teal-50 rounded-md px-6"
               >
                 Az összes megtekintése
                 <ArrowRight className="ml-2 h-4 w-4" />
