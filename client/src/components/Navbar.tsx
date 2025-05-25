@@ -1,14 +1,12 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { 
-  ChevronDown, Search, BookOpen, GraduationCap, 
-  BarChart, Code, Database, School, HeartPulse, 
-  Briefcase, Menu, X, Globe, Calculator, UserCircle,
+  BookOpen, GraduationCap, 
+  BarChart, Menu, X, UserCircle,
   LogOut, TrendingUp, BrainCircuit
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { Input } from "@/components/ui/input";
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -19,29 +17,12 @@ import {
 import logo from "../assets/academion2.png";
 import { Badge } from "@/components/ui/badge";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useSearch } from "@/hooks/useSearch";
-import SearchResults from "@/components/SearchResults";
-import { AnimatePresence } from "framer-motion";
-
-// Define course categories
-const courseCategories = [
-  { name: "Informatika és Programozás", icon: <Code className="h-4 w-4 mr-2" />, slug: "informatika" },
-  { name: "Adattudomány", icon: <Database className="h-4 w-4 mr-2" />, slug: "adattudomany" },
-  { name: "Üzlet és Menedzsment", icon: <Briefcase className="h-4 w-4 mr-2" />, slug: "uzlet" },
-  { name: "Oktatás", icon: <School className="h-4 w-4 mr-2" />, slug: "oktatas" },
-  { name: "Egészségügy", icon: <HeartPulse className="h-4 w-4 mr-2" />, slug: "egeszsegugy" },
-  { name: "Nyelvek", icon: <Globe className="h-4 w-4 mr-2" />, slug: "nyelvek" },
-  { name: "Matematika", icon: <Calculator className="h-4 w-4 mr-2" />, slug: "matematika" },
-  { name: "Statisztika", icon: <BarChart className="h-4 w-4 mr-2" />, slug: "statisztika" },
-];
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [location] = useLocation();
   const isMobile = useIsMobile();
   const { user, isAuthenticated, isLoading } = useAuth();
-  const { query, setQuery, results, isLoading: searchLoading, isSearchOpen, setIsSearchOpen, closeSearch } = useSearch();
-  const searchRef = useRef<HTMLDivElement>(null);
   
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -50,20 +31,6 @@ const Navbar: React.FC = () => {
   const isActive = (path: string) => {
     return location === path;
   };
-  
-  // Close search results when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-        setIsSearchOpen(false);
-      }
-    };
-    
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [setIsSearchOpen]);
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-40">
@@ -137,43 +104,6 @@ const Navbar: React.FC = () => {
             )}
           </div>
           
-          {!isMobile && (
-            <div className="flex-1 max-w-xl px-6">
-              <div className="relative" ref={searchRef}>
-                <Input
-                  type="text"
-                  placeholder="Mit szeretne tanulni?"
-                  className="w-full pl-10 pr-4 py-2 rounded-full border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  onFocus={() => setIsSearchOpen(true)}
-                />
-                <span className="absolute left-3 top-2.5 text-neutral-500">
-                  <Search className="h-4 w-4" />
-                </span>
-                {query && (
-                  <button 
-                    className="absolute right-3 top-2.5 text-neutral-400 hover:text-neutral-600"
-                    onClick={() => setQuery('')}
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                )}
-                
-                <AnimatePresence>
-                  {isSearchOpen && (
-                    <SearchResults 
-                      results={results} 
-                      query={query} 
-                      isLoading={searchLoading} 
-                      onResultClick={closeSearch}
-                    />
-                  )}
-                </AnimatePresence>
-              </div>
-            </div>
-          )}
-          
           <div className="flex items-center space-x-1 md:space-x-4">
             {!isMobile && !isLoading && (
               <>
@@ -226,55 +156,12 @@ const Navbar: React.FC = () => {
                 )}
               </>
             )}
-            {isMobile && !isOpen && (
-              <Button 
-                size="sm" 
-                variant="ghost" 
-                className="p-2"
-                onClick={toggleMenu}
-              >
-                <Search className="h-5 w-5" />
-              </Button>
-            )}
           </div>
         </div>
         
         {/* Mobile Menu */}
         {isMobile && isOpen && (
           <div className="px-4 py-3 border-t border-neutral-100 bg-white">
-            <div className="relative mb-4" ref={searchRef}>
-              <Input
-                type="text"
-                placeholder="Mit szeretne tanulni?"
-                className="w-full pl-10 pr-4 py-2 rounded-full border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onFocus={() => setIsSearchOpen(true)}
-              />
-              <span className="absolute left-3 top-2.5 text-neutral-500">
-                <Search className="h-4 w-4" />
-              </span>
-              {query && (
-                <button 
-                  className="absolute right-3 top-2.5 text-neutral-400 hover:text-neutral-600"
-                  onClick={() => setQuery('')}
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              )}
-              
-              <AnimatePresence>
-                {isSearchOpen && (
-                  <SearchResults 
-                    results={results} 
-                    query={query} 
-                    isLoading={searchLoading} 
-                    onResultClick={closeSearch}
-                  />
-                )}
-              </AnimatePresence>
-            </div>
-            
             <nav className="space-y-1 mb-4">
               <Link href="/courses" className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-neutral-700 hover:bg-neutral-50">
                 <BookOpen className="h-5 w-5 mr-3 text-neutral-500" />
@@ -298,23 +185,6 @@ const Navbar: React.FC = () => {
                 AI Karriertervező
                 <Badge className="ml-2 bg-purple-100 text-purple-800 text-[10px] py-0 px-1.5">Új</Badge>
               </Link>
-              
-              <div className="pt-2 pb-1">
-                <p className="px-3 text-xs font-medium text-neutral-500 uppercase tracking-wider">
-                  Kategóriák
-                </p>
-              </div>
-              
-              {courseCategories.map((category) => (
-                <Link key={category.slug} href={`/category/${category.slug}`}>
-                  <a className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-neutral-700 hover:bg-neutral-50">
-                    <span className="h-5 w-5 mr-3 text-neutral-500 flex items-center justify-center">
-                      {category.icon}
-                    </span>
-                    {category.name}
-                  </a>
-                </Link>
-              ))}
             </nav>
             
             <div className="pt-2 flex flex-col space-y-3">
