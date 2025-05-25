@@ -248,15 +248,37 @@ const Navbar: React.FC = () => {
         {/* Mobile Menu */}
         {isMobile && isOpen && (
           <div className="px-4 py-3 border-t border-neutral-100 bg-white">
-            <div className="relative mb-4">
+            <div className="relative mb-4" ref={searchRef}>
               <Input
                 type="text"
                 placeholder="Mit szeretne tanulni?"
                 className="w-full pl-10 pr-4 py-2 rounded-full border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onFocus={() => setIsSearchOpen(true)}
               />
               <span className="absolute left-3 top-2.5 text-neutral-500">
                 <Search className="h-4 w-4" />
               </span>
+              {query && (
+                <button 
+                  className="absolute right-3 top-2.5 text-neutral-400 hover:text-neutral-600"
+                  onClick={() => setQuery('')}
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+              
+              <AnimatePresence>
+                {isSearchOpen && (
+                  <SearchResults 
+                    results={results} 
+                    query={query} 
+                    isLoading={searchLoading} 
+                    onResultClick={closeSearch}
+                  />
+                )}
+              </AnimatePresence>
             </div>
             
             <nav className="space-y-1 mb-4">
