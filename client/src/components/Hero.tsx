@@ -289,30 +289,72 @@ const Hero: React.FC = () => {
             className="lg:w-1/2 relative"
           >
             <div className="relative">
+              {/* Decorative backdrop for the main platform display */}
+              <div className="absolute inset-0 translate-x-5 translate-y-5 blur-xl opacity-40 bg-gradient-to-br from-blue-300/30 via-primary/30 to-teal-300/30 rounded-xl"></div>
+              
               {/* Main platform image with interactive styling */}
               <motion.div
                 whileHover={{ y: -5 }}
-                className="bg-white rounded-2xl overflow-hidden shadow-2xl relative z-20 border border-neutral-200/50"
+                className="bg-white rounded-2xl overflow-hidden shadow-2xl relative z-20 border border-neutral-200/50 backdrop-blur-sm"
               >
+                {/* Platform header with animated dots */}
+                <div className="bg-gradient-to-r from-gray-50 to-white p-4 border-b border-neutral-100 flex items-center">
+                  <div className="flex space-x-2 mr-4">
+                    <motion.span 
+                      animate={{ scale: [1, 1.2, 1] }}
+                      transition={{ repeat: Infinity, duration: 2, repeatDelay: 1 }}
+                      className="inline-block w-3 h-3 bg-red-500 rounded-full"
+                    ></motion.span>
+                    <motion.span 
+                      animate={{ scale: [1, 1.2, 1] }}
+                      transition={{ repeat: Infinity, duration: 2, repeatDelay: 1, delay: 0.3 }}
+                      className="inline-block w-3 h-3 bg-yellow-500 rounded-full"
+                    ></motion.span>
+                    <motion.span 
+                      animate={{ scale: [1, 1.2, 1] }}
+                      transition={{ repeat: Infinity, duration: 2, repeatDelay: 1, delay: 0.6 }}
+                      className="inline-block w-3 h-3 bg-green-500 rounded-full"
+                    ></motion.span>
+                  </div>
+                  <div className="flex-1 bg-neutral-100 h-7 rounded-full overflow-hidden flex items-center justify-center">
+                    <div className="text-xs text-neutral-500 font-medium">academion.hu</div>
+                  </div>
+                </div>
+                
+                {/* Main platform content */}
                 <img 
                   src={heroImage} 
                   alt="Academion platform" 
-                  className="w-full h-auto object-contain rounded-t-2xl"
+                  className="w-full h-auto object-contain"
                 />
-                <div className="bg-white p-6 rounded-b-2xl">
+                
+                {/* Platform footer with progress */}
+                <div className="bg-white p-6 border-t border-neutral-100">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-bold text-lg">Academion Online Platform</h3>
-                    <div className="flex space-x-2">
-                      <span className="inline-block w-3 h-3 bg-red-500 rounded-full"></span>
-                      <span className="inline-block w-3 h-3 bg-yellow-500 rounded-full"></span>
-                      <span className="inline-block w-3 h-3 bg-green-500 rounded-full"></span>
+                    <h3 className="font-bold text-lg text-neutral-800">Haladási áttekintő</h3>
+                    <div className="text-xs px-3 py-1 bg-blue-100 text-blue-800 rounded-full font-medium">
+                      Jelenleg aktív
                     </div>
                   </div>
-                  <div className="flex items-center space-x-4">
-                    <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-                      <div className="bg-primary h-full rounded-full" style={{width: "75%"}}></div>
+                  <div className="space-y-3">
+                    <div>
+                      <div className="flex justify-between items-center text-sm mb-1">
+                        <span className="text-neutral-600">Teljes haladás</span>
+                        <span className="font-bold text-neutral-800">75%</span>
+                      </div>
+                      <div className="h-2.5 bg-neutral-100 rounded-full overflow-hidden">
+                        <motion.div 
+                          initial={{ width: "0%" }}
+                          animate={{ width: "75%" }}
+                          transition={{ duration: 1.5, delay: 1 }}
+                          className="h-full bg-gradient-to-r from-primary to-blue-500 rounded-full"
+                        ></motion.div>
+                      </div>
                     </div>
-                    <span className="text-sm font-medium">75%</span>
+                    <div className="flex justify-between text-xs text-neutral-500">
+                      <span>4/6 teljesített modul</span>
+                      <span>2 nap múlva esedékes</span>
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -322,21 +364,35 @@ const Hero: React.FC = () => {
                 initial={{ opacity: 0, x: -30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.6, duration: 0.5 }}
-                className="absolute top-10 -left-8 z-30 bg-white rounded-xl shadow-lg p-4 border border-neutral-200"
+                className="absolute top-10 -left-8 z-30 bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-4 border border-neutral-200"
                 whileHover={{ 
                   scale: 1.05,
-                  rotate: -2 
+                  rotate: -2,
+                  boxShadow: "0 15px 30px rgba(0,0,0,0.1)"
                 }}
               >
                 <div className="flex items-center space-x-1 mb-1">
                   {[1, 2, 3, 4, 5].map(i => (
-                    <svg key={i} className="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                    <motion.svg 
+                      key={i} 
+                      animate={i === 5 ? { scale: [1, 1.3, 1], rotate: [0, 10, 0] } : {}}
+                      transition={{ repeat: Infinity, duration: 2, repeatDelay: 3 }}
+                      className="w-4 h-4 text-yellow-400" 
+                      fill="currentColor" 
+                      viewBox="0 0 20 20"
+                    >
                       <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.799-2.034c-.784-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
+                    </motion.svg>
                   ))}
                 </div>
                 <div className="text-lg font-bold">4.9/5.0</div>
-                <div className="text-xs text-neutral-500">Több mint 500 értékelés</div>
+                <div className="text-xs text-neutral-500 font-medium">Több mint 500 értékelés</div>
+                <div className="mt-2 pt-2 border-t border-neutral-200">
+                  <div className="text-xs text-green-600 font-medium flex items-center">
+                    <ArrowRight className="h-3 w-3 mr-1" />
+                    Kiemelkedő minőség
+                  </div>
+                </div>
               </motion.div>
               
               {/* Active learners overlay element */}
@@ -344,19 +400,26 @@ const Hero: React.FC = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.8, duration: 0.5 }}
-                className="absolute -bottom-10 right-0 z-30 bg-white p-4 rounded-xl shadow-lg border border-neutral-200"
-                whileHover={{ scale: 1.05 }}
+                className="absolute -bottom-8 right-0 z-30 bg-white/90 backdrop-blur-sm p-4 rounded-xl shadow-lg border border-neutral-200"
+                whileHover={{ scale: 1.05, boxShadow: "0 15px 30px rgba(0,0,0,0.1)" }}
               >
-                <div className="text-sm font-medium mb-2">Aktív tanulók most</div>
+                <div className="text-sm font-medium mb-2 text-neutral-700">Aktív tanulók most</div>
                 <div className="flex items-center">
                   <div className="relative mr-4">
-                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center animate-pulse">
-                      <div className="w-6 h-6 bg-green-500 rounded-full"></div>
+                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                      <motion.div 
+                        animate={{ scale: [1, 1.3, 1] }}
+                        transition={{ repeat: Infinity, duration: 2 }}
+                        className="w-6 h-6 bg-green-500 rounded-full"
+                      ></motion.div>
                     </div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold">1,248</div>
-                    <div className="text-xs text-green-600 font-medium">+24% az előző héthez képest</div>
+                    <div className="text-2xl font-bold text-neutral-800">1,248</div>
+                    <div className="text-xs text-green-600 font-medium flex items-center">
+                      <ArrowRight className="h-3 w-3 mr-1" />
+                      +24% az előző héthez képest
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -366,20 +429,32 @@ const Hero: React.FC = () => {
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1, duration: 0.5 }}
-                className="absolute -top-6 right-10 z-30 bg-white p-3 rounded-xl shadow-lg border border-neutral-200"
-                whileHover={{ scale: 1.05 }}
+                className="absolute -top-10 right-10 z-30 bg-white/90 backdrop-blur-sm p-4 rounded-xl shadow-lg border border-neutral-200"
+                whileHover={{ scale: 1.05, boxShadow: "0 15px 30px rgba(0,0,0,0.1)" }}
               >
-                <div className="text-xs font-medium mb-2 text-neutral-500">Partneregyetemek</div>
+                <div className="flex items-center mb-2">
+                  <GraduationCap className="h-4 w-4 text-blue-600 mr-2" />
+                  <div className="text-sm font-medium text-neutral-700">Partneregyetemek</div>
+                </div>
                 <div className="flex space-x-2">
-                  <div className="w-8 h-8 rounded bg-neutral-100 flex items-center justify-center p-1">
-                    <img src="@assets/bme.png" alt="BME" className="w-full h-full object-contain" />
-                  </div>
-                  <div className="w-8 h-8 rounded bg-neutral-100 flex items-center justify-center p-1">
-                    <img src="@assets/corvinus_logo_angol_sz_transparent.png" alt="Corvinus" className="w-full h-full object-contain" />
-                  </div>
-                  <div className="w-8 h-8 rounded bg-neutral-100 flex items-center justify-center p-1">
-                    <img src="@assets/miskolci_egyetem.png" alt="Miskolci Egyetem" className="w-full h-full object-contain" />
-                  </div>
+                  <motion.div 
+                    whileHover={{ y: -2 }}
+                    className="w-10 h-10 rounded-lg bg-white flex items-center justify-center p-1 shadow-sm border border-neutral-100"
+                  >
+                    <img src="https://bme.hu/sites/default/files/page/field_main_image/bme_logo.png" alt="BME" className="w-full h-full object-contain" />
+                  </motion.div>
+                  <motion.div 
+                    whileHover={{ y: -2 }}
+                    className="w-10 h-10 rounded-lg bg-white flex items-center justify-center p-1 shadow-sm border border-neutral-100"
+                  >
+                    <img src="https://www.uni-corvinus.hu/wp-content/uploads/2021/10/corvinus_logo_color.png" alt="Corvinus" className="w-full h-full object-contain" />
+                  </motion.div>
+                  <motion.div 
+                    whileHover={{ y: -2 }}
+                    className="w-10 h-10 rounded-lg bg-white flex items-center justify-center p-1 shadow-sm border border-neutral-100"
+                  >
+                    <img src="https://media.licdn.com/dms/image/C4D0BAQHcMIgd_7HhEw/company-logo_200_200/0/1630592132108?e=2147483647&v=beta&t=4nDLuA7mPJiBtI9XsL7HFOjqF0SibCvn2h6mnPTxzQ4" alt="ELTE" className="w-full h-full object-contain" />
+                  </motion.div>
                 </div>
               </motion.div>
             </div>
