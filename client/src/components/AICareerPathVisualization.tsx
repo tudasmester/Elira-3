@@ -301,7 +301,7 @@ const AICareerPathVisualization: React.FC<AICareerPathVisualizationProps> = ({ i
   };
 
   // Submit skills for analysis
-  const submitSkillsAnalysis = async () => {
+  const handleAnalyzeSkills = async () => {
     if (!selectedCareer || userSkills.length === 0) {
       toast({
         title: "Hiányzó adatok",
@@ -328,6 +328,12 @@ const AICareerPathVisualization: React.FC<AICareerPathVisualizationProps> = ({ i
       
       const data = await response.json();
       setSkillsAnalysis(data);
+      
+      // Show success message
+      toast({
+        title: "Készségek elemzése sikeres",
+        description: "Részletes értékelés és fejlesztési terv készült az Ön készségeiről.",
+      });
     } catch (error) {
       console.error("Error analyzing skills:", error);
       toast({
@@ -388,6 +394,9 @@ const AICareerPathVisualization: React.FC<AICareerPathVisualizationProps> = ({ i
       setCurrentSkill("");
     }
   };
+  
+  // Alias for backward compatibility
+  const submitSkillsAnalysis = handleAnalyzeSkills;
 
   // Add interest to the list
   const addInterest = () => {
@@ -782,7 +791,7 @@ const AICareerPathVisualization: React.FC<AICareerPathVisualizationProps> = ({ i
                   </div>
 
                   <Button 
-                    onClick={submitSkillsAnalysis} 
+                    onClick={handleAnalyzeSkills} 
                     className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
                     disabled={loadingAnalysis || userSkills.length === 0 || !selectedCareer}
                   >
