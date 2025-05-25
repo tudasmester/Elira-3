@@ -138,7 +138,7 @@ const VerificationStep: React.FC<VerificationStepProps> = ({
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <div className="text-primary text-2xl font-bold font-heading mb-6">Elira</div>
+            <div className="text-primary text-2xl font-bold font-heading mb-6">Academion</div>
             <h1 className="text-2xl font-bold mb-4">Ellenőrző kód megadása</h1>
             <p className="text-neutral-600 mb-6">
               Elküldtünk egy 6 számjegyű ellenőrző kódot a következő e-mail címre:<br />
@@ -234,7 +234,7 @@ const VerificationStep: React.FC<VerificationStepProps> = ({
                 <div>
                   <h3 className="font-semibold">Adatbiztonság a fókuszban</h3>
                   <p className="text-sm text-white/70">
-                    Az Elira platform teljes mértékben megfelel a GDPR előírásoknak, 
+                    Az Academion platform teljes mértékben megfelel a GDPR előírásoknak, 
                     és a legmodernebb titkosítási technológiákat alkalmazza az Ön adatainak védelmére.
                   </p>
                 </div>

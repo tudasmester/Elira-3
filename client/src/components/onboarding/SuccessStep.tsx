@@ -92,7 +92,7 @@ const SuccessStep: React.FC<SuccessStepProps> = ({
           
           <h1 className="text-3xl font-bold mb-4">Gratulálunk!</h1>
           <p className="text-xl text-neutral-600 mb-8 max-w-lg mx-auto">
-            Sikeresen befejezte a regisztrációt! Üdvözöljük az Elira platformon, mint {getUserTypeText()}.
+            Sikeresen befejezte a regisztrációt! Üdvözöljük az Academion platformon, mint {getUserTypeText()}.
           </p>
 
           <div className="bg-neutral-50 rounded-xl p-6 mb-8 max-w-md mx-auto">

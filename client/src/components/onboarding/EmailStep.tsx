@@ -71,7 +71,7 @@ const EmailStep: React.FC<EmailStepProps> = ({
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <div className="text-primary text-2xl font-bold font-heading mb-6">Elira</div>
+            <div className="text-primary text-2xl font-bold font-heading mb-6">Academion</div>
             <h1 className="text-2xl font-bold mb-4">Adja meg e-mail címét</h1>
             <p className="text-neutral-600 mb-6">
               Használja e-mail címét a regisztrációhoz és a bejelentkezéshez.

@@ -42,8 +42,8 @@ const UserTypeStep: React.FC<UserTypeStepProps> = ({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="text-primary text-2xl font-bold font-heading mb-6">Elira</div>
-          <h1 className="text-3xl font-bold mb-4">Mi hozta az Elira platformra?</h1>
+          <div className="text-primary text-2xl font-bold font-heading mb-6">Academion</div>
+          <h1 className="text-3xl font-bold mb-4">Mi hozta az Academion platformra?</h1>
           <p className="text-neutral-600 mb-10">
             Válassza ki, hogy milyen minőségben szeretné használni a platformot, így személyre szabhatjuk élményét.
           </p>

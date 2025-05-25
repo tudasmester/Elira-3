@@ -38,16 +38,15 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
       </header>
-
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}
         <div className="bg-gradient-to-r from-primary to-secondary rounded-xl text-white p-8 mb-8">
           <div className="flex flex-col md:flex-row items-center">
             <div className="md:w-2/3 mb-6 md:mb-0">
-              <h1 className="text-2xl md:text-3xl font-bold mb-2">Üdvözöljük az Elira platformon! 👋</h1>
+              <h1 className="text-2xl md:text-3xl font-bold mb-2">Üdvözöljük az Academion platformon! 👋</h1>
               <p className="text-white/90 mb-4">Örülünk, hogy csatlakozott! Fedezze fel a kurzusainkat és kezdje el tanulási útját.</p>
               <div className="flex space-x-4">
-                <Button variant="secondary" className="text-primary">Ajánlott kurzusok</Button>
+                <Button className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:bg-secondary/80 h-10 px-4 py-2 bg-[#0f766d] text-[#ffffff] font-bold">Ajánlott kurzusok</Button>
                 <Button variant="outline" className="bg-white text-primary border-white hover:bg-white/90">Profilom kitöltése</Button>
               </div>
             </div>
