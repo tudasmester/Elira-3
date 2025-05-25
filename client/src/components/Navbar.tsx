@@ -139,6 +139,14 @@ const Navbar: React.FC = () => {
                   Trending
                   <Badge className="ml-2 bg-orange-100 text-orange-800 text-[10px] py-0 px-1.5">Új</Badge>
                 </Link>
+                <Link href="/careers" className={`flex items-center px-3 py-2 rounded-md text-sm font-medium ${
+                  isActive("/careers") 
+                    ? "text-primary bg-primary/5" 
+                    : "text-neutral-700 hover:text-primary hover:bg-neutral-50"
+                }`}>
+                  <TrendingUp className="h-4 w-4 mr-1" />
+                  Karrierutak
+                </Link>
               </nav>
             )}
           </div>
