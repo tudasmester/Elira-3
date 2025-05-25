@@ -11,7 +11,7 @@ const PartnerUniversities: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="bg-gradient-to-r from-indigo-900 to-purple-900 rounded-2xl p-8 text-white shadow-xl"
+          className="bg-gradient-to-r from-primary to-teal-600 rounded-2xl p-8 text-white shadow-xl"
         >
           <motion.h2 
             initial={{ opacity: 0, y: 10 }}

@@ -15,7 +15,7 @@ const CareerPaths: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <h2 className="text-2xl md:text-3xl font-bold mb-2 text-indigo-900">Indítson új karriert akár 6 hónap alatt</h2>
+          <h2 className="text-2xl md:text-3xl font-bold mb-2 text-primary-900">Indítson új karriert akár 6 hónap alatt</h2>
           <p className="text-neutral-600 mb-8">Nézze meg karrierprogramjainkat</p>
         </motion.div>
 
@@ -23,7 +23,7 @@ const CareerPaths: React.FC = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="bg-gradient-to-br from-indigo-900 via-indigo-800 to-purple-900 rounded-2xl p-6 mb-10 shadow-xl"
+          className="bg-gradient-to-br from-primary to-teal-800 rounded-2xl p-6 mb-10 shadow-xl"
         >
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
             {/* Career Information Section */}

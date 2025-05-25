@@ -9,16 +9,6 @@ const Navbar: React.FC = () => {
   return (
     <header className="bg-white shadow-sm">
       <div className="max-w-7xl mx-auto">
-        {/* Top Navigation for Audience Types */}
-        <div className="bg-neutral-900 text-white text-sm">
-          <nav className="flex justify-center space-x-6 py-2 px-4">
-            <a href="#" className="hover:text-tertiary transition duration-200">Magánszemélyeknek</a>
-            <a href="#" className="hover:text-tertiary transition duration-200">Vállalkozásoknak</a>
-            <a href="#" className="hover:text-tertiary transition duration-200">Egyetemeknek</a>
-            <a href="#" className="hover:text-tertiary transition duration-200">Kormányoknak</a>
-          </nav>
-        </div>
-        
         {/* Main Navigation */}
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center">

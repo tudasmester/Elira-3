@@ -35,21 +35,21 @@ const BusinessSolutions: React.FC = () => {
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="text-neutral-600 mb-6"
               >
-                Próbálja ki a világ vezető szervezetei által is választott világszínvonalú oktatást és fejlesztést. Mindezt a Elira for Business keretében.
+                Próbálja ki a világ vezető szervezetei által is választott világszínvonalú oktatást és fejlesztést. Mindezt az Academion for Business keretében.
               </motion.p>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
               >
-                <Button className="mb-4">Fedezze fel a Elira for Business-t</Button>
+                <Button className="mb-4 bg-primary hover:bg-primary/90 text-white">Fedezze fel az Academion for Business-t</Button>
                 <p className="text-sm text-neutral-600">
                   Egy kis csapatot szeretne továbbképezni? 
-                  <a href="#" className="text-primary hover:underline ml-1">A Elira for Teams megtekintése</a>
+                  <a href="#" className="text-primary hover:underline ml-1">Az Academion for Teams megtekintése</a>
                 </p>
               </motion.div>
             </div>
-            <div className="md:w-1/2 flex justify-center items-center bg-gradient-to-br from-primary to-secondary p-8">
+            <div className="md:w-1/2 flex justify-center items-center bg-gradient-to-br from-primary to-teal-500 p-8">
               <div className="grid grid-cols-3 gap-4">
                 {partnerLogos.map((logo, index) => (
                   <motion.div
