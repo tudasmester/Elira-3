@@ -5,6 +5,7 @@ import { useLocation } from "wouter";
 import heroImage from "@assets/academion (3).png";
 import { Check, ArrowRight, Play, Sparkles, GraduationCap, Clock, Users } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import VideoModal from "./VideoModal";
 
 const Hero: React.FC = () => {
   const [, setLocation] = useLocation();
@@ -467,6 +468,12 @@ const Hero: React.FC = () => {
           <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V0C50.45,0,111.91,20.27,171.29,40.23Z" className="fill-white"></path>
         </svg>
       </div>
+      
+      {/* Video Modal */}
+      <VideoModal 
+        isOpen={isVideoModalOpen}
+        onClose={() => setIsVideoModalOpen(false)}
+      />
     </section>
   );
 };

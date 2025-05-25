@@ -100,6 +100,7 @@ const PopularCertificates: React.FC = () => {
                 >
                   <Button 
                     className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white rounded-lg shadow transition-all duration-300"
+                    onClick={() => window.location.href = `/certificate/${cert.id}`}
                   >
                     Tanfolyam megtekintése
                   </Button>
@@ -117,6 +118,7 @@ const PopularCertificates: React.FC = () => {
             <Button 
               variant="default" 
               className="rounded-full bg-gradient-to-r from-primary to-purple-600 text-white border-none hover:opacity-90 shadow-md hover:shadow-lg px-8"
+              onClick={() => window.location.href = '/certificates?popular=true'}
             >
               Továbbiak megtekintése
             </Button>
@@ -128,6 +130,7 @@ const PopularCertificates: React.FC = () => {
             <Button 
               variant="outline" 
               className="rounded-full text-primary border-primary hover:bg-primary/5 px-8"
+              onClick={() => window.location.href = '/certificates'}
             >
               Összes megtekintése
             </Button>
