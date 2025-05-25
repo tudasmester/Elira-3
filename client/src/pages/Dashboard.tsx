@@ -52,9 +52,9 @@ const Dashboard: React.FC = () => {
             </div>
             <div className="md:w-1/3 flex justify-center">
               <img 
-                src="/attached_assets/academion (3).png" 
+                src="/academion (3).png" 
                 alt="Academion logo" 
-                className="rounded-lg shadow-lg h-64 object-contain"
+                className="rounded-lg shadow-lg h-64 object-contain bg-white p-4"
               />
             </div>
           </div>
