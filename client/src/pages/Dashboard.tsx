@@ -116,72 +116,110 @@ const Dashboard: React.FC = () => {
       </header>
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section with User Info */}
-        <div className="bg-gradient-to-r from-primary to-secondary rounded-xl text-white p-8 mb-8">
-          <div className="flex flex-col md:flex-row items-center">
-            <div className="md:w-2/3 mb-6 md:mb-0">
-              <h1 className="text-2xl md:text-3xl font-bold mb-2">
-                {isLoading ? 'Betöltés...' : (
-                  user?.firstName ? `Üdvözöljük, ${user.firstName}!` : 'Üdvözöljük az Academion platformon!'
-                )}
-              </h1>
-              <p className="text-white/90 mb-4">
-                Folytassa a tanulást! Az Ön személyre szabott irányítópultja minden szükséges eszközt biztosít a haladáshoz.
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <Link href="/courses">
-                  <Button className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:bg-secondary/80 h-10 px-4 py-2 bg-[#0f766d] text-[#ffffff] font-bold">
-                    <Search className="mr-1 h-4 w-4" />
-                    Kurzusok böngészése
-                  </Button>
-                </Link>
-                <Button variant="outline" className="bg-white text-primary border-white hover:bg-white/90">
-                  <Calendar className="mr-1 h-4 w-4" />
-                  Órarend megtekintése
-                </Button>
-              </div>
-            </div>
-            <div className="md:w-1/3 flex justify-center">
-              <div className="bg-white p-6 rounded-lg shadow-lg">
-                <div className="flex items-center mb-4">
-                  {user?.profileImageUrl ? (
-                    <img 
-                      src={user.profileImageUrl} 
-                      alt="Profile" 
-                      className="h-16 w-16 rounded-full object-cover mr-4" 
-                    />
-                  ) : (
-                    <div className="h-16 w-16 rounded-full bg-tertiary flex items-center justify-center mr-4">
-                      <User className="h-8 w-8 text-white" />
-                    </div>
+        <div className="relative overflow-hidden rounded-xl mb-8">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary via-teal-600 to-blue-600 opacity-95"></div>
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQ0MCIgaGVpZ2h0PSI0MDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiIGlkPSJhIj48c3RvcCBzdG9wLWNvbG9yPSIjRkZGIiBvZmZzZXQ9IjAlIi8+PHN0b3Agc3RvcC1jb2xvcj0iI0ZGRiIgc3RvcC1vcGFjaXR5PSIwIiBvZmZzZXQ9IjEwMCUiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cGF0aCBkPSJNMCAwaDcyMHY0MDBIMHoiIGZpbGw9InVybCgjYSkiIGZpbGwtcnVsZT0iZXZlbm9kZCIgZmlsbC1vcGFjaXR5PSIuMDUiLz48L3N2Zz4=')] bg-center bg-no-repeat opacity-50"></div>
+          
+          {/* Decorative elements */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl transform translate-x-1/3 -translate-y-1/2"></div>
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full blur-3xl transform -translate-x-1/3 translate-y-1/3"></div>
+          <div className="absolute top-1/2 left-1/3 w-12 h-12 bg-white/10 rounded-full blur-xl"></div>
+          
+          <div className="relative p-8 md:p-12 text-white">
+            <div className="flex flex-col md:flex-row items-center">
+              <div className="md:w-2/3 mb-6 md:mb-0">
+                <div className="inline-flex items-center px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm mb-4 text-white/90 text-sm">
+                  <GraduationCap className="h-4 w-4 mr-2" />
+                  <span>Személyes tanulási portál</span>
+                </div>
+                
+                <h1 className="text-3xl md:text-4xl font-bold mb-3">
+                  {isLoading ? 'Betöltés...' : (
+                    user?.firstName ? (
+                      <>
+                        Üdvözöljük, <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-blue-200">{user.firstName}!</span>
+                      </>
+                    ) : (
+                      'Üdvözöljük az Academion platformon!'
+                    )
                   )}
-                  <div>
-                    <h2 className="text-lg font-bold text-neutral-800">
-                      {user?.firstName ? `${user.firstName} ${user.lastName || ''}` : 'Tanulói profil'}
-                    </h2>
-                    <p className="text-sm text-neutral-600">{user?.email || 'Nincs email cím'}</p>
+                </h1>
+                
+                <p className="text-white/90 mb-6 text-lg max-w-xl">
+                  Folytassa a tanulást! Az Ön személyre szabott irányítópultja minden szükséges eszközt biztosít a folyamatos fejlődéshez.
+                </p>
+                
+                <div className="flex flex-wrap gap-4">
+                  <Link href="/courses">
+                    <Button className="bg-white text-primary hover:bg-white/90 shadow-lg font-medium">
+                      <Search className="mr-2 h-4 w-4" />
+                      Kurzusok böngészése
+                    </Button>
+                  </Link>
+                  <Button variant="outline" className="bg-transparent text-white border-white hover:bg-white/20">
+                    <Calendar className="mr-2 h-4 w-4" />
+                    Órarend megtekintése
+                  </Button>
+                </div>
+                
+                <div className="flex items-center mt-8 space-x-4">
+                  <div className="flex items-center">
+                    <div className="h-4 w-4 rounded-full bg-green-300 mr-2 animate-pulse"></div>
+                    <span className="text-white/90 text-sm">Legutóbbi bejelentkezés: Ma, 14:30</span>
+                  </div>
+                  <div className="h-4 border-l border-white/20"></div>
+                  <div className="flex items-center">
+                    <Clock className="h-4 w-4 mr-2 text-white/80" />
+                    <span className="text-white/90 text-sm">Tanulási idő: {userProgress.completedHours} óra</span>
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <div>
-                    <div className="flex justify-between items-center text-sm text-neutral-800 mb-1">
-                      <span>Tanulási haladás</span>
-                      <span className="font-bold">{userProgress.completionPercentage}%</span>
-                    </div>
-                    <div className="w-full bg-neutral-200 rounded-full h-2">
-                      <div 
-                        className="bg-primary h-2 rounded-full" 
-                        style={{ width: `${userProgress.completionPercentage}%` }}
-                      ></div>
+              </div>
+              
+              <div className="md:w-1/3 flex justify-center">
+                <div className="bg-white/10 backdrop-blur-sm p-6 rounded-lg border border-white/20 shadow-lg w-full max-w-xs">
+                  <div className="flex items-center mb-4">
+                    {user?.profileImageUrl ? (
+                      <img 
+                        src={user.profileImageUrl} 
+                        alt="Profile" 
+                        className="h-16 w-16 rounded-full object-cover mr-4 border-2 border-white/30" 
+                      />
+                    ) : (
+                      <div className="h-16 w-16 rounded-full bg-white/20 flex items-center justify-center mr-4 border border-white/30">
+                        <User className="h-8 w-8 text-white" />
+                      </div>
+                    )}
+                    <div>
+                      <h2 className="text-lg font-bold text-white">
+                        {user?.firstName ? `${user.firstName} ${user.lastName || ''}` : 'Tanulói profil'}
+                      </h2>
+                      <p className="text-sm text-white/70">{user?.email || 'Nincs email cím'}</p>
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-2 pt-2">
-                    <div className="bg-primary/10 p-2 rounded text-center">
-                      <p className="text-primary text-lg font-bold">{userProgress.completedCourses}</p>
-                      <p className="text-xs text-neutral-700">Teljesített kurzus</p>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <div className="flex justify-between items-center text-sm text-white/80 mb-1">
+                        <span>Tanulási haladás</span>
+                        <span className="font-bold">{userProgress.completionPercentage}%</span>
+                      </div>
+                      <div className="w-full bg-white/20 rounded-full h-2.5">
+                        <div 
+                          className="bg-white h-2.5 rounded-full" 
+                          style={{ width: `${userProgress.completionPercentage}%` }}
+                        ></div>
+                      </div>
                     </div>
-                    <div className="bg-tertiary/10 p-2 rounded text-center">
-                      <p className="text-tertiary text-lg font-bold">{userProgress.certificates}</p>
-                      <p className="text-xs text-neutral-700">Oklevél</p>
+                    
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="bg-white/10 p-3 rounded-lg text-center">
+                        <p className="text-white text-xl font-bold">{userProgress.completedCourses}</p>
+                        <p className="text-xs text-white/80">Teljesített kurzus</p>
+                      </div>
+                      <div className="bg-white/10 p-3 rounded-lg text-center">
+                        <p className="text-white text-xl font-bold">{userProgress.certificates}</p>
+                        <p className="text-xs text-white/80">Oklevél</p>
+                      </div>
                     </div>
                   </div>
                 </div>

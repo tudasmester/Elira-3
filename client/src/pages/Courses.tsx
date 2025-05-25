@@ -87,46 +87,63 @@ const CoursesPage: React.FC = () => {
     <div className="bg-gradient-to-b from-neutral-50 to-white min-h-screen">
       <div className="max-w-7xl mx-auto px-4 py-12">
         {/* Hero Section */}
-        <div className="text-center mb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <Badge className="bg-primary/10 text-primary mb-4 px-3 py-1.5">
-              <BookOpen className="h-3.5 w-3.5 mr-1.5" />
-              350+ kurzus elérhető
-            </Badge>
-            <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-6 leading-tight">
-              Fedezze fel az <span className="text-primary">Academion</span> kurzusokat
-            </h1>
-            <p className="text-neutral-600 text-lg md:text-xl max-w-3xl mx-auto mb-8">
-              Válasszon a magyar egyetemek és oktatási intézmények által kínált kurzusok széles választékából, 
-              és sajátítsa el a jövő készségeit.
-            </p>
-            
-            {/* Search Bar */}
-            <div className="max-w-2xl mx-auto relative mb-12">
-              <Input
-                type="text"
-                placeholder="Keressen kurzusokat..."
-                className="w-full pl-12 pr-4 py-6 rounded-full border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-lg"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <span className="absolute left-5 top-1/2 transform -translate-y-1/2 text-neutral-500">
-                <Search className="h-5 w-5" />
-              </span>
-              {searchQuery && (
-                <button 
-                  className="absolute right-5 top-1/2 transform -translate-y-1/2 text-neutral-500 hover:text-neutral-700"
-                  onClick={() => setSearchQuery("")}
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              )}
-            </div>
-          </motion.div>
+        <div className="relative overflow-hidden rounded-2xl mb-16">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/30 via-primary/20 to-purple-500/10 opacity-70"></div>
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQ0MCIgaGVpZ2h0PSI0MDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiIGlkPSJhIj48c3RvcCBzdG9wLWNvbG9yPSIjRkZGIiBvZmZzZXQ9IjAlIi8+PHN0b3Agc3RvcC1jb2xvcj0iI0ZGRiIgc3RvcC1vcGFjaXR5PSIwIiBvZmZzZXQ9IjEwMCUiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cGF0aCBkPSJNMCAwaDcyMHY0MDBIMHoiIGZpbGw9InVybCgjYSkiIGZpbGwtcnVsZT0iZXZlbm9kZCIgZmlsbC1vcGFjaXR5PSIuMDUiLz48L3N2Zz4=')] bg-center bg-no-repeat opacity-100"></div>
+          <div className="absolute -top-24 -right-24 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
+          <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
+          
+          <div className="relative text-center py-16 md:py-24 px-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <Badge className="bg-primary/20 text-primary mb-6 px-4 py-2 text-base">
+                <BookOpen className="h-4 w-4 mr-2" />
+                350+ kurzus elérhető
+              </Badge>
+              
+              <h1 className="text-4xl md:text-6xl font-bold text-neutral-900 mb-8 leading-tight">
+                Fedezze fel az <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-primary">Academion</span> kurzusokat
+              </h1>
+              
+              <p className="text-neutral-700 text-lg md:text-xl max-w-3xl mx-auto mb-10">
+                Válasszon a magyar egyetemek és oktatási intézmények által kínált kurzusok széles választékából, 
+                és sajátítsa el a jövő készségeit.
+              </p>
+              
+              <div className="flex flex-wrap justify-center gap-3 mb-8">
+                <Badge className="bg-blue-100 text-blue-800 text-sm px-3 py-1">Programozás</Badge>
+                <Badge className="bg-green-100 text-green-800 text-sm px-3 py-1">Adattudomány</Badge>
+                <Badge className="bg-purple-100 text-purple-800 text-sm px-3 py-1">Üzleti ismeretek</Badge>
+                <Badge className="bg-amber-100 text-amber-800 text-sm px-3 py-1">Nyelvek</Badge>
+                <Badge className="bg-rose-100 text-rose-800 text-sm px-3 py-1">Marketing</Badge>
+              </div>
+              
+              {/* Search Bar */}
+              <div className="max-w-2xl mx-auto relative">
+                <Input
+                  type="text"
+                  placeholder="Keressen kurzusokat..."
+                  className="w-full pl-12 pr-4 py-6 rounded-full border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-lg shadow-lg"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <span className="absolute left-5 top-1/2 transform -translate-y-1/2 text-neutral-500">
+                  <Search className="h-5 w-5" />
+                </span>
+                {searchQuery && (
+                  <button 
+                    className="absolute right-5 top-1/2 transform -translate-y-1/2 text-neutral-500 hover:text-neutral-700"
+                    onClick={() => setSearchQuery("")}
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                )}
+              </div>
+            </motion.div>
+          </div>
         </div>
         
         {/* Category Filters */}
