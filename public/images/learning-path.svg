@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800px" height="600px" viewBox="0 0 800 600" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Learning Path</title>
+    <defs>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="gradientPrimary">
+            <stop stop-color="#0f766d" offset="0%"></stop>
+            <stop stop-color="#0d9488" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="gradientSecondary">
+            <stop stop-color="#7e22ce" offset="0%"></stop>
+            <stop stop-color="#a855f7" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="gradientTertiary">
+            <stop stop-color="#0284c7" offset="0%"></stop>
+            <stop stop-color="#38bdf8" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <!-- Background -->
+        <rect fill="#f8fafc" x="0" y="0" width="800" height="600"></rect>
+        
+        <!-- Path -->
+        <path d="M150,300 C250,150 350,450 450,250 C550,50 650,350 750,200" stroke-width="12" stroke-linecap="round" stroke-dasharray="1,25" stroke="url(#gradientPrimary)"></path>
+        
+        <!-- Milestones -->
+        <circle cx="150" cy="300" r="30" fill="#ffffff" stroke="url(#gradientPrimary)" stroke-width="4"></circle>
+        <text x="150" y="305" font-family="Arial" font-size="16" fill="#0f766d" text-anchor="middle">1</text>
+        
+        <circle cx="300" cy="300" r="30" fill="#ffffff" stroke="url(#gradientSecondary)" stroke-width="4"></circle>
+        <text x="300" y="305" font-family="Arial" font-size="16" fill="#7e22ce" text-anchor="middle">2</text>
+        
+        <circle cx="450" cy="250" r="30" fill="#ffffff" stroke="url(#gradientTertiary)" stroke-width="4"></circle>
+        <text x="450" y="255" font-family="Arial" font-size="16" fill="#0284c7" text-anchor="middle">3</text>
+        
+        <circle cx="600" cy="300" r="30" fill="#ffffff" stroke="url(#gradientSecondary)" stroke-width="4"></circle>
+        <text x="600" y="305" font-family="Arial" font-size="16" fill="#7e22ce" text-anchor="middle">4</text>
+        
+        <circle cx="750" cy="200" r="30" fill="#ffffff" stroke="url(#gradientPrimary)" stroke-width="4"></circle>
+        <text x="750" y="205" font-family="Arial" font-size="16" fill="#0f766d" text-anchor="middle">5</text>
+        
+        <!-- Icons -->
+        <g transform="translate(130, 100)">
+            <rect width="160" height="80" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"></rect>
+            <text x="80" y="35" font-family="Arial" font-size="14" fill="#0f172a" text-anchor="middle">Bevezetés</text>
+            <text x="80" y="55" font-family="Arial" font-size="12" fill="#64748b" text-anchor="middle">Alapvető fogalmak</text>
+        </g>
+        
+        <g transform="translate(280, 160)">
+            <rect width="160" height="80" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"></rect>
+            <text x="80" y="35" font-family="Arial" font-size="14" fill="#0f172a" text-anchor="middle">Haladó ismeretek</text>
+            <text x="80" y="55" font-family="Arial" font-size="12" fill="#64748b" text-anchor="middle">Készségfejlesztés</text>
+        </g>
+        
+        <g transform="translate(430, 120)">
+            <rect width="160" height="80" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"></rect>
+            <text x="80" y="35" font-family="Arial" font-size="14" fill="#0f172a" text-anchor="middle">Szakértői szint</text>
+            <text x="80" y="55" font-family="Arial" font-size="12" fill="#64748b" text-anchor="middle">Speciális alkalmazások</text>
+        </g>
+        
+        <g transform="translate(580, 180)">
+            <rect width="160" height="80" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"></rect>
+            <text x="80" y="35" font-family="Arial" font-size="14" fill="#0f172a" text-anchor="middle">Projektek</text>
+            <text x="80" y="55" font-family="Arial" font-size="12" fill="#64748b" text-anchor="middle">Gyakorlati megvalósítás</text>
+        </g>
+        
+        <!-- Progress indicator -->
+        <rect x="200" y="500" width="400" height="12" rx="6" fill="#e2e8f0"></rect>
+        <rect x="200" y="500" width="240" height="12" rx="6" fill="url(#gradientPrimary)"></rect>
+        <text x="400" y="540" font-family="Arial" font-size="16" fill="#0f172a" text-anchor="middle">60% teljesítve</text>
+    </g>
+</svg>
