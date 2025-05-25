@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800px" height="600px" viewBox="0 0 800 600" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Interactive Learning</title>
+    <defs>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="gradientPrimary">
+            <stop stop-color="#0f766d" offset="0%"></stop>
+            <stop stop-color="#0d9488" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="gradientSecondary">
+            <stop stop-color="#7e22ce" offset="0%"></stop>
+            <stop stop-color="#a855f7" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="gradientTertiary">
+            <stop stop-color="#0284c7" offset="0%"></stop>
+            <stop stop-color="#38bdf8" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="videoGradient">
+            <stop stop-color="#f43f5e" offset="0%"></stop>
+            <stop stop-color="#e11d48" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <!-- Background -->
+        <rect fill="#f8fafc" x="0" y="0" width="800" height="600"></rect>
+        
+        <!-- Main Content Screen -->
+        <rect x="100" y="100" width="600" height="350" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"></rect>
+        
+        <!-- Video Player Area -->
+        <rect x="120" y="130" width="560" height="270" rx="4" fill="#0f172a"></rect>
+        <rect x="120" y="130" width="560" height="35" rx="4 4 0 0" fill="#1e293b"></rect>
+        
+        <!-- Video Controls -->
+        <circle cx="400" cy="265" r="30" fill="#ffffff" opacity="0.8"></circle>
+        <path d="M390,250 L420,265 L390,280 Z" fill="#0f172a"></path>
+        
+        <!-- Video Timeline -->
+        <rect x="140" y="370" width="520" height="8" rx="4" fill="#e2e8f0"></rect>
+        <rect x="140" y="370" width="290" height="8" rx="4" fill="url(#gradientPrimary)"></rect>
+        <circle cx="430" cy="374" r="10" fill="#ffffff" stroke="url(#gradientPrimary)" stroke-width="2"></circle>
+        
+        <!-- Video Time -->
+        <text x="145" y="395" font-family="Arial" font-size="12" fill="#64748b">03:25 / 06:10</text>
+        
+        <!-- Question Popup -->
+        <g transform="translate(500, 200)">
+            <rect width="200" height="140" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="2" opacity="0.95"></rect>
+            <text x="100" y="30" font-family="Arial" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">Interaktív kérdés</text>
+            <text x="100" y="60" font-family="Arial" font-size="12" fill="#64748b" text-anchor="middle" width="180">Melyik programozási nyelv</text>
+            <text x="100" y="80" font-family="Arial" font-size="12" fill="#64748b" text-anchor="middle" width="180">használja az indentációt?</text>
+            
+            <!-- Answer options -->
+            <rect x="20" y="95" width="160" height="30" rx="4" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"></rect>
+            <text x="100" y="115" font-family="Arial" font-size="12" fill="#0f172a" text-anchor="middle">Python</text>
+            <circle cx="35" cy="110" r="6" fill="#ffffff" stroke="#0f766d" stroke-width="2"></circle>
+            <circle cx="35" cy="110" r="3" fill="#0f766d"></circle>
+        </g>
+        
+        <!-- Note Taking Sidebar -->
+        <g transform="translate(560, 130)">
+            <rect width="120" height="270" rx="4" fill="#f8fafc" opacity="0.8"></rect>
+            <text x="60" y="30" font-family="Arial" font-size="12" font-weight="bold" fill="#0f172a" text-anchor="middle">Jegyzetek</text>
+            
+            <line x1="10" y1="45" x2="110" y2="45" stroke="#e2e8f0" stroke-width="1"></line>
+            
+            <text x="10" y="65" font-family="Arial" font-size="10" fill="#64748b">• Változók deklarálása</text>
+            <text x="10" y="85" font-family="Arial" font-size="10" fill="#64748b">• Adattípusok</text>
+            <text x="10" y="105" font-family="Arial" font-size="10" fill="#64748b">• Vezérlési szerkezetek</text>
+            <text x="10" y="125" font-family="Arial" font-size="10" fill="#0f766d">• Indentáció! Fontos</text>
+            
+            <rect x="10" y="240" width="100" height="20" rx="4" fill="#0f766d"></rect>
+            <text x="60" y="255" font-family="Arial" font-size="10" fill="#ffffff" text-anchor="middle">+ Új jegyzet</text>
+        </g>
+        
+        <!-- Progress Indicators -->
+        <g transform="translate(100, 470)">
+            <text x="0" y="20" font-family="Arial" font-size="16" font-weight="bold" fill="#0f172a">Tanulási előrehaladás</text>
+            
+            <g transform="translate(0, 40)">
+                <text x="0" y="15" font-family="Arial" font-size="12" fill="#64748b">1. Modul: Bevezetés</text>
+                <rect x="150" y="10" width="200" height="8" rx="4" fill="#e2e8f0"></rect>
+                <rect x="150" y="10" width="200" height="8" rx="4" fill="url(#gradientPrimary)"></rect>
+                <text x="360" y="15" font-family="Arial" font-size="12" fill="#0f766d">100%</text>
+            </g>
+            
+            <g transform="translate(0, 70)">
+                <text x="0" y="15" font-family="Arial" font-size="12" fill="#64748b">2. Modul: Alapok</text>
+                <rect x="150" y="10" width="200" height="8" rx="4" fill="#e2e8f0"></rect>
+                <rect x="150" y="10" width="120" height="8" rx="4" fill="url(#gradientPrimary)"></rect>
+                <text x="360" y="15" font-family="Arial" font-size="12" fill="#0f766d">60%</text>
+            </g>
+            
+            <g transform="translate(0, 100)">
+                <text x="0" y="15" font-family="Arial" font-size="12" fill="#64748b">3. Modul: Haladó</text>
+                <rect x="150" y="10" width="200" height="8" rx="4" fill="#e2e8f0"></rect>
+                <rect x="150" y="10" width="0" height="8" rx="4" fill="url(#gradientPrimary)"></rect>
+                <text x="360" y="15" font-family="Arial" font-size="12" fill="#0f766d">0%</text>
+            </g>
+        </g>
+        
+        <!-- Interactive Elements -->
+        <g transform="translate(450, 470)">
+            <text x="0" y="20" font-family="Arial" font-size="16" font-weight="bold" fill="#0f172a">Interaktív elemek</text>
+            
+            <g transform="translate(0, 40)">
+                <rect width="50" height="50" rx="8" fill="#ffffff" stroke="url(#gradientPrimary)" stroke-width="2"></rect>
+                <text x="25" y="75" font-family="Arial" font-size="10" fill="#64748b" text-anchor="middle">Kvízek</text>
+                <text x="25" y="30" font-family="Arial" font-size="14" fill="url(#gradientPrimary)" text-anchor="middle">Q</text>
+            </g>
+            
+            <g transform="translate(70, 40)">
+                <rect width="50" height="50" rx="8" fill="#ffffff" stroke="url(#gradientSecondary)" stroke-width="2"></rect>
+                <text x="25" y="75" font-family="Arial" font-size="10" fill="#64748b" text-anchor="middle">Feladatok</text>
+                <text x="25" y="30" font-family="Arial" font-size="14" fill="url(#gradientSecondary)" text-anchor="middle">⚙️</text>
+            </g>
+            
+            <g transform="translate(140, 40)">
+                <rect width="50" height="50" rx="8" fill="#ffffff" stroke="url(#gradientTertiary)" stroke-width="2"></rect>
+                <text x="25" y="75" font-family="Arial" font-size="10" fill="#64748b" text-anchor="middle">Fórum</text>
+                <text x="25" y="30" font-family="Arial" font-size="14" fill="url(#gradientTertiary)" text-anchor="middle">💬</text>
+            </g>
+            
+            <g transform="translate(210, 40)">
+                <rect width="50" height="50" rx="8" fill="#ffffff" stroke="url(#videoGradient)" stroke-width="2"></rect>
+                <text x="25" y="75" font-family="Arial" font-size="10" fill="#64748b" text-anchor="middle">Videók</text>
+                <text x="25" y="30" font-family="Arial" font-size="14" fill="url(#videoGradient)" text-anchor="middle">▶️</text>
+            </g>
+        </g>
+    </g>
+</svg>

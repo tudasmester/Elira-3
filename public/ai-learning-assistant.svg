@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800px" height="600px" viewBox="0 0 800 600" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>AI Learning Assistant</title>
+    <defs>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="gradientPrimary">
+            <stop stop-color="#0f766d" offset="0%"></stop>
+            <stop stop-color="#0d9488" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="gradientSecondary">
+            <stop stop-color="#7e22ce" offset="0%"></stop>
+            <stop stop-color="#a855f7" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="gradientTertiary">
+            <stop stop-color="#0284c7" offset="0%"></stop>
+            <stop stop-color="#38bdf8" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="gradientBrain">
+            <stop stop-color="#7e22ce" offset="0%"></stop>
+            <stop stop-color="#c026d3" offset="50%"></stop>
+            <stop stop-color="#e879f9" offset="100%"></stop>
+        </linearGradient>
+        <filter x="-10%" y="-10%" width="120%" height="120%" filterUnits="objectBoundingBox" id="glow">
+            <feGaussianBlur stdDeviation="10" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+    </defs>
+    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <!-- Background -->
+        <rect fill="#f8fafc" x="0" y="0" width="800" height="600"></rect>
+        
+        <!-- AI Brain circle glow -->
+        <circle cx="400" cy="220" r="100" fill="url(#gradientSecondary)" opacity="0.1" filter="url(#glow)"></circle>
+        
+        <!-- AI Brain -->
+        <g transform="translate(320, 140)">
+            <!-- Brain outline -->
+            <path d="M80,0 C124.18,0 160,35.82 160,80 C160,124.18 124.18,160 80,160 C35.82,160 0,124.18 0,80 C0,35.82 35.82,0 80,0 Z" fill="#ffffff" stroke="url(#gradientBrain)" stroke-width="4"></path>
+            
+            <!-- Brain neural network -->
+            <circle cx="50" cy="60" r="10" fill="url(#gradientSecondary)"></circle>
+            <circle cx="110" cy="60" r="10" fill="url(#gradientSecondary)"></circle>
+            <circle cx="35" cy="90" r="10" fill="url(#gradientSecondary)"></circle>
+            <circle cx="80" cy="100" r="10" fill="url(#gradientSecondary)"></circle>
+            <circle cx="125" cy="90" r="10" fill="url(#gradientSecondary)"></circle>
+            <circle cx="80" cy="40" r="15" fill="url(#gradientSecondary)"></circle>
+            
+            <!-- Connections -->
+            <line x1="50" y1="60" x2="80" y2="40" stroke="#a855f7" stroke-width="2"></line>
+            <line x1="110" y1="60" x2="80" y2="40" stroke="#a855f7" stroke-width="2"></line>
+            <line x1="35" y1="90" x2="50" y2="60" stroke="#a855f7" stroke-width="2"></line>
+            <line x1="80" y1="100" x2="50" y2="60" stroke="#a855f7" stroke-width="2"></line>
+            <line x1="80" y1="100" x2="110" y2="60" stroke="#a855f7" stroke-width="2"></line>
+            <line x1="125" y1="90" x2="110" y2="60" stroke="#a855f7" stroke-width="2"></line>
+            <line x1="35" y1="90" x2="80" y2="100" stroke="#a855f7" stroke-width="2"></line>
+            <line x1="125" y1="90" x2="80" y2="100" stroke="#a855f7" stroke-width="2"></line>
+        </g>
+        
+        <!-- Course Blocks -->
+        <g transform="translate(100, 350)">
+            <rect width="140" height="80" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"></rect>
+            <text x="70" y="45" font-family="Arial" font-size="14" fill="#0f172a" text-anchor="middle">Matematika</text>
+        </g>
+        
+        <g transform="translate(330, 350)">
+            <rect width="140" height="80" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"></rect>
+            <text x="70" y="45" font-family="Arial" font-size="14" fill="#0f172a" text-anchor="middle">Programozás</text>
+        </g>
+        
+        <g transform="translate(560, 350)">
+            <rect width="140" height="80" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"></rect>
+            <text x="70" y="45" font-family="Arial" font-size="14" fill="#0f172a" text-anchor="middle">Adatelemzés</text>
+        </g>
+        
+        <!-- Personalized Recommendations -->
+        <g transform="translate(180, 500)">
+            <path d="M0,0 L440,0 L440,60 L240,60 L220,80 L200,60 L0,60 Z" fill="#ffffff" stroke="url(#gradientPrimary)" stroke-width="2"></path>
+            <text x="220" y="35" font-family="Arial" font-size="16" fill="#0f172a" text-anchor="middle">Személyre szabott ajánlások az Ön tanulási stílusához</text>
+        </g>
+        
+        <!-- Connection Lines from Brain to Courses -->
+        <line x1="400" y1="300" x2="170" y2="350" stroke="url(#gradientPrimary)" stroke-width="3" stroke-dasharray="5,5"></line>
+        <line x1="400" y1="300" x2="400" y2="350" stroke="url(#gradientPrimary)" stroke-width="3" stroke-dasharray="5,5"></line>
+        <line x1="400" y1="300" x2="630" y2="350" stroke="url(#gradientPrimary)" stroke-width="3" stroke-dasharray="5,5"></line>
+        
+        <!-- Learning Data -->
+        <g transform="translate(550, 150)">
+            <rect width="180" height="140" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"></rect>
+            <text x="90" y="30" font-family="Arial" font-size="14" fill="#0f172a" text-anchor="middle">Tanulási adatok</text>
+            
+            <line x1="20" y1="50" x2="160" y2="50" stroke="#e2e8f0" stroke-width="1"></line>
+            <line x1="20" y1="80" x2="160" y2="80" stroke="#e2e8f0" stroke-width="1"></line>
+            <line x1="20" y1="110" x2="160" y2="110" stroke="#e2e8f0" stroke-width="1"></line>
+            
+            <line x1="40" y1="60" x2="90" y2="60" stroke="url(#gradientTertiary)" stroke-width="4" stroke-linecap="round"></line>
+            <line x1="40" y1="90" x2="130" y2="90" stroke="url(#gradientPrimary)" stroke-width="4" stroke-linecap="round"></line>
+            <line x1="40" y1="120" x2="70" y2="120" stroke="url(#gradientSecondary)" stroke-width="4" stroke-linecap="round"></line>
+        </g>
+        
+        <!-- Connection from Learning Data to Brain -->
+        <line x1="550" y1="200" x2="480" y2="200" stroke="url(#gradientSecondary)" stroke-width="3" stroke-dasharray="5,5"></line>
+        
+        <!-- User Profile -->
+        <g transform="translate(70, 150)">
+            <rect width="180" height="140" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"></rect>
+            <text x="90" y="30" font-family="Arial" font-size="14" fill="#0f172a" text-anchor="middle">Felhasználói profil</text>
+            
+            <circle cx="90" cy="70" r="25" fill="#e2e8f0"></circle>
+            <path d="M90,60 C97,60 102,65 102,72 C102,79 97,84 90,84 C83,84 78,79 78,72 C78,65 83,60 90,60 Z" fill="#94a3b8"></path>
+            <path d="M70,110 C70,95 110,95 110,110" stroke="#94a3b8" stroke-width="4" fill="none"></path>
+            
+            <line x1="40" y1="120" x2="140" y2="120" stroke="#e2e8f0" stroke-width="1"></line>
+        </g>
+        
+        <!-- Connection from User Profile to Brain -->
+        <line x1="250" y1="200" x2="320" y2="200" stroke="url(#gradientPrimary)" stroke-width="3" stroke-dasharray="5,5"></line>
+    </g>
+</svg>

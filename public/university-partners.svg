@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800px" height="400px" viewBox="0 0 800 400" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>University Partners</title>
+    <defs>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="gradientPrimary">
+            <stop stop-color="#0f766d" offset="0%"></stop>
+            <stop stop-color="#0d9488" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="gradientLight">
+            <stop stop-color="#f0fdfa" offset="0%"></stop>
+            <stop stop-color="#ccfbf1" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <!-- Background -->
+        <rect fill="#ffffff" x="0" y="0" width="800" height="400"></rect>
+        
+        <!-- Background Decoration -->
+        <path d="M0,0 L800,0 L800,200 C600,250 200,150 0,200 Z" fill="url(#gradientLight)"></path>
+        
+        <!-- Section Title -->
+        <text x="400" y="60" font-family="Arial" font-size="24" font-weight="bold" fill="#0f172a" text-anchor="middle">Partnereink</text>
+        <text x="400" y="90" font-family="Arial" font-size="16" fill="#64748b" text-anchor="middle">Vezető magyar egyetemek és vállalatok</text>
+        
+        <!-- University Card 1: BME -->
+        <g transform="translate(50, 130)">
+            <rect width="200" height="220" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"></rect>
+            
+            <!-- Logo Circle -->
+            <circle cx="100" cy="80" r="50" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"></circle>
+            
+            <!-- University Name -->
+            <text x="100" y="160" font-family="Arial" font-size="16" font-weight="bold" fill="#0f172a" text-anchor="middle">Budapesti Műszaki és</text>
+            <text x="100" y="180" font-family="Arial" font-size="16" font-weight="bold" fill="#0f172a" text-anchor="middle">Gazdaságtudományi Egyetem</text>
+            
+            <!-- University Info -->
+            <text x="100" y="210" font-family="Arial" font-size="12" fill="#64748b" text-anchor="middle">30+ kurzus • 5+ szakterület</text>
+        </g>
+        
+        <!-- University Card 2: Corvinus -->
+        <g transform="translate(300, 130)">
+            <rect width="200" height="220" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"></rect>
+            
+            <!-- Logo Circle -->
+            <circle cx="100" cy="80" r="50" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"></circle>
+            
+            <!-- University Name -->
+            <text x="100" y="160" font-family="Arial" font-size="16" font-weight="bold" fill="#0f172a" text-anchor="middle">Corvinus Egyetem</text>
+            <text x="100" y="180" font-family="Arial" font-size="16" font-weight="bold" fill="#0f172a" text-anchor="middle">Budapest</text>
+            
+            <!-- University Info -->
+            <text x="100" y="210" font-family="Arial" font-size="12" fill="#64748b" text-anchor="middle">25+ kurzus • 4+ szakterület</text>
+        </g>
+        
+        <!-- University Card 3: OTP Bank -->
+        <g transform="translate(550, 130)">
+            <rect width="200" height="220" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"></rect>
+            
+            <!-- Logo Circle -->
+            <circle cx="100" cy="80" r="50" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"></circle>
+            
+            <!-- Company Name -->
+            <text x="100" y="160" font-family="Arial" font-size="16" font-weight="bold" fill="#0f172a" text-anchor="middle">OTP Bank</text>
+            <text x="100" y="180" font-family="Arial" font-size="16" font-weight="bold" fill="#0f172a" text-anchor="middle">Vállalati Partner</text>
+            
+            <!-- Company Info -->
+            <text x="100" y="210" font-family="Arial" font-size="12" fill="#64748b" text-anchor="middle">15+ kurzus • 3+ szakterület</text>
+        </g>
+        
+        <!-- Bottom Decoration -->
+        <path d="M0,400 L800,400 L800,350 C600,300 200,380 0,330 Z" fill="url(#gradientLight)"></path>
+    </g>
+</svg>

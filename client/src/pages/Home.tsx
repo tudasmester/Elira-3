@@ -187,9 +187,9 @@ const Home: React.FC = () => {
               <div className="relative">
                 <div className="absolute -top-6 -left-6 w-24 h-24 bg-primary/10 rounded-full"></div>
                 <img 
-                  src="@assets/Képernyőfotó 2025-05-24 - 23.09.14.png" 
+                  src="/interactive-learning.svg" 
                   alt="Interaktív tanulási felület" 
-                  className="rounded-xl shadow-xl relative z-10 w-full"
+                  className="rounded-xl shadow-xl relative z-10 w-full bg-white"
                 />
                 <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-secondary/10 rounded-full"></div>
               </div>
@@ -241,9 +241,9 @@ const Home: React.FC = () => {
               <div className="relative">
                 <div className="absolute -top-6 -right-6 w-24 h-24 bg-secondary/10 rounded-full"></div>
                 <img 
-                  src="@assets/Képernyőfotó 2025-05-24 - 23.09.05.png" 
+                  src="/ai-learning-assistant.svg" 
                   alt="AI-alapú tanulási segéd" 
-                  className="rounded-xl shadow-xl relative z-10 w-full"
+                  className="rounded-xl shadow-xl relative z-10 w-full bg-white"
                 />
                 <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-primary/10 rounded-full"></div>
               </div>
@@ -295,9 +295,9 @@ const Home: React.FC = () => {
               <div className="relative">
                 <div className="absolute -top-6 -left-6 w-24 h-24 bg-blue-100/30 rounded-full"></div>
                 <img 
-                  src="@assets/Képernyőfotó 2025-05-24 - 23.08.33.png" 
+                  src="/certificate-template.svg" 
                   alt="Szakmai bizonyítványok" 
-                  className="rounded-xl shadow-xl relative z-10 w-full"
+                  className="rounded-xl shadow-xl relative z-10 w-full bg-white"
                 />
                 <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-yellow-100/30 rounded-full"></div>
               </div>
