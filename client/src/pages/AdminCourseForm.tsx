@@ -192,10 +192,13 @@ export default function AdminCourseForm() {
       return response.json();
     },
     onSuccess: () => {
+      // Invalidate admin queries
       queryClient.invalidateQueries({ queryKey: ['/api/admin/courses'] });
       queryClient.invalidateQueries({ queryKey: ['/api/admin/stats'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/courses'] });
       queryClient.invalidateQueries({ queryKey: ['/api/courses', courseId] });
+      
+      // Trigger immediate refresh of user-facing data
+      triggerDataRefresh(queryClient);
       
       toast({
         title: "Kurzus frissítve",
