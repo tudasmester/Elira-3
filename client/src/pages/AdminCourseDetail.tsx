@@ -273,7 +273,7 @@ export default function AdminCourseDetail() {
                             <div className="flex items-center gap-2">
                               {lesson.quizzes && lesson.quizzes.length > 0 && (
                                 <Badge variant="outline">
-                                  <Quiz className="h-3 w-3 mr-1" />
+                                  <HelpCircle className="h-3 w-3 mr-1" />
                                   {lesson.quizzes.length} kvíz
                                 </Badge>
                               )}
@@ -338,7 +338,7 @@ export default function AdminCourseDetail() {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Átlagos kvíz eredmény</CardTitle>
-                  <Quiz className="h-4 w-4 text-muted-foreground" />
+                  <HelpCircle className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{analytics?.avgQuizScore || 0}%</div>
@@ -361,7 +361,7 @@ export default function AdminCourseDetail() {
             </div>
             
             <div className="text-center py-8">
-              <Quiz className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <HelpCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-600">Kvíz kezelési funkciók hamarosan...</p>
             </div>
           </TabsContent>

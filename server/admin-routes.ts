@@ -3,6 +3,7 @@ import { storage } from "./storage";
 import { isAuthenticated } from "./replitAuth";
 import { isAdmin } from "./adminAuth";
 import { insertCourseSchema, insertUniversitySchema } from "@shared/schema";
+import { contentSync } from "./content-sync";
 
 export function registerAdminRoutes(app: Express) {
   // Admin middleware for all admin routes
@@ -280,6 +281,156 @@ export function registerAdminRoutes(app: Express) {
     } catch (error) {
       console.error("Error promoting user to admin:", error);
       res.status(500).json({ message: "Failed to promote user to admin" });
+    }
+  });
+
+  // ========== CONTENT IMPORT & SYNCHRONIZATION ENDPOINTS ==========
+  
+  // Import courses from existing frontend pages (/courses, /trending, /careers)
+  app.post('/api/admin/import-courses', async (req, res) => {
+    try {
+      await contentSync.importCoursesFromFrontend();
+      res.json({ 
+        success: true, 
+        message: "Courses imported successfully from frontend pages" 
+      });
+    } catch (error) {
+      console.error("Error importing courses:", error);
+      res.status(500).json({ 
+        success: false, 
+        message: "Failed to import courses from frontend" 
+      });
+    }
+  });
+
+  // Sync course visibility and trending status
+  app.post('/api/admin/sync-visibility', async (req, res) => {
+    try {
+      await contentSync.syncCourseVisibility();
+      res.json({ 
+        success: true, 
+        message: "Course visibility synchronized successfully" 
+      });
+    } catch (error) {
+      console.error("Error syncing visibility:", error);
+      res.status(500).json({ 
+        success: false, 
+        message: "Failed to sync course visibility" 
+      });
+    }
+  });
+
+  // Export course data for frontend consumption (real-time sync)
+  app.get('/api/admin/export-frontend', async (req, res) => {
+    try {
+      const exportData = await contentSync.exportCoursesForFrontend();
+      res.json({ 
+        success: true, 
+        data: exportData 
+      });
+    } catch (error) {
+      console.error("Error exporting for frontend:", error);
+      res.status(500).json({ 
+        success: false, 
+        message: "Failed to export courses for frontend" 
+      });
+    }
+  });
+
+  // Validate course data integrity
+  app.get('/api/admin/validate-data', async (req, res) => {
+    try {
+      const validation = await contentSync.validateCourseData();
+      res.json({ 
+        success: validation.valid, 
+        validation 
+      });
+    } catch (error) {
+      console.error("Error validating data:", error);
+      res.status(500).json({ 
+        success: false, 
+        message: "Failed to validate course data" 
+      });
+    }
+  });
+
+  // Bulk course operations
+  app.post('/api/admin/courses/bulk-update', async (req, res) => {
+    try {
+      const { courseIds, updates } = req.body;
+      
+      if (!courseIds || !Array.isArray(courseIds)) {
+        return res.status(400).json({ message: "Course IDs array is required" });
+      }
+
+      const results = [];
+      for (const courseId of courseIds) {
+        try {
+          const updatedCourse = await storage.updateCourse(parseInt(courseId), updates);
+          results.push({ courseId, success: true, course: updatedCourse });
+        } catch (error) {
+          results.push({ courseId, success: false, error: error.message });
+        }
+      }
+
+      res.json({ 
+        success: true, 
+        message: `Bulk update completed for ${courseIds.length} courses`,
+        results 
+      });
+    } catch (error) {
+      console.error("Error in bulk update:", error);
+      res.status(500).json({ message: "Failed to perform bulk update" });
+    }
+  });
+
+  // Archive/unarchive courses
+  app.put('/api/admin/courses/:id/archive', async (req, res) => {
+    try {
+      const courseId = parseInt(req.params.id);
+      const { archive } = req.body;
+      
+      const updatedCourse = await storage.updateCourse(courseId, { 
+        isPublished: archive ? 0 : 1 
+      });
+      
+      res.json({ 
+        success: true, 
+        course: updatedCourse,
+        message: archive ? "Course archived successfully" : "Course unarchived successfully"
+      });
+    } catch (error) {
+      console.error("Error archiving/unarchiving course:", error);
+      res.status(500).json({ message: "Failed to archive/unarchive course" });
+    }
+  });
+
+  // Get content synchronization status
+  app.get('/api/admin/sync-status', async (req, res) => {
+    try {
+      const courses = await storage.getAllCourses();
+      const universities = await storage.getAllUniversities();
+      
+      const syncStatus = {
+        lastSyncTime: new Date().toISOString(),
+        totalCourses: courses.length,
+        publishedCourses: courses.filter(c => c.isPublished === 1).length,
+        archivedCourses: courses.filter(c => c.isPublished === 0).length,
+        freeCourses: courses.filter(c => c.isFree === 1).length,
+        paidCourses: courses.filter(c => c.isFree === 0).length,
+        highlightedCourses: courses.filter(c => c.isHighlighted === 1).length,
+        universities: universities.length,
+        categories: [...new Set(courses.map(c => c.category))],
+        levels: [...new Set(courses.map(c => c.level))]
+      };
+      
+      res.json({ 
+        success: true, 
+        syncStatus 
+      });
+    } catch (error) {
+      console.error("Error getting sync status:", error);
+      res.status(500).json({ message: "Failed to get synchronization status" });
     }
   });
 }
