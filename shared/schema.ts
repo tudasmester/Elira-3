@@ -36,22 +36,37 @@ export const upsertUserSchema = createInsertSchema(users).omit({
   updatedAt: true,
 });
 
-// Course schema
+// Enhanced Course schema with additional fields
 export const courses = pgTable("courses", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
   description: text("description").notNull(),
+  shortDescription: text("short_description"), // Brief summary for listings
   imageUrl: text("image_url").notNull(),
+  trailerVideoUrl: text("trailer_video_url"), // Course preview video
   universityId: integer("university_id").notNull(),
   isFree: integer("is_free").default(0).notNull(),
   level: text("level").notNull(),
   category: text("category").notNull(),
+  duration: text("duration"), // e.g., "6 weeks", "3 months"
+  language: text("language").default("Hungarian").notNull(),
+  prerequisites: text("prerequisites"), // Required background knowledge
+  learningOutcomes: text("learning_outcomes"), // What students will learn
+  instructorName: text("instructor_name"),
+  instructorBio: text("instructor_bio"),
+  instructorImageUrl: text("instructor_image_url"),
+  price: integer("price").default(0), // Price in Hungarian Forints
+  enrollmentCount: integer("enrollment_count").default(0),
+  rating: integer("rating").default(0), // Average rating (1-5 scale * 100 for precision)
+  isPublished: integer("is_published").default(0).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 export const insertCourseSchema = createInsertSchema(courses).omit({
   id: true,
   createdAt: true,
+  updatedAt: true,
 });
 
 // University schema
