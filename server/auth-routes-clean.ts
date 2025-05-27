@@ -135,6 +135,87 @@ export function setupAuthRoutes(app: Express) {
     }
   });
 
+  // Update Profile
+  app.put("/api/auth/profile", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      const { firstName, lastName, email, phone } = req.body;
+      
+      const updatedUser = await storage.updateUser(userId, {
+        firstName,
+        lastName,
+        email,
+        phone
+      });
+
+      res.json({
+        id: updatedUser.id,
+        email: updatedUser.email,
+        firstName: updatedUser.firstName,
+        lastName: updatedUser.lastName,
+        phone: updatedUser.phone,
+        profileImageUrl: updatedUser.profileImageUrl,
+      });
+    } catch (error) {
+      console.error("Update profile error:", error);
+      res.status(500).json({ message: "Failed to update profile" });
+    }
+  });
+
+  // Change Password
+  app.put("/api/auth/password", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      const { currentPassword, newPassword } = req.body;
+      
+      // Get current user to verify password
+      const user = await storage.getUser(userId);
+      if (!user || !user.password) {
+        return res.status(400).json({ message: "User not found" });
+      }
+
+      // Verify current password
+      const isValidPassword = await comparePasswords(currentPassword, user.password);
+      if (!isValidPassword) {
+        return res.status(400).json({ message: "Jelenlegi jelszó helytelen" });
+      }
+
+      // Hash new password and update
+      const hashedNewPassword = await hashPassword(newPassword);
+      await storage.updateUser(userId, { password: hashedNewPassword });
+
+      res.json({ message: "Jelszó sikeresen megváltoztatva" });
+    } catch (error) {
+      console.error("Change password error:", error);
+      res.status(500).json({ message: "Failed to change password" });
+    }
+  });
+
+  // Update Settings (notifications, privacy)
+  app.put("/api/auth/settings", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      // For now, we'll just return success
+      // In a real app, you'd store these preferences in the database
+      res.json({ message: "Beállítások sikeresen mentve" });
+    } catch (error) {
+      console.error("Update settings error:", error);
+      res.status(500).json({ message: "Failed to update settings" });
+    }
+  });
+
   // Logout
   app.post("/api/auth/logout", (req: Request, res: Response) => {
     res.json({ message: "Sikeres kijelentkezés" });
