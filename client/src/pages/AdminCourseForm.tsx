@@ -67,10 +67,12 @@ export default function AdminCourseForm() {
   const courseId = isEdit ? parseInt(params.id as string) : null;
 
   // Fetch universities for dropdown
-  const { data: universities, isLoading: universitiesLoading } = useQuery({
+  const { data: universitiesData, isLoading: universitiesLoading } = useQuery({
     queryKey: ['/api/universities'],
     retry: false,
   });
+  
+  const universities = universitiesData?.universities || [];
 
   // Fetch existing course data for editing
   const { data: existingCourse, isLoading: courseLoading } = useQuery({

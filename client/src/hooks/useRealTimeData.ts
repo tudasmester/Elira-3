@@ -1,85 +1,81 @@
 import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
-/**
- * Hook for real-time data synchronization
- * Automatically refetches course data at regular intervals
- * and when the window regains focus
- */
+// Real-time data synchronization hook for user-facing pages
 export function useRealTimeData() {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    // Refetch data when window regains focus
-    const handleFocus = () => {
+    // Refresh course data every 30 seconds for regular updates
+    const interval = setInterval(() => {
       queryClient.invalidateQueries({ queryKey: ['/api/courses'] });
       queryClient.invalidateQueries({ queryKey: ['/api/universities'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/degrees'] });
+    }, 30000);
+
+    // Refresh data when user comes back to the tab
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        queryClient.invalidateQueries({ queryKey: ['/api/courses'] });
+        queryClient.invalidateQueries({ queryKey: ['/api/universities'] });
+      }
     };
 
-    // Refetch data when network comes back online
+    // Refresh data when user comes back online
     const handleOnline = () => {
       queryClient.invalidateQueries({ queryKey: ['/api/courses'] });
       queryClient.invalidateQueries({ queryKey: ['/api/universities'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/degrees'] });
     };
 
-    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
     window.addEventListener('online', handleOnline);
 
-    // Set up periodic data refresh every 30 seconds
-    const interval = setInterval(() => {
-      // Only refetch if the user is on a course-related page
-      const currentPath = window.location.pathname;
-      if (
-        currentPath.includes('/courses') || 
-        currentPath.includes('/course/') ||
-        currentPath === '/' ||
-        currentPath.includes('/category') ||
-        currentPath.includes('/trending')
-      ) {
-        queryClient.invalidateQueries({ queryKey: ['/api/courses'] });
-      }
-    }, 30000); // 30 seconds
-
     return () => {
-      window.removeEventListener('focus', handleFocus);
-      window.removeEventListener('online', handleOnline);
       clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('online', handleOnline);
     };
   }, [queryClient]);
 }
 
-/**
- * Hook for admin-specific real-time updates
- * More frequent updates for admin panel
- */
+// Real-time data synchronization hook for admin panel (more frequent updates)
 export function useAdminRealTimeData() {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    // More frequent updates for admin panel (every 10 seconds)
+    // Refresh admin data every 10 seconds for real-time management
     const interval = setInterval(() => {
-      const currentPath = window.location.pathname;
-      if (currentPath.includes('/admin')) {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/courses'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/stats'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/universities'] });
+    }, 10000);
+
+    // Immediate refresh when admin comes back to tab
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
         queryClient.invalidateQueries({ queryKey: ['/api/admin/courses'] });
         queryClient.invalidateQueries({ queryKey: ['/api/admin/stats'] });
         queryClient.invalidateQueries({ queryKey: ['/api/admin/universities'] });
       }
-    }, 10000); // 10 seconds
+    };
 
-    return () => clearInterval(interval);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, [queryClient]);
 }
 
-/**
- * Utility function to trigger immediate data refresh
- * Can be called after admin operations to sync user-facing data
- */
+// Function to trigger immediate data refresh across the platform
 export function triggerDataRefresh(queryClient: any) {
+  // Refresh all user-facing data immediately
   queryClient.invalidateQueries({ queryKey: ['/api/courses'] });
   queryClient.invalidateQueries({ queryKey: ['/api/universities'] });
   queryClient.invalidateQueries({ queryKey: ['/api/degrees'] });
-  queryClient.invalidateQueries({ queryKey: ['/api/admin/courses'] });
-  queryClient.invalidateQueries({ queryKey: ['/api/admin/stats'] });
+  
+  // Also refresh any specific course queries
+  queryClient.invalidateQueries({ 
+    predicate: (query: any) => query.queryKey[0] === '/api/courses'
+  });
 }
