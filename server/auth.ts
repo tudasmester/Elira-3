@@ -36,8 +36,11 @@ export function generateToken(userId: string): string {
 
 export function verifyToken(token: string): { userId: string } | null {
   try {
-    return jwt.verify(token, JWT_SECRET) as { userId: string };
-  } catch {
+    const decoded = jwt.verify(token, JWT_SECRET) as { userId: string };
+    console.log("Token verified successfully for user:", decoded.userId);
+    return decoded;
+  } catch (error) {
+    console.log("Token verification error:", error.message);
     return null;
   }
 }
@@ -134,18 +137,23 @@ export function generatePhoneCode(): string {
 
 // Middleware for authentication
 export function requireAuth(req: AuthRequest, res: Response, next: NextFunction) {
-  const token = req.headers.authorization?.replace("Bearer ", "");
+  const authHeader = req.headers.authorization;
+  console.log("Auth header received:", authHeader ? "Bearer " + authHeader.substring(7, 27) + "..." : "None");
+  
+  const token = authHeader?.replace("Bearer ", "");
   
   if (!token) {
+    console.log("No token provided");
     return res.status(401).json({ message: "Authentication required" });
   }
 
   const payload = verifyToken(token);
   if (!payload) {
     console.log("Token verification failed for token:", token.substring(0, 20) + "...");
-    return res.status(401).json({ message: "Invalid token" });
+    return res.status(401).json({ message: "Unauthorized" });
   }
 
+  console.log("Authentication successful for user:", payload.userId);
   // Set user object for downstream middleware
   req.user = { id: payload.userId };
   next();
