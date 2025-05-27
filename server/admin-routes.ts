@@ -157,7 +157,7 @@ export function registerAdminRoutes(app: Express) {
   });
 
   // Get detailed course with modules, lessons, and analytics
-  apiRouter.get('/courses/:id/detailed', isAdmin, async (req: Request, res: Response) => {
+  app.get('/api/admin/courses/:id/detailed', isAdmin, async (req: Request, res: Response) => {
     try {
       const courseId = parseInt(req.params.id);
       const course = await storage.getCourseWithDetails(courseId);

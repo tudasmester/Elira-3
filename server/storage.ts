@@ -59,6 +59,15 @@ export interface IStorage {
   promoteUserToAdmin(userId: string): Promise<User>;
   demoteUserFromAdmin(userId: string): Promise<User>;
   
+  // Subscription operations
+  updateUserSubscription(userId: string, subscriptionData: {
+    subscriptionType?: string;
+    subscriptionStatus?: string;
+    stripeCustomerId?: string | null;
+    stripeSubscriptionId?: string | null;
+    subscriptionEndDate?: Date | null;
+  }): Promise<User>;
+  
   // Advanced course management
   getCourseWithDetails(courseId: number): Promise<any>;
   getCourseAnalytics(courseId: number): Promise<any>;
