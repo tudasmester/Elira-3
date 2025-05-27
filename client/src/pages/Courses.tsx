@@ -48,10 +48,18 @@ const CoursesPage: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("osszes");
-  const [previewCourse, setPreviewCourse] = useState<typeof courses[0] | null>(null);
+  const [previewCourse, setPreviewCourse] = useState<any>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+
+  // Fetch courses from admin panel (authoritative source)
+  const { data: coursesResponse, isLoading } = useQuery({
+    queryKey: ['/api/courses', { page: 'courses' }],
+    retry: false,
+  });
+
+  const courses = coursesResponse?.data?.courses || [];
   
-  const openPreview = (course: typeof courses[0]) => {
+  const openPreview = (course: any) => {
     setPreviewCourse(course);
     setIsPreviewOpen(true);
   };
@@ -61,7 +69,7 @@ const CoursesPage: React.FC = () => {
   };
   
   // Filter courses based on active filter, search query, and tab
-  const filteredCourses = courses.filter(course => {
+  const filteredCourses = courses.filter((course: any) => {
     // Filter by category if activeFilter is set
     if (activeFilter && course.category !== activeFilter) {
       return false;
@@ -73,16 +81,27 @@ const CoursesPage: React.FC = () => {
     }
     
     // Filter by tab
-    if (activeTab === "ingyenes" && !course.isFree) {
+    if (activeTab === "ingyenes" && course.isFree !== 1) {
       return false;
     }
-    if (activeTab === "fizetős" && course.isFree) {
+    if (activeTab === "fizetős" && course.isFree === 1) {
       return false;
     }
     
     return true;
   });
   
+  if (isLoading) {
+    return (
+      <div className="bg-gradient-to-b from-neutral-50 to-white min-h-screen">
+        <div className="max-w-7xl mx-auto px-4 py-12 text-center">
+          <div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p>Kurzusok betöltése...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-gradient-to-b from-neutral-50 to-white min-h-screen">
       <div className="max-w-7xl mx-auto px-4 py-12">
