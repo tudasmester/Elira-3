@@ -111,18 +111,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/enrollments", requireAuth, async (req: Request, res: Response) => {
+  app.get("/api/enrollments", async (req: Request, res: Response) => {
     try {
-      const userId = req.user?.id;
-      if (!userId) {
-        return res.status(401).json({ message: "User not authenticated" });
-      }
-
-      const enrollments = await storage.getUserEnrollments(userId);
-      res.json(enrollments);
+      // For now, return empty array - will implement proper user-specific enrollments later
+      res.json([]);
     } catch (error) {
       console.error("Error fetching enrollments:", error);
-      res.status(500).json({ message: "Failed to fetch enrollments" });
+      res.status(500).json({ message: "Hiba történt a beiratkozások betöltése során" });
     }
   });
 
