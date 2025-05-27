@@ -37,29 +37,84 @@ export class ContentSyncService {
     }
   }
   
-  // Get course data that matches your frontend structure
+  // Get course data that matches your frontend structure - these should match your actual frontend courses
   private getFrontendCourseData(): InsertCourse[] {
     return [
-      // Trending/Popular courses
+      // From /courses page - Main course offerings
       {
-        title: "Full-Stack JavaScript fejlesztés",
-        description: "Tanulj meg modern webalkalmazásokat fejleszteni JavaScript technológiákkal. A kurzus során megismered a React, Node.js és MongoDB használatát.",
-        shortDescription: "Modern webalkalmazás fejlesztés JavaScript stack-kel",
-        imageUrl: "https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=800",
+        title: "Adattudomány és Machine Learning",
+        description: "Komprehenzív kurzus az adattudomány és gépi tanulás területén. Tanulj meg Python-t használni adatelemzésre, építs prediktív modelleket és dolgozz valós adatokkal.",
+        shortDescription: "Adatelemzés és ML algoritmusok mesterkurzus",
+        imageUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800",
         universityId: 1,
         isFree: 0,
-        price: 59900,
-        level: "Középhaladó",
-        category: "Informatika",
-        duration: "16 hét",
+        price: 89900,
+        level: "Haladó",
+        category: "Adattudomány",
+        duration: "20 hét",
         language: "Magyar",
-        prerequisites: ["Alapszintű HTML/CSS ismeretek", "JavaScript alapok"],
-        learningOutcomes: ["React alkalmazások fejlesztése", "Node.js backend építés", "MongoDB adatbázis kezelés", "RESTful API tervezés"],
-        instructorName: "Tóth László",
+        prerequisites: "Matematikai alapok, Python alapismeretek",
+        learningOutcomes: "Adatelemzési technikák, Machine Learning algoritmusok, Deep Learning alapok, Valós projektek",
+        instructorName: "Dr. Nagy Péter",
         isPublished: 1
       },
       
-      // Career-focused courses
+      {
+        title: "Full-Stack Webfejlesztés",
+        description: "Modern webalkalmazások fejlesztése React és Node.js technológiákkal. A kurzus során teljes körű webfejlesztői tudást szerezhetsz.",
+        shortDescription: "Teljes körű webfejlesztői képzés",
+        imageUrl: "https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=800",
+        universityId: 2,
+        isFree: 0,
+        price: 69900,
+        level: "Középhaladó",
+        category: "Webfejlesztés",
+        duration: "16 hét", 
+        language: "Magyar",
+        prerequisites: "HTML/CSS alapok, JavaScript ismeretek",
+        learningOutcomes: "React frontend fejlesztés, Node.js backend, API tervezés, Adatbázis kezelés",
+        instructorName: "Kovács Anna",
+        isPublished: 1
+      },
+      
+      // From /trending page - Popular courses
+      {
+        title: "Cybersecurity és Etikus Hacking",
+        description: "Tanuld meg védeni a digitális infrastruktúrát és azonosítani a biztonsági réseket. Praktikus ethical hacking technikák és védelmi stratégiák.",
+        shortDescription: "Kiberbiztonsági szakértő képzés",
+        imageUrl: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800",
+        universityId: 1,
+        isFree: 0,
+        price: 79900,
+        level: "Haladó",
+        category: "Kiberbiztonsag",
+        duration: "18 hét",
+        language: "Magyar",
+        prerequisites: "Hálózati alapismeretek, Linux alapok",
+        learningOutcomes: "Penetration testing, Vulnerability assessment, Security protocols, Incident response",
+        instructorName: "Dr. Varga Gábor",
+        isPublished: 1
+      },
+      
+      {
+        title: "Digital Marketing és SEO",
+        description: "Mesterd el a digitális marketing minden területét. Social media marketing, SEO optimalizálás, Google Ads kampányok és analytics.",
+        shortDescription: "Teljes körű digitális marketing képzés",
+        imageUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800",
+        universityId: 3,
+        isFree: 0,
+        price: 49900,
+        level: "Kezdő",
+        category: "Marketing",
+        duration: "12 hét",
+        language: "Magyar",
+        prerequisites: "Alapszintű számítógépes ismeretek",
+        learningOutcomes: "SEO stratégiák, PPC kampányok, Social media marketing, Analytics elemzés",
+        instructorName: "Szabó Eszter",
+        isPublished: 1
+      },
+      
+      // From /careers page - Career-focused courses
       {
         title: "UX/UI Design alapok",
         description: "Ismerd meg a felhasználó-központú tervezés elveit és módszereit. Tanulj meg Figma-t használni és készíts professzionális design-okat.",
