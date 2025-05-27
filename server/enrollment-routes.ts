@@ -7,7 +7,7 @@ import { z } from "zod";
 const enrollmentRouter = express.Router();
 
 // Enroll user in a course
-enrollmentRouter.post("/courses/enroll", isAuthenticated, async (req: any, res) => {
+enrollmentRouter.post("/courses/enroll", requireAuth, async (req: any, res) => {
   try {
     const userId = req.user.claims.sub;
     const { courseId } = req.body;

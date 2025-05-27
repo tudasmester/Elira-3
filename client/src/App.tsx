@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useRealTimeData } from "@/hooks/useRealTimeData";
 import Home from "@/pages/Home";
-import Onboarding from "@/pages/Onboarding";
+import OnboardingPage from "@/pages/OnboardingPage";
 import Dashboard from "@/pages/Dashboard";
 import CourseDetail from "@/pages/CourseDetail";
 import Trending from "@/pages/Trending";
@@ -40,7 +40,7 @@ function Router() {
   const content = (
     <Switch>
       <Route path="/" component={Home} />
-      <Route path="/onboarding" component={Onboarding} />
+      <Route path="/onboarding" component={OnboardingPage} />
       <Route path="/auth" component={AuthPage} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/course/:id" component={CourseDetail} />

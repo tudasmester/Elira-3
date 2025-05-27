@@ -113,9 +113,9 @@ export default function AuthPage() {
         localStorage.setItem('auth_token', data.token);
         toast({
           title: "Sikeres regisztráció!",
-          description: "Ellenőrzési email került kiküldésre",
+          description: "Üdvözöljük az Academion-ban!",
         });
-        navigate('/');
+        navigate('/onboarding');
       } else {
         toast({
           title: "Regisztrációs hiba",
