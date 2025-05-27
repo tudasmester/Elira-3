@@ -188,7 +188,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Admin routes temporarily disabled during auth system cleanup
 
   // Enable clean authentication routes
-  const { setupAuthRoutes } = await import("./auth-routes-clean");
   setupAuthRoutes(app);
 
   const httpServer = createServer(app);
