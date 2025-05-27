@@ -735,7 +735,7 @@ export class DatabaseStorage implements IStorage {
 }
 
 // Create database storage instance
-// Add subscription method to DatabaseStorage prototype
+// Add subscription methods to DatabaseStorage prototype
 DatabaseStorage.prototype.updateUserSubscription = async function(userId: string, subscriptionData: {
   subscriptionType?: string;
   subscriptionStatus?: string;
@@ -749,6 +749,11 @@ DatabaseStorage.prototype.updateUserSubscription = async function(userId: string
     .where(eq(users.id, userId))
     .returning();
   return user;
+};
+
+DatabaseStorage.prototype.getUserByEmail = async function(email: string): Promise<User | undefined> {
+  const results = await db.select().from(users).where(eq(users.email, email)).limit(1);
+  return results.length > 0 ? results[0] : undefined;
 };
 
 export const storage = new DatabaseStorage();

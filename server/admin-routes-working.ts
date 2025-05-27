@@ -29,7 +29,7 @@ export function registerAdminRoutes(app: Express) {
   app.get('/api/admin/courses/:id', isAdmin, async (req: Request, res: Response) => {
     try {
       const courseId = parseInt(req.params.id);
-      const course = await storage.getCourseById(courseId);
+      const course = await storage.getCourse(courseId);
       if (!course) {
         return res.status(404).json({ message: "Course not found" });
       }

@@ -183,7 +183,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Register subscription routes
-  const { registerSubscriptionRoutes } = await import("./subscription-routes");
+  const { registerSubscriptionRoutes } = await import("./subscription-routes-fixed");
   registerSubscriptionRoutes(app);
   
   // Register admin routes
