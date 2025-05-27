@@ -30,10 +30,10 @@ export function setupAuthRoutes(app: Express) {
       const user = await storage.createUser({
         email,
         password: hashedPassword,
-        firstName,
-        lastName,
+        first_name: firstName,
+        last_name: lastName,
         phone: phone || null,
-        isEmailVerified: 1, // Auto-verify for now to simplify UX
+        is_email_verified: 1, // Auto-verify for now to simplify UX
       });
 
       // Generate token
