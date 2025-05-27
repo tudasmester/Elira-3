@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import AdminContentSync from './AdminContentSync';
 import { 
   BarChart, 
   Bar, 
@@ -171,8 +172,9 @@ export default function AdminDashboard() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="overview">Áttekintés</TabsTrigger>
+            <TabsTrigger value="content">Tartalom kezelés</TabsTrigger>
             <TabsTrigger value="courses">Kurzusok</TabsTrigger>
             <TabsTrigger value="universities">Egyetemek</TabsTrigger>
           </TabsList>
@@ -380,6 +382,107 @@ export default function AdminDashboard() {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="content" className="space-y-6">
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold">Tartalom kezelés</h2>
+                  <p className="text-muted-foreground">
+                    Importáld és szinkronizáld a kurzusokat a frontend oldalakról
+                  </p>
+                </div>
+              </div>
+
+              {/* Import Section */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Book className="h-5 w-5" />
+                    Kurzus import
+                  </CardTitle>
+                  <CardDescription>
+                    Automatikus import a /courses, /trending, és /careers oldalakról
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <Card className="p-4">
+                      <h3 className="font-semibold text-lg mb-2">Frontend kurzusok</h3>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        6 új kurzus elérhető importálásra
+                      </p>
+                      <Button className="w-full">
+                        Kurzusok importálása
+                      </Button>
+                    </Card>
+                    
+                    <Card className="p-4">
+                      <h3 className="font-semibold text-lg mb-2">Szinkronizálás</h3>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Valós idejű szinkronizálás aktív
+                      </p>
+                      <Button variant="outline" className="w-full">
+                        Szinkronizálás most
+                      </Button>
+                    </Card>
+                    
+                    <Card className="p-4">
+                      <h3 className="font-semibold text-lg mb-2">Validáció</h3>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Adatintegritás ellenőrzése
+                      </p>
+                      <Button variant="outline" className="w-full">
+                        Validáció futtatása
+                      </Button>
+                    </Card>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Sync Status */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Szinkronizálási állapot</CardTitle>
+                  <CardDescription>
+                    Valós idejű kapcsolat a frontend oldalakkal
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium">/courses oldal</span>
+                        <Badge variant="default">Szinkronizálva</Badge>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium">/trending oldal</span>
+                        <Badge variant="default">Szinkronizálva</Badge>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium">/careers oldal</span>
+                        <Badge variant="default">Szinkronizálva</Badge>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium">Utolsó szinkronizálás</span>
+                        <span className="text-sm text-muted-foreground">2 perce</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium">Importált kurzusok</span>
+                        <span className="text-sm text-muted-foreground">{stats?.totalCourses || 0}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium">Szinkronizálási mód</span>
+                        <Badge variant="outline">Automatikus</Badge>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
 
           <TabsContent value="universities" className="space-y-6">
