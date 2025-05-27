@@ -187,9 +187,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Admin routes temporarily disabled during auth system cleanup
 
-  // Enable simplified authentication routes
-  const { setupSimpleAuth } = await import("./auth-simple");
-  setupSimpleAuth(app);
+  // Enable secure authentication system
+  const { setupAuthSystem } = await import("./auth-system");
+  setupAuthSystem(app);
 
   const httpServer = createServer(app);
   return httpServer;
