@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 // import { setupAuthRoutes } from "./auth-routes-clean";
-import { requireAuth } from "./auth";
+// import { requireAuth } from "./auth";
 import { storage } from "./storage";
 import { registerAdminRoutes } from "./admin-routes";
 import { generateCareerPathInfo, getCareerRecommendation, generateSkillsAnalysis } from "./openai";
@@ -9,8 +9,9 @@ import { contentManager } from "./content-manager";
 import type { Request, Response } from "express";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Setup comprehensive authentication routes (email/password, phone, social login)
-  setupAuthRoutes(app);
+  // Enable secure authentication system
+  const { setupAuthSystem } = await import("./auth-system");
+  setupAuthSystem(app);
 
   // Initialize admin content (one-time setup)
   app.post("/api/admin/initialize", async (req: Request, res: Response) => {
@@ -88,7 +89,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Enrollment routes
-  app.post("/api/enrollments", requireAuth, async (req: Request, res: Response) => {
+  app.post("/api/enrollments", async (req: Request, res: Response) => {
     try {
       const userId = req.user?.id;
       if (!userId) {
@@ -186,10 +187,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Subscription routes temporarily disabled during auth system cleanup
   
   // Admin routes temporarily disabled during auth system cleanup
-
-  // Enable secure authentication system
-  const { setupAuthSystem } = await import("./auth-system");
-  setupAuthSystem(app);
 
   const httpServer = createServer(app);
   return httpServer;
