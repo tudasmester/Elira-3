@@ -10,7 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { 
   Download, 
   Upload, 
-  Sync, 
+  RotateCcw, 
   CheckCircle, 
   AlertCircle, 
   Database, 
@@ -327,7 +327,7 @@ export default function AdminContentSync() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Sync className="h-5 w-5" />
+                  <RotateCcw className="h-5 w-5" />
                   Láthatóság szinkronizálás
                 </CardTitle>
                 <CardDescription>

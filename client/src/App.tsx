@@ -20,6 +20,7 @@ import PremiumSubscription from "@/pages/PremiumSubscription";
 import AdminDashboard from "@/pages/AdminDashboard";
 import AdminCourseForm from "@/pages/AdminCourseForm";
 import AdminCourseDetail from "@/pages/AdminCourseDetail";
+import AdminContentSync from "@/pages/AdminContentSync";
 import AdminSetup from "@/pages/AdminSetup";
 import NotFound from "@/pages/not-found";
 import Layout from "@/components/Layout";
@@ -52,6 +53,7 @@ function Router() {
       <Route path="/premium" component={PremiumSubscription} />
       <Route path="/admin-setup" component={AdminSetup} />
       <Route path="/admin" component={AdminDashboard} />
+      <Route path="/admin/sync" component={AdminContentSync} />
       <Route path="/admin/courses/new" component={AdminCourseForm} />
       <Route path="/admin/courses/:id" component={AdminCourseDetail} />
       <Route path="/admin/courses/:id/edit" component={AdminCourseForm} />
