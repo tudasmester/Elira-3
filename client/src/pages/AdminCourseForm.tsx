@@ -27,6 +27,7 @@ import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Save, Loader2 } from 'lucide-react';
 import { Link } from 'wouter';
 import { AdminGuard } from '@/components/AdminGuard';
+import { triggerDataRefresh } from '@/hooks/useRealTimeData';
 
 // Form validation schema
 const courseFormSchema = z.object({
@@ -144,9 +145,12 @@ export default function AdminCourseForm() {
       return response.json();
     },
     onSuccess: () => {
+      // Invalidate admin queries
       queryClient.invalidateQueries({ queryKey: ['/api/admin/courses'] });
       queryClient.invalidateQueries({ queryKey: ['/api/admin/stats'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/courses'] });
+      
+      // Trigger immediate refresh of user-facing data
+      triggerDataRefresh(queryClient);
       
       toast({
         title: "Kurzus létrehozva",

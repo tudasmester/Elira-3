@@ -3,6 +3,7 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { useRealTimeData } from "@/hooks/useRealTimeData";
 import Home from "@/pages/Home";
 import Onboarding from "@/pages/Onboarding";
 import Dashboard from "@/pages/Dashboard";
@@ -24,6 +25,9 @@ import ScrollToTop from "@/components/ui/ScrollToTop";
 
 function Router() {
   const [location] = useLocation();
+  
+  // Enable real-time data synchronization
+  useRealTimeData();
   
   // Don't use the Layout on onboarding pages
   const useLayout = !location.startsWith("/onboarding");

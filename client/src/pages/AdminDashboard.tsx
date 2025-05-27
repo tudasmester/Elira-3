@@ -35,6 +35,7 @@ import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'wouter';
 import { AdminGuard } from '@/components/AdminGuard';
+import { useAdminRealTimeData, triggerDataRefresh } from '@/hooks/useRealTimeData';
 
 interface AdminStats {
   totalCourses: number;
@@ -65,6 +66,9 @@ export default function AdminDashboard() {
   const [deleteDialog, setDeleteDialog] = useState<{ isOpen: boolean; courseId: number | null; courseName: string }>({ isOpen: false, courseId: null, courseName: '' });
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  
+  // Enable real-time updates for admin panel
+  useAdminRealTimeData();
 
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ['/api/admin/stats'],
@@ -93,8 +97,13 @@ export default function AdminDashboard() {
       return response.json();
     },
     onSuccess: () => {
+      // Invalidate admin queries
       queryClient.invalidateQueries({ queryKey: ['/api/admin/courses'] });
       queryClient.invalidateQueries({ queryKey: ['/api/admin/stats'] });
+      
+      // Trigger immediate refresh of user-facing data
+      triggerDataRefresh(queryClient);
+      
       toast({
         title: "Course deleted",
         description: "The course has been successfully deleted.",
