@@ -125,10 +125,14 @@ export default function OnboardingRegistrationClean() {
 
       if (response.ok) {
         const data = await response.json();
+        console.log('Registration successful:', data);
         
         // Store the authentication token
         if (data.token) {
           localStorage.setItem('authToken', data.token);
+          console.log('Token stored successfully');
+        } else {
+          console.warn('No token received from registration');
         }
         
         toast({
@@ -136,17 +140,18 @@ export default function OnboardingRegistrationClean() {
           description: "Üdvözöljük az Academion-ban!",
         });
         
-        // Redirect to dashboard with tutorial flag for first-time users
-        setLocation('/dashboard?tutorial=true');
+        // Force refresh user data and redirect to dashboard with tutorial flag
+        window.location.href = '/dashboard?tutorial=true';
       } else {
         const error = await response.text();
+        console.error('Registration failed with status:', response.status, error);
         throw new Error(error);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Registration error:', error);
       toast({
         title: "Hiba történt",
-        description: "Kérjük, próbálja újra később.",
+        description: error.message || "Kérjük, próbálja újra később.",
         variant: "destructive",
       });
     } finally {
