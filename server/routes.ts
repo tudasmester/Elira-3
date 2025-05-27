@@ -195,9 +195,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Mount the API router
-  // Add enrollment routes
   app.use("/api", apiRouter);
   app.use("/api", enrollmentRouter);
+  
+  // Register admin routes
+  registerAdminRoutes(app);
 
   const httpServer = createServer(app);
   return httpServer;
