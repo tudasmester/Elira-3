@@ -17,8 +17,18 @@ export interface IStorage {
   // User operations
   getUser(id: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
+  getUserByPhone(phone: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUser(id: string, data: Partial<InsertUser>): Promise<User>;
   upsertUser(user: UpsertUser): Promise<User>;
+  
+  // Authentication tokens
+  updateEmailVerification(userId: string, token: string): Promise<void>;
+  verifyEmail(token: string): Promise<User | undefined>;
+  updatePasswordReset(userId: string, token: string, expiry: Date): Promise<void>;
+  resetPassword(token: string, newPassword: string): Promise<User | undefined>;
+  updatePhoneVerification(userId: string, code: string, expiry: Date): Promise<void>;
+  verifyPhone(phone: string, code: string): Promise<User | undefined>;
   
   // Course operations
   getCourse(id: number): Promise<Course | undefined>;

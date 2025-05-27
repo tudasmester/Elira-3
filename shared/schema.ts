@@ -13,19 +13,42 @@ export const sessions = pgTable(
   (table) => [index("IDX_session_expire").on(table.expire)],
 );
 
-// User schema for Replit Auth
+// Enhanced user schema with comprehensive authentication support
 export const users = pgTable("users", {
   id: varchar("id").primaryKey().notNull(),
   email: varchar("email").unique(),
+  password: varchar("password"), // For email/password auth
+  phone: varchar("phone").unique(), // For phone auth
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
-  isAdmin: integer("is_admin").default(0).notNull(),
-  subscriptionType: varchar("subscription_type").default("free").notNull(), // 'free', 'plus', 'annual'
+  
+  // Email and phone verification
+  isEmailVerified: integer("is_email_verified").default(0),
+  isPhoneVerified: integer("is_phone_verified").default(0),
+  emailVerificationToken: varchar("email_verification_token"),
+  phoneVerificationCode: varchar("phone_verification_code"),
+  phoneVerificationExpiry: timestamp("phone_verification_expiry"),
+  
+  // Password reset
+  passwordResetToken: varchar("password_reset_token"),
+  passwordResetExpiry: timestamp("password_reset_expiry"),
+  
+  // OAuth provider info
+  googleId: varchar("google_id").unique(),
+  facebookId: varchar("facebook_id").unique(),
+  appleId: varchar("apple_id").unique(),
+  
+  // Subscription fields
+  subscriptionType: varchar("subscription_type").default("free"),
+  subscriptionStatus: varchar("subscription_status").default("inactive"),
   stripeCustomerId: varchar("stripe_customer_id"),
   stripeSubscriptionId: varchar("stripe_subscription_id"),
-  subscriptionStatus: varchar("subscription_status").default("active").notNull(),
   subscriptionEndDate: timestamp("subscription_end_date"),
+  
+  // Admin fields
+  isAdmin: integer("is_admin").default(0),
+  
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
