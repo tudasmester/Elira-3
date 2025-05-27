@@ -1,153 +1,213 @@
-import React, { useState, useEffect } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useLocation, useRoute } from 'wouter';
-import { zodResolver } from '@hookform/resolvers/zod';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useLocation, useParams } from 'wouter';
 import { z } from 'zod';
+import { 
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardHeader, 
+  CardTitle 
+} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Save, Loader2 } from 'lucide-react';
 import { Link } from 'wouter';
-import { apiRequest } from '@/lib/queryClient';
+import { AdminGuard } from '@/components/AdminGuard';
 
-const courseSchema = z.object({
-  title: z.string().min(1, 'A cím megadása kötelező'),
-  description: z.string().min(10, 'A leírás legalább 10 karakter hosszú legyen'),
-  imageUrl: z.string().url('Érvényes URL-t adjon meg'),
-  universityId: z.number().min(1, 'Válasszon egy egyetemet'),
+// Form validation schema
+const courseFormSchema = z.object({
+  title: z.string().min(1, "Cím megadása kötelező").max(200, "Cím túl hosszú"),
+  description: z.string().min(10, "Leírás legalább 10 karakter legyen").max(2000, "Leírás túl hosszú"),
+  imageUrl: z.string().url("Érvényes URL-t adj meg").optional().or(z.literal("")),
+  universityId: z.number().min(1, "Egyetem kiválasztása kötelező"),
   isFree: z.boolean(),
-  level: z.string().min(1, 'Válasszon szintet'),
-  category: z.string().min(1, 'Válasszon kategóriát'),
+  price: z.number().min(0, "Ár nem lehet negatív").optional(),
+  level: z.enum(["Kezdő", "Középhaladó", "Haladó", "Szakértő"], {
+    required_error: "Szint kiválasztása kötelező"
+  }),
+  category: z.enum([
+    "Programozás", "Adattudomány", "Mesterséges intelligencia", 
+    "Webfejlesztés", "Mobilfejlesztés", "DevOps", "Kiberbiztonsag", 
+    "Üzleti készségek", "Design", "Marketing", "Egyéb"
+  ], {
+    required_error: "Kategória kiválasztása kötelező"
+  }),
+  duration: z.number().min(1, "Időtartam legalább 1 óra legyen").optional(),
+  language: z.string().min(1, "Nyelv megadása kötelező").default("Hungarian"),
+  prerequisites: z.string().optional(),
+  learningOutcomes: z.string().optional(),
+  instructorName: z.string().optional(),
+  isPublished: z.boolean().default(false),
 });
 
-type CourseFormData = z.infer<typeof courseSchema>;
-
-const categories = [
-  'Programozás',
-  'Adattudományok',
-  'Üzleti tanulmányok',
-  'Dizajn',
-  'Marketing',
-  'Egészségügy',
-  'Mérnöki tudományok',
-  'Nyelvi tanulmányok',
-  'Művészetek',
-  'Természettudományok'
-];
-
-const levels = [
-  'Kezdő',
-  'Középhaladó', 
-  'Haladó',
-  'Szakértő'
-];
+type CourseFormData = z.infer<typeof courseFormSchema>;
 
 export default function AdminCourseForm() {
-  const [, navigate] = useLocation();
-  const [match, params] = useRoute('/admin/courses/:id/edit');
-  const isEdit = !!match;
-  const courseId = params?.id ? parseInt(params.id) : null;
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const params = useParams();
+  const [, setLocation] = useLocation();
+  
+  const isEdit = params.id !== 'new';
+  const courseId = isEdit ? parseInt(params.id as string) : null;
+
+  // Fetch universities for dropdown
+  const { data: universities, isLoading: universitiesLoading } = useQuery({
+    queryKey: ['/api/universities'],
+    retry: false,
+  });
+
+  // Fetch existing course data for editing
+  const { data: existingCourse, isLoading: courseLoading } = useQuery({
+    queryKey: ['/api/courses', courseId],
+    enabled: isEdit && !!courseId,
+    retry: false,
+  });
 
   const form = useForm<CourseFormData>({
-    resolver: zodResolver(courseSchema),
+    resolver: zodResolver(courseFormSchema),
     defaultValues: {
       title: '',
       description: '',
       imageUrl: '',
       universityId: 0,
       isFree: true,
-      level: '',
-      category: '',
+      price: 0,
+      level: 'Kezdő',
+      category: 'Programozás',
+      duration: 10,
+      language: 'Hungarian',
+      prerequisites: '',
+      learningOutcomes: '',
+      instructorName: '',
+      isPublished: false,
     },
   });
 
-  // Fetch course data for editing
-  const { data: course, isLoading: courseLoading } = useQuery({
-    queryKey: [`/api/admin/courses/${courseId}`],
-    enabled: isEdit && !!courseId,
-    retry: false,
-  });
-
-  // Fetch universities for dropdown
-  const { data: universities } = useQuery({
-    queryKey: ['/api/admin/universities'],
-    retry: false,
-  });
+  // Update form with existing course data
+  useEffect(() => {
+    if (existingCourse) {
+      form.reset({
+        title: existingCourse.title || '',
+        description: existingCourse.description || '',
+        imageUrl: existingCourse.imageUrl || '',
+        universityId: existingCourse.universityId || 0,
+        isFree: existingCourse.isFree === 1,
+        price: existingCourse.price || 0,
+        level: existingCourse.level || 'Kezdő',
+        category: existingCourse.category || 'Programozás',
+        duration: existingCourse.duration || 10,
+        language: existingCourse.language || 'Hungarian',
+        prerequisites: existingCourse.prerequisites || '',
+        learningOutcomes: existingCourse.learningOutcomes || '',
+        instructorName: existingCourse.instructorName || '',
+        isPublished: existingCourse.isPublished === 1,
+      });
+    }
+  }, [existingCourse, form]);
 
   // Create course mutation
   const createMutation = useMutation({
-    mutationFn: (data: CourseFormData) => apiRequest(`/api/admin/courses`, {
-      method: 'POST',
-      body: JSON.stringify({
+    mutationFn: async (data: CourseFormData) => {
+      const payload = {
         ...data,
-        isFree: data.isFree ? 1 : 0
-      }),
-    }),
-    onSuccess: () => {
-      toast({
-        title: 'Siker!',
-        description: 'A kurzus sikeresen létrehozva.',
+        isFree: data.isFree ? 1 : 0,
+        isPublished: data.isPublished ? 1 : 0,
+        price: data.isFree ? 0 : (data.price || 0),
+      };
+      
+      const response = await fetch('/api/courses', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
       });
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/courses'] });
-      navigate('/admin');
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to create course');
+      }
+      
+      return response.json();
     },
-    onError: () => {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/courses'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/stats'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/courses'] });
+      
       toast({
-        title: 'Hiba!',
-        description: 'Nem sikerült létrehozni a kurzust.',
-        variant: 'destructive',
+        title: "Kurzus létrehozva",
+        description: "A kurzus sikeresen létrejött.",
+      });
+      
+      setLocation('/admin');
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Hiba",
+        description: error.message,
+        variant: "destructive",
       });
     },
   });
 
   // Update course mutation
   const updateMutation = useMutation({
-    mutationFn: (data: CourseFormData) => apiRequest(`/api/admin/courses/${courseId}`, {
-      method: 'PUT',
-      body: JSON.stringify({
+    mutationFn: async (data: CourseFormData) => {
+      const payload = {
         ...data,
-        isFree: data.isFree ? 1 : 0
-      }),
-    }),
-    onSuccess: () => {
-      toast({
-        title: 'Siker!',
-        description: 'A kurzus sikeresen frissítve.',
+        isFree: data.isFree ? 1 : 0,
+        isPublished: data.isPublished ? 1 : 0,
+        price: data.isFree ? 0 : (data.price || 0),
+      };
+      
+      const response = await fetch(`/api/courses/${courseId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
       });
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/courses'] });
-      navigate('/admin');
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to update course');
+      }
+      
+      return response.json();
     },
-    onError: () => {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/courses'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/stats'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/courses'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/courses', courseId] });
+      
       toast({
-        title: 'Hiba!',
-        description: 'Nem sikerült frissíteni a kurzust.',
-        variant: 'destructive',
+        title: "Kurzus frissítve",
+        description: "A kurzus adatai sikeresen frissültek.",
+      });
+      
+      setLocation('/admin');
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Hiba",
+        description: error.message,
+        variant: "destructive",
       });
     },
   });
-
-  // Set form values when course data is loaded
-  useEffect(() => {
-    if (course && isEdit) {
-      form.reset({
-        title: course.title,
-        description: course.description,
-        imageUrl: course.imageUrl,
-        universityId: course.universityId,
-        isFree: !!course.isFree,
-        level: course.level,
-        category: course.category,
-      });
-    }
-  }, [course, isEdit, form]);
 
   const onSubmit = (data: CourseFormData) => {
     if (isEdit) {
@@ -157,215 +217,313 @@ export default function AdminCourseForm() {
     }
   };
 
-  if (courseLoading) {
+  const isPending = createMutation.isPending || updateMutation.isPending;
+  const isLoading = courseLoading || universitiesLoading;
+
+  if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-      </div>
+      <AdminGuard>
+        <div className="flex items-center justify-center min-h-screen">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+      </AdminGuard>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <Link href="/admin">
-            <Button variant="outline" className="mb-4">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Vissza az admin panelhez
-            </Button>
-          </Link>
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-            {isEdit ? 'Kurzus szerkesztése' : 'Új kurzus létrehozása'}
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            {isEdit ? 'Módosítsa a kurzus adatait' : 'Adja meg az új kurzus részleteit'}
-          </p>
-        </div>
+    <AdminGuard>
+      <div className="container mx-auto py-6 px-4">
+        <div className="max-w-4xl mx-auto">
+          {/* Header */}
+          <div className="flex items-center gap-4 mb-6">
+            <Link href="/admin">
+              <Button variant="outline" size="sm">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Vissza
+              </Button>
+            </Link>
+            <div>
+              <h1 className="text-3xl font-bold">
+                {isEdit ? 'Kurzus szerkesztése' : 'Új kurzus létrehozása'}
+              </h1>
+              <p className="text-gray-600">
+                {isEdit ? 'Módosítsd a kurzus adatait' : 'Töltsd ki az alábbi adatokat az új kurzus létrehozásához'}
+              </p>
+            </div>
+          </div>
 
-        <Card className="max-w-2xl mx-auto">
-          <CardHeader>
-            <CardTitle>{isEdit ? 'Kurzus szerkesztése' : 'Új kurzus'}</CardTitle>
-            <CardDescription>
-              Töltse ki az alábbi mezőket a kurzus {isEdit ? 'frissítéséhez' : 'létrehozásához'}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <FormField
-                  control={form.control}
-                  name="title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Kurzus címe</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Adja meg a kurzus címét" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            {/* Basic Information */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Alapadatok</CardTitle>
+                <CardDescription>
+                  A kurzus alapvető információi
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="title">Kurzus címe *</Label>
+                    <Input
+                      id="title"
+                      {...form.register('title')}
+                      placeholder="pl. React fejlesztés kezdőknek"
+                      disabled={isPending}
+                    />
+                    {form.formState.errors.title && (
+                      <p className="text-red-500 text-sm">{form.formState.errors.title.message}</p>
+                    )}
+                  </div>
 
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Leírás</FormLabel>
-                      <FormControl>
-                        <Textarea 
-                          placeholder="Adja meg a kurzus részletes leírását"
-                          className="min-h-[100px]"
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="imageUrl"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Kép URL</FormLabel>
-                      <FormControl>
-                        <Input placeholder="https://example.com/image.jpg" {...field} />
-                      </FormControl>
-                      <FormDescription>
-                        Adjon meg egy érvényes URL-t a kurzus képéhez
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="universityId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Egyetem</FormLabel>
-                      <Select 
-                        onValueChange={(value) => field.onChange(parseInt(value))}
-                        value={field.value.toString()}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Válasszon egyetemet" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {universities?.map((university: any) => (
-                            <SelectItem key={university.id} value={university.id.toString()}>
-                              {university.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="category"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Kategória</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Válasszon kategóriát" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {categories.map((category) => (
-                            <SelectItem key={category} value={category}>
-                              {category}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="level"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Szint</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Válasszon szintet" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {levels.map((level) => (
-                            <SelectItem key={level} value={level}>
-                              {level}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="isFree"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                      <div className="space-y-0.5">
-                        <FormLabel className="text-base">
-                          Ingyenes kurzus
-                        </FormLabel>
-                        <FormDescription>
-                          Jelölje be, ha a kurzus ingyenesen elérhető
-                        </FormDescription>
-                      </div>
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-
-                <div className="flex gap-4">
-                  <Button 
-                    type="submit" 
-                    disabled={createMutation.isPending || updateMutation.isPending}
-                    className="flex-1"
-                  >
-                    {createMutation.isPending || updateMutation.isPending 
-                      ? 'Mentés...' 
-                      : isEdit ? 'Frissítés' : 'Létrehozás'
-                    }
-                  </Button>
-                  <Link href="/admin">
-                    <Button type="button" variant="outline">
-                      Mégse
-                    </Button>
-                  </Link>
+                  <div className="space-y-2">
+                    <Label htmlFor="universityId">Egyetem *</Label>
+                    <Select
+                      value={form.watch('universityId').toString()}
+                      onValueChange={(value) => form.setValue('universityId', parseInt(value))}
+                      disabled={isPending}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Válassz egyetmet" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {universities?.map((university: any) => (
+                          <SelectItem key={university.id} value={university.id.toString()}>
+                            {university.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {form.formState.errors.universityId && (
+                      <p className="text-red-500 text-sm">{form.formState.errors.universityId.message}</p>
+                    )}
+                  </div>
                 </div>
-              </form>
-            </Form>
-          </CardContent>
-        </Card>
+
+                <div className="space-y-2">
+                  <Label htmlFor="description">Leírás *</Label>
+                  <Textarea
+                    id="description"
+                    {...form.register('description')}
+                    placeholder="Írj egy részletes leírást a kurzusról..."
+                    rows={4}
+                    disabled={isPending}
+                  />
+                  {form.formState.errors.description && (
+                    <p className="text-red-500 text-sm">{form.formState.errors.description.message}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="imageUrl">Borítókép URL</Label>
+                  <Input
+                    id="imageUrl"
+                    {...form.register('imageUrl')}
+                    placeholder="https://example.com/image.jpg"
+                    disabled={isPending}
+                  />
+                  {form.formState.errors.imageUrl && (
+                    <p className="text-red-500 text-sm">{form.formState.errors.imageUrl.message}</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Course Details */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Kurzus részletei</CardTitle>
+                <CardDescription>
+                  További információk a kurzusról
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="level">Szint *</Label>
+                    <Select
+                      value={form.watch('level')}
+                      onValueChange={(value) => form.setValue('level', value as any)}
+                      disabled={isPending}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Válassz szintet" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Kezdő">Kezdő</SelectItem>
+                        <SelectItem value="Középhaladó">Középhaladó</SelectItem>
+                        <SelectItem value="Haladó">Haladó</SelectItem>
+                        <SelectItem value="Szakértő">Szakértő</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {form.formState.errors.level && (
+                      <p className="text-red-500 text-sm">{form.formState.errors.level.message}</p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="category">Kategória *</Label>
+                    <Select
+                      value={form.watch('category')}
+                      onValueChange={(value) => form.setValue('category', value as any)}
+                      disabled={isPending}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Válassz kategóriát" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Programozás">Programozás</SelectItem>
+                        <SelectItem value="Adattudomány">Adattudomány</SelectItem>
+                        <SelectItem value="Mesterséges intelligencia">Mesterséges intelligencia</SelectItem>
+                        <SelectItem value="Webfejlesztés">Webfejlesztés</SelectItem>
+                        <SelectItem value="Mobilfejlesztés">Mobilfejlesztés</SelectItem>
+                        <SelectItem value="DevOps">DevOps</SelectItem>
+                        <SelectItem value="Kiberbiztonsag">Kiberbiztonsag</SelectItem>
+                        <SelectItem value="Üzleti készségek">Üzleti készségek</SelectItem>
+                        <SelectItem value="Design">Design</SelectItem>
+                        <SelectItem value="Marketing">Marketing</SelectItem>
+                        <SelectItem value="Egyéb">Egyéb</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {form.formState.errors.category && (
+                      <p className="text-red-500 text-sm">{form.formState.errors.category.message}</p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="duration">Időtartam (órában)</Label>
+                    <Input
+                      id="duration"
+                      type="number"
+                      min="1"
+                      {...form.register('duration', { valueAsNumber: true })}
+                      placeholder="10"
+                      disabled={isPending}
+                    />
+                    {form.formState.errors.duration && (
+                      <p className="text-red-500 text-sm">{form.formState.errors.duration.message}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="instructorName">Oktató neve</Label>
+                    <Input
+                      id="instructorName"
+                      {...form.register('instructorName')}
+                      placeholder="Dr. Kovács János"
+                      disabled={isPending}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="language">Nyelv</Label>
+                    <Input
+                      id="language"
+                      {...form.register('language')}
+                      placeholder="Hungarian"
+                      disabled={isPending}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="prerequisites">Előfeltételek</Label>
+                  <Textarea
+                    id="prerequisites"
+                    {...form.register('prerequisites')}
+                    placeholder="Milyen előismereteket igényel a kurzus?"
+                    rows={2}
+                    disabled={isPending}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="learningOutcomes">Tanulási célok</Label>
+                  <Textarea
+                    id="learningOutcomes"
+                    {...form.register('learningOutcomes')}
+                    placeholder="Mit fognak megtanulni a résztvevők?"
+                    rows={3}
+                    disabled={isPending}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Pricing and Publication */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Árképzés és publikálás</CardTitle>
+                <CardDescription>
+                  Állítsd be a kurzus árát és láthatóságát
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="isFree"
+                    checked={form.watch('isFree')}
+                    onCheckedChange={(checked) => form.setValue('isFree', checked)}
+                    disabled={isPending}
+                  />
+                  <Label htmlFor="isFree">Ingyenes kurzus</Label>
+                </div>
+
+                {!form.watch('isFree') && (
+                  <div className="space-y-2">
+                    <Label htmlFor="price">Ár (HUF)</Label>
+                    <Input
+                      id="price"
+                      type="number"
+                      min="0"
+                      {...form.register('price', { valueAsNumber: true })}
+                      placeholder="15000"
+                      disabled={isPending}
+                    />
+                    {form.formState.errors.price && (
+                      <p className="text-red-500 text-sm">{form.formState.errors.price.message}</p>
+                    )}
+                  </div>
+                )}
+
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="isPublished"
+                    checked={form.watch('isPublished')}
+                    onCheckedChange={(checked) => form.setValue('isPublished', checked)}
+                    disabled={isPending}
+                  />
+                  <Label htmlFor="isPublished">Kurzus publikálása</Label>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Actions */}
+            <div className="flex justify-end space-x-4">
+              <Link href="/admin">
+                <Button type="button" variant="outline" disabled={isPending}>
+                  Mégse
+                </Button>
+              </Link>
+              <Button type="submit" disabled={isPending}>
+                {isPending ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    {isEdit ? 'Frissítés...' : 'Létrehozás...'}
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4 mr-2" />
+                    {isEdit ? 'Kurzus frissítése' : 'Kurzus létrehozása'}
+                  </>
+                )}
+              </Button>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
+    </AdminGuard>
   );
 }
