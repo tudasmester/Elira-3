@@ -333,3 +333,64 @@ export type QuizAnswer = typeof quizAnswers.$inferSelect;
 
 export type InsertQuizAttempt = z.infer<typeof insertQuizAttemptSchema>;
 export type QuizAttempt = typeof quizAttempts.$inferSelect;
+
+// Learning Path tables
+export const learningPaths = pgTable("learning_paths", {
+  id: serial("id").primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  userId: varchar("user_id").notNull(),
+  difficulty: varchar("difficulty", { length: 50 }).notNull().default("beginner"),
+  tags: text("tags").array().default([]),
+  isPublic: boolean("is_public").default(false),
+  totalDuration: varchar("total_duration", { length: 100 }),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const learningPathSteps = pgTable("learning_path_steps", {
+  id: serial("id").primaryKey(),
+  learningPathId: integer("learning_path_id").notNull(),
+  courseId: integer("course_id").notNull(),
+  orderIndex: integer("order_index").notNull(),
+  isCompleted: boolean("is_completed").default(false),
+  estimatedDuration: varchar("estimated_duration", { length: 100 }),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertLearningPathSchema = createInsertSchema(learningPaths).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertLearningPathStepSchema = createInsertSchema(learningPathSteps).omit({
+  id: true,
+  createdAt: true,
+});
+
+// Learning Path relations
+export const learningPathsRelations = relations(learningPaths, ({ one, many }) => ({
+  user: one(users, {
+    fields: [learningPaths.userId],
+    references: [users.id],
+  }),
+  steps: many(learningPathSteps),
+}));
+
+export const learningPathStepsRelations = relations(learningPathSteps, ({ one }) => ({
+  learningPath: one(learningPaths, {
+    fields: [learningPathSteps.learningPathId],
+    references: [learningPaths.id],
+  }),
+  course: one(courses, {
+    fields: [learningPathSteps.courseId],
+    references: [courses.id],
+  }),
+}));
+
+// Learning Path types
+export type InsertLearningPath = z.infer<typeof insertLearningPathSchema>;
+export type LearningPath = typeof learningPaths.$inferSelect;
+export type InsertLearningPathStep = z.infer<typeof insertLearningPathStepSchema>;
+export type LearningPathStep = typeof learningPathSteps.$inferSelect;
