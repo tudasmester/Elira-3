@@ -17,7 +17,7 @@ export const isAdmin: RequestHandler = async (req, res, next) => {
     const userId = user.claims.sub;
     const userRecord = await storage.getUser(userId);
     
-    if (!userRecord || !userRecord.isAdmin) {
+    if (!userRecord || userRecord.isAdmin !== 1) {
       return res.status(403).json({ message: "Admin access required" });
     }
 

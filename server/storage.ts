@@ -48,6 +48,10 @@ export interface IStorage {
   updateEnrollmentProgress(id: number, progress: number): Promise<Enrollment>;
   updateEnrollmentStatus(id: number, status: string): Promise<Enrollment>;
   isUserEnrolledInCourse(userId: string, courseId: number): Promise<boolean>;
+  
+  // Admin operations
+  promoteUserToAdmin(userId: string): Promise<User>;
+  demoteUserFromAdmin(userId: string): Promise<User>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -274,6 +278,25 @@ export class DatabaseStorage implements IStorage {
   async isUserEnrolledInCourse(userId: string, courseId: number): Promise<boolean> {
     const enrollment = await this.getEnrollment(userId, courseId);
     return !!enrollment;
+  }
+
+  // Admin operations
+  async promoteUserToAdmin(userId: string): Promise<User> {
+    const [user] = await db
+      .update(users)
+      .set({ isAdmin: 1, updatedAt: new Date() })
+      .where(eq(users.id, userId))
+      .returning();
+    return user;
+  }
+
+  async demoteUserFromAdmin(userId: string): Promise<User> {
+    const [user] = await db
+      .update(users)
+      .set({ isAdmin: 0, updatedAt: new Date() })
+      .where(eq(users.id, userId))
+      .returning();
+    return user;
   }
 
   // Initialize database with sample data if needed
