@@ -156,7 +156,7 @@ export function registerAdminRoutes(app: Express) {
   });
 
   // Super admin endpoint to promote users to admin (protected by environment variable)
-  router.post('/setup-admin', async (req: Request, res: Response) => {
+  app.post('/api/admin/setup-admin', async (req, res) => {
     try {
       const { userId, adminSecret } = req.body;
       
@@ -174,39 +174,6 @@ export function registerAdminRoutes(app: Express) {
     } catch (error) {
       console.error("Error promoting user to admin:", error);
       res.status(500).json({ message: "Failed to promote user to admin" });
-    }
-  });
-
-  // Admin-only endpoint to manage other admins
-  router.post('/promote-admin', isAdmin, async (req: Request, res: Response) => {
-    try {
-      const { userId } = req.body;
-
-      if (!userId) {
-        return res.status(400).json({ message: "User ID is required" });
-      }
-
-      const user = await storage.promoteUserToAdmin(userId);
-      res.json({ message: "User promoted to admin successfully", user: { id: user.id, email: user.email, isAdmin: user.isAdmin } });
-    } catch (error) {
-      console.error("Error promoting user to admin:", error);
-      res.status(500).json({ message: "Failed to promote user to admin" });
-    }
-  });
-
-  router.post('/demote-admin', isAdmin, async (req: Request, res: Response) => {
-    try {
-      const { userId } = req.body;
-
-      if (!userId) {
-        return res.status(400).json({ message: "User ID is required" });
-      }
-
-      const user = await storage.demoteUserFromAdmin(userId);
-      res.json({ message: "User demoted from admin successfully", user: { id: user.id, email: user.email, isAdmin: user.isAdmin } });
-    } catch (error) {
-      console.error("Error demoting user from admin:", error);
-      res.status(500).json({ message: "Failed to demote user from admin" });
     }
   });
 }
