@@ -7,6 +7,7 @@ import {
   LogOut, TrendingUp, BrainCircuit
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -23,6 +24,7 @@ const Navbar: React.FC = () => {
   const [location] = useLocation();
   const isMobile = useIsMobile();
   const { user, isAuthenticated, isLoading } = useAuth();
+  const { isAdmin } = useAdminAuth();
   
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -137,6 +139,14 @@ const Navbar: React.FC = () => {
                               <span>Profilom</span>
                             </Link>
                           </DropdownMenuItem>
+                          {isAdmin && (
+                            <DropdownMenuItem asChild>
+                              <Link href="/admin" className="flex items-center cursor-pointer text-primary">
+                                <BarChart className="h-4 w-4 mr-2" />
+                                <span>Admin Panel</span>
+                              </Link>
+                            </DropdownMenuItem>
+                          )}
                           <DropdownMenuItem asChild>
                             <a href="/api/logout" className="flex items-center cursor-pointer text-red-500">
                               <LogOut className="h-4 w-4 mr-2" />

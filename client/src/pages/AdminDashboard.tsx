@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { 
   BarChart, 
   Bar, 
@@ -20,11 +20,19 @@ import {
   Plus,
   Edit3,
   Trash2,
-  Eye
+  Eye,
+  Search,
+  Filter,
+  MoreHorizontal
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { useToast } from '@/hooks/use-toast';
 import { Link } from 'wouter';
 import { AdminGuard } from '@/components/AdminGuard';
 
@@ -53,6 +61,10 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, courseId: null, courseName: '' });
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ['/api/admin/stats'],
