@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { setupAuth, isAuthenticated } from "./replitAuth";
 import { setupAuthRoutes } from "./auth-routes";
+import { requireAuth } from "./auth";
 import { storage } from "./storage";
 import { registerAdminRoutes } from "./admin-routes";
 import { generateCareerPathInfo, getCareerRecommendation, generateSkillsAnalysis } from "./openai";
@@ -9,9 +9,6 @@ import { contentManager } from "./content-manager";
 import type { Request, Response } from "express";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Auth middleware
-  await setupAuth(app);
-  
   // Setup comprehensive authentication routes (email/password, phone, social login)
   setupAuthRoutes(app);
 
@@ -91,7 +88,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Enrollment routes
-  app.post("/api/enrollments", isAuthenticated, async (req: Request, res: Response) => {
+  app.post("/api/enrollments", requireAuth, async (req: Request, res: Response) => {
     try {
       const userId = req.user?.id;
       if (!userId) {
@@ -113,7 +110,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/enrollments", isAuthenticated, async (req: Request, res: Response) => {
+  app.get("/api/enrollments", requireAuth, async (req: Request, res: Response) => {
     try {
       const userId = req.user?.id;
       if (!userId) {
@@ -195,16 +192,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   registerSimpleAdminRoutes(app);
 
   // Auth routes
-  app.get('/api/auth/user', isAuthenticated, async (req: Request, res: Response) => {
-    try {
-      const userId = req.user?.claims?.sub;
-      const user = await storage.getUser(userId);
-      res.json(user);
-    } catch (error) {
-      console.error("Error fetching user:", error);
-      res.status(500).json({ message: "Failed to fetch user" });
-    }
-  });
+  // This route is now handled by auth-routes.ts
 
   const httpServer = createServer(app);
   return httpServer;
