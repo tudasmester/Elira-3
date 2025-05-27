@@ -23,7 +23,8 @@ import {
   Eye,
   Search,
   Filter,
-  MoreHorizontal
+  MoreHorizontal,
+  Settings
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -351,6 +352,11 @@ export default function AdminDashboard() {
                         <Link href={`/course/${course.id}`}>
                           <Button variant="outline" size="sm">
                             <Eye className="h-4 w-4" />
+                          </Button>
+                        </Link>
+                        <Link href={`/admin/courses/${course.id}`}>
+                          <Button variant="outline" size="sm">
+                            <Settings className="h-4 w-4" />
                           </Button>
                         </Link>
                         <Link href={`/admin/courses/${course.id}/edit`}>

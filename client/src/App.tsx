@@ -53,6 +53,7 @@ function Router() {
       <Route path="/admin-setup" component={AdminSetup} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/admin/courses/new" component={AdminCourseForm} />
+      <Route path="/admin/courses/:id" component={AdminCourseDetail} />
       <Route path="/admin/courses/:id/edit" component={AdminCourseForm} />
       <Route component={NotFound} />
     </Switch>
