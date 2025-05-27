@@ -182,8 +182,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Register subscription routes
+  const { registerSubscriptionRoutes } = await import("./subscription-routes");
+  registerSubscriptionRoutes(app);
+  
   // Register admin routes
-  registerAdminRoutes(app);
+  const { registerAdminRoutes: registerSimpleAdminRoutes } = await import("./admin-routes-working");
+  registerSimpleAdminRoutes(app);
 
   // Auth routes
   app.get('/api/auth/user', isAuthenticated, async (req: Request, res: Response) => {

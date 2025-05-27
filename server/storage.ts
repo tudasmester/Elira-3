@@ -115,6 +115,15 @@ export interface IStorage {
   
   // Course structure retrieval
   getCourseWithFullStructure(courseId: number): Promise<any>;
+  
+  // Subscription operations
+  updateUserSubscription(userId: string, subscriptionData: {
+    subscriptionType?: string;
+    subscriptionStatus?: string;
+    stripeCustomerId?: string | null;
+    stripeSubscriptionId?: string | null;
+    subscriptionEndDate?: Date | null;
+  }): Promise<User>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -726,6 +735,22 @@ export class DatabaseStorage implements IStorage {
 }
 
 // Create database storage instance
+// Add subscription method to DatabaseStorage prototype
+DatabaseStorage.prototype.updateUserSubscription = async function(userId: string, subscriptionData: {
+  subscriptionType?: string;
+  subscriptionStatus?: string;
+  stripeCustomerId?: string | null;
+  stripeSubscriptionId?: string | null;
+  subscriptionEndDate?: Date | null;
+}): Promise<User> {
+  const [user] = await db
+    .update(users)
+    .set(subscriptionData)
+    .where(eq(users.id, userId))
+    .returning();
+  return user;
+};
+
 export const storage = new DatabaseStorage();
 
 // Initialize database with sample data
