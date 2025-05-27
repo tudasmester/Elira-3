@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,6 +7,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useLocation } from "wouter";
+import TutorialGuide from "@/components/TutorialGuide";
 import { 
   BookOpen, 
   Award, 
@@ -58,6 +60,20 @@ interface UserStats {
 export default function Dashboard() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("overview");
+  const [location] = useLocation();
+  const [showTutorial, setShowTutorial] = useState(false);
+
+  // Check if user came from registration (tutorial flag)
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.split('?')[1] || '');
+    const shouldShowTutorial = urlParams.get('tutorial') === 'true';
+    
+    if (shouldShowTutorial && user) {
+      setShowTutorial(true);
+      // Clean up URL
+      window.history.replaceState({}, '', '/dashboard');
+    }
+  }, [location, user]);
 
   // Fetch user enrollments
   const { data: enrollments = [], isLoading: enrollmentsLoading } = useQuery<Enrollment[]>({
@@ -121,6 +137,12 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+      {/* Tutorial Guide for first-time users */}
+      <TutorialGuide 
+        isOpen={showTutorial} 
+        onClose={() => setShowTutorial(false)} 
+      />
+      
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <motion.div

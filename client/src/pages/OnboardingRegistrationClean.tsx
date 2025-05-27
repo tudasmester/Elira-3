@@ -124,11 +124,20 @@ export default function OnboardingRegistrationClean() {
       });
 
       if (response.ok) {
+        const data = await response.json();
+        
+        // Store the authentication token
+        if (data.token) {
+          localStorage.setItem('authToken', data.token);
+        }
+        
         toast({
           title: "Sikeres regisztráció!",
           description: "Üdvözöljük az Academion-ban!",
         });
-        setLocation('/dashboard');
+        
+        // Redirect to dashboard with tutorial flag for first-time users
+        setLocation('/dashboard?tutorial=true');
       } else {
         const error = await response.text();
         throw new Error(error);
