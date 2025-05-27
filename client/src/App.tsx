@@ -23,6 +23,7 @@ import AdminCourseForm from "@/pages/AdminCourseForm";
 import AdminCourseDetail from "@/pages/AdminCourseDetail";
 import AdminContentSync from "@/pages/AdminContentSync";
 import AdminSetup from "@/pages/AdminSetup";
+import AuthPage from "@/pages/AuthPage";
 import NotFound from "@/pages/not-found";
 import Layout from "@/components/Layout";
 import ScrollToTop from "@/components/ui/ScrollToTop";
@@ -40,6 +41,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/onboarding" component={Onboarding} />
+      <Route path="/auth" component={AuthPage} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/course/:id" component={CourseDetail} />
       <Route path="/trending" component={Trending} />
