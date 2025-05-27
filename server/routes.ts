@@ -1,6 +1,6 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { setupAuthRoutes } from "./auth-routes-clean";
+// import { setupAuthRoutes } from "./auth-routes-clean";
 import { requireAuth } from "./auth";
 import { storage } from "./storage";
 import { registerAdminRoutes } from "./admin-routes";
@@ -187,8 +187,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Admin routes temporarily disabled during auth system cleanup
 
-  // Enable clean authentication routes
-  setupAuthRoutes(app);
+  // Enable simplified authentication routes
+  const { setupSimpleAuth } = await import("./auth-simple");
+  setupSimpleAuth(app);
 
   const httpServer = createServer(app);
   return httpServer;
