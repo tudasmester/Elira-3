@@ -1,7 +1,7 @@
 import express, { type Express, type Request, type Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertSubscriberSchema, insertEnrollmentSchema } from "@shared/schema";
+import { insertSubscriberSchema, insertEnrollmentSchema, insertCourseSchema } from "@shared/schema";
 import { z } from "zod";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import enrollmentRouter from "./enrollment-routes";

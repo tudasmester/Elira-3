@@ -62,7 +62,7 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
   const [searchTerm, setSearchTerm] = useState("");
-  const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, courseId: null, courseName: '' });
+  const [deleteDialog, setDeleteDialog] = useState<{ isOpen: boolean; courseId: number | null; courseName: string }>({ isOpen: false, courseId: null, courseName: '' });
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -121,11 +121,11 @@ export default function AdminDashboard() {
   };
 
   // Filter courses based on search term
-  const filteredCourses = courses?.filter((course: Course) =>
+  const filteredCourses = Array.isArray(courses) ? courses.filter((course: Course) =>
     course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     course.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
     course.category.toLowerCase().includes(searchTerm.toLowerCase())
-  ) || [];
+  ) : [];
 
   if (statsLoading || coursesLoading) {
     return (
