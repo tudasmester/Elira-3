@@ -66,6 +66,8 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
   const [searchTerm, setSearchTerm] = useState("");
   const [deleteDialog, setDeleteDialog] = useState<{ isOpen: boolean; courseId: number | null; courseName: string }>({ isOpen: false, courseId: null, courseName: '' });
+  const [selectedCourses, setSelectedCourses] = useState<number[]>([]);
+  const [showBulkActions, setShowBulkActions] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
@@ -121,14 +123,15 @@ export default function AdminDashboard() {
     },
   });
 
-  // Import courses mutation
-  const importMutation = useMutation({
-    mutationFn: async () => {
-      const response = await fetch('/api/admin/import-courses', {
+  // Bulk operations mutation
+  const bulkOperationMutation = useMutation({
+    mutationFn: async ({ operation, courseIds }: { operation: string, courseIds: number[] }) => {
+      const response = await fetch('/api/admin/bulk-operations', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ operation, courseIds })
       });
-      if (!response.ok) throw new Error('Import failed');
+      if (!response.ok) throw new Error('Bulk operation failed');
       return response.json();
     },
     onSuccess: (data) => {
@@ -136,13 +139,14 @@ export default function AdminDashboard() {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/stats'] });
       triggerDataRefresh(queryClient);
       toast({
-        title: "Import sikeres!",
-        description: `${data.imported || 6} kurzus importálva`,
+        title: "Tömeges művelet sikeres!",
+        description: `${data.affected} kurzus frissítve`,
       });
+      setSelectedCourses([]);
     },
     onError: (error: Error) => {
       toast({
-        title: "Import hiba",
+        title: "Hiba történt",
         description: error.message,
         variant: "destructive",
       });
@@ -177,12 +181,29 @@ export default function AdminDashboard() {
     }
   });
 
-  const handleImportCourses = () => {
-    importMutation.mutate();
+  const handleBulkPublish = () => {
+    bulkOperationMutation.mutate({ operation: 'publish', courseIds: selectedCourses });
   };
 
-  const handleSyncCourses = () => {
-    syncMutation.mutate();
+  const handleBulkUnpublish = () => {
+    bulkOperationMutation.mutate({ operation: 'unpublish', courseIds: selectedCourses });
+  };
+
+  const handleBulkHighlight = () => {
+    bulkOperationMutation.mutate({ operation: 'highlight', courseIds: selectedCourses });
+  };
+
+  const toggleCourseSelection = (courseId: number) => {
+    setSelectedCourses(prev => 
+      prev.includes(courseId) 
+        ? prev.filter(id => id !== courseId)
+        : [...prev, courseId]
+    );
+  };
+
+  const selectAllCourses = () => {
+    const allCourseIds = filteredCourses.map((course: any) => course.id);
+    setSelectedCourses(selectedCourses.length === allCourseIds.length ? [] : allCourseIds);
   };
 
   const handleDeleteCourse = (courseId: number, courseName: string) => {
