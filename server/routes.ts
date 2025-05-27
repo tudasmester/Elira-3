@@ -1,6 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { setupAuth, isAuthenticated } from "./replitAuth";
+import { setupAuthRoutes } from "./auth-routes";
 import { storage } from "./storage";
 import { registerAdminRoutes } from "./admin-routes";
 import { generateCareerPathInfo, getCareerRecommendation, generateSkillsAnalysis } from "./openai";
@@ -10,6 +11,9 @@ import type { Request, Response } from "express";
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
   await setupAuth(app);
+  
+  // Setup comprehensive authentication routes (email/password, phone, social login)
+  setupAuthRoutes(app);
 
   // Initialize admin content (one-time setup)
   app.post("/api/admin/initialize", async (req: Request, res: Response) => {

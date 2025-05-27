@@ -160,6 +160,121 @@ export class DatabaseStorage implements IStorage {
     return results[0];
   }
   
+  async getUserByPhone(phone: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.phone, phone));
+    return user;
+  }
+
+  async updateUser(id: string, data: Partial<InsertUser>): Promise<User> {
+    const [user] = await db
+      .update(users)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(users.id, id))
+      .returning();
+    return user;
+  }
+
+  async updateEmailVerification(userId: string, token: string): Promise<void> {
+    await db
+      .update(users)
+      .set({ emailVerificationToken: token, updatedAt: new Date() })
+      .where(eq(users.id, userId));
+  }
+
+  async verifyEmail(token: string): Promise<User | undefined> {
+    const [user] = await db
+      .update(users)
+      .set({ 
+        isEmailVerified: 1, 
+        emailVerificationToken: null,
+        updatedAt: new Date() 
+      })
+      .where(eq(users.emailVerificationToken, token))
+      .returning();
+    return user;
+  }
+
+  async updatePasswordReset(userId: string, token: string, expiry: Date): Promise<void> {
+    await db
+      .update(users)
+      .set({ 
+        passwordResetToken: token,
+        passwordResetExpiry: expiry,
+        updatedAt: new Date() 
+      })
+      .where(eq(users.id, userId));
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<User | undefined> {
+    const [user] = await db
+      .update(users)
+      .set({ 
+        password: newPassword,
+        passwordResetToken: null,
+        passwordResetExpiry: null,
+        updatedAt: new Date() 
+      })
+      .where(eq(users.passwordResetToken, token))
+      .returning();
+    
+    return user;
+  }
+
+  async updatePhoneVerification(userId: string, code: string, expiry: Date): Promise<void> {
+    await db
+      .update(users)
+      .set({ 
+        phoneVerificationCode: code,
+        phoneVerificationExpiry: expiry,
+        updatedAt: new Date() 
+      })
+      .where(eq(users.id, userId));
+  }
+
+  async verifyPhone(phone: string, code: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(
+      and(
+        eq(users.phone, phone),
+        eq(users.phoneVerificationCode, code)
+      )
+    );
+
+    if (!user || !user.phoneVerificationExpiry || new Date() > user.phoneVerificationExpiry) {
+      return undefined;
+    }
+
+    const [updatedUser] = await db
+      .update(users)
+      .set({ 
+        isPhoneVerified: 1,
+        phoneVerificationCode: null,
+        phoneVerificationExpiry: null,
+        updatedAt: new Date() 
+      })
+      .where(eq(users.id, user.id))
+      .returning();
+
+    return updatedUser;
+  }
+
+  async updateUserSubscription(userId: string, subscriptionData: {
+    subscriptionType: string;
+    subscriptionStatus: string;
+    stripeCustomerId?: string;
+    stripeSubscriptionId?: string;
+    subscriptionEndDate?: Date;
+  }): Promise<User> {
+    const [user] = await db
+      .update(users)
+      .set({ 
+        ...subscriptionData,
+        updatedAt: new Date() 
+      })
+      .where(eq(users.id, userId))
+      .returning();
+    return user;
+  }
+
   async upsertUser(userData: UpsertUser): Promise<User> {
     const [user] = await db
       .insert(users)
@@ -169,6 +284,8 @@ export class DatabaseStorage implements IStorage {
         firstName: userData.firstName,
         lastName: userData.lastName,
         profileImageUrl: userData.profileImageUrl,
+        subscriptionType: userData.subscriptionType || "free",
+        subscriptionStatus: userData.subscriptionStatus || "inactive",
         updatedAt: new Date(),
       })
       .onConflictDoUpdate({
@@ -178,6 +295,8 @@ export class DatabaseStorage implements IStorage {
           firstName: userData.firstName,
           lastName: userData.lastName,
           profileImageUrl: userData.profileImageUrl,
+          subscriptionType: userData.subscriptionType || "free",
+          subscriptionStatus: userData.subscriptionStatus || "inactive",
           updatedAt: new Date(),
         },
       })
