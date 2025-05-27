@@ -148,10 +148,13 @@ const Navbar: React.FC = () => {
                             </DropdownMenuItem>
                           )}
                           <DropdownMenuItem asChild>
-                            <a href="/api/logout" className="flex items-center cursor-pointer text-red-500">
+                            <button onClick={() => {
+                              localStorage.removeItem('auth_token');
+                              window.location.href = '/';
+                            }} className="flex items-center cursor-pointer text-red-500 w-full text-left">
                               <LogOut className="h-4 w-4 mr-2" />
                               <span>Kijelentkezés</span>
-                            </a>
+                            </button>
                           </DropdownMenuItem>
                         </DropdownMenuGroup>
                       </DropdownMenuContent>
@@ -159,14 +162,14 @@ const Navbar: React.FC = () => {
                   </div>
                 ) : (
                   <>
-                    <a href="/api/login" className="text-neutral-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
+                    <Link href="/auth" className="text-neutral-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium">
                       Bejelentkezés
-                    </a>
-                    <a href="/api/login">
+                    </Link>
+                    <Link href="/auth">
                       <Button className="bg-primary hover:bg-primary/90 text-white">
                         Csatlakozzon ingyen
                       </Button>
-                    </a>
+                    </Link>
                   </>
                 )}
               </>
@@ -226,25 +229,29 @@ const Navbar: React.FC = () => {
                       Profilom
                     </Button>
                   </Link>
-                  <a href="/api/logout">
-                    <Button className="w-full justify-center bg-red-50 hover:bg-red-100 text-red-600 border border-red-200">
-                      <LogOut className="mr-2 h-4 w-4" />
-                      Kijelentkezés
-                    </Button>
-                  </a>
+                  <Button 
+                    onClick={() => {
+                      localStorage.removeItem('auth_token');
+                      window.location.href = '/';
+                    }}
+                    className="w-full justify-center bg-red-50 hover:bg-red-100 text-red-600 border border-red-200"
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Kijelentkezés
+                  </Button>
                 </>
               ) : (
                 <>
-                  <a href="/api/login">
+                  <Link href="/auth">
                     <Button variant="outline" className="w-full justify-center">
                       Bejelentkezés
                     </Button>
-                  </a>
-                  <a href="/api/login">
+                  </Link>
+                  <Link href="/auth">
                     <Button className="w-full justify-center bg-primary hover:bg-primary/90 text-white">
                       Csatlakozzon ingyen
                     </Button>
-                  </a>
+                  </Link>
                 </>
               )}
             </div>

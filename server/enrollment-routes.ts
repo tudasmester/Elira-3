@@ -1,5 +1,5 @@
 import express from "express";
-import { isAuthenticated } from "./replitAuth";
+import { requireAuth } from "./auth";
 import { storage } from "./storage";
 import { z } from "zod";
 
