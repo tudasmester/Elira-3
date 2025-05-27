@@ -30,7 +30,7 @@ import {
   TabsList, 
   TabsTrigger 
 } from "@/components/ui/tabs";
-import { courses } from "@/data/courses";
+import { useQuery } from "@tanstack/react-query";
 
 // Define course categories
 const courseCategories = [
