@@ -1,523 +1,556 @@
 import React, { useState } from "react";
-import { Bell, Search, User, BookOpen, GraduationCap, Calendar, Badge as BadgeIcon, 
-  Settings, LogOut, ChevronDown, Bookmark, Clock, Star } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
-import { Link } from "wouter";
+import { useQuery } from "@tanstack/react-query";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuGroup,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
-import { courses } from "@/data/courses";
+  BookOpen, 
+  Award, 
+  Target, 
+  TrendingUp, 
+  Clock, 
+  Users, 
+  Settings,
+  Bell,
+  Calendar,
+  PlayCircle,
+  CheckCircle,
+  Star,
+  BarChart3,
+  Download,
+  Share2
+} from "lucide-react";
+import { motion } from "framer-motion";
+import { Link } from "wouter";
 
-const Dashboard: React.FC = () => {
-  const { user, isAuthenticated, isLoading } = useAuth();
-  const [activeTab, setActiveTab] = useState("overview");
-  
-  // Mock enrollment data - in a real app this would come from the backend
-  const enrolledCourses = courses.slice(0, 3);
-  const savedCourses = courses.slice(3, 6);
-  const completedCourses = courses.slice(6, 8);
-  
-  // User progress data
-  const userProgress = {
-    totalCourses: 3,
-    completedCourses: 1,
-    completionPercentage: 33,
-    certificates: 1,
-    totalHours: 24,
-    completedHours: 8
+interface Enrollment {
+  id: string;
+  courseId: number;
+  progress: number;
+  isCompleted: number;
+  enrolledAt: string;
+  course: {
+    id: number;
+    title: string;
+    description: string;
+    imageUrl: string;
+    level: string;
+    category: string;
+    instructor: string;
+    totalLessons: number;
+    estimatedDuration: string;
   };
-  
+}
+
+interface UserStats {
+  totalEnrollments: number;
+  completedCourses: number;
+  totalStudyTime: number;
+  certificatesEarned: number;
+  currentStreak: number;
+  averageProgress: number;
+}
+
+export default function Dashboard() {
+  const { user } = useAuth();
+  const [activeTab, setActiveTab] = useState("overview");
+
+  // Fetch user enrollments
+  const { data: enrollments = [], isLoading: enrollmentsLoading } = useQuery<Enrollment[]>({
+    queryKey: ["/api/enrollments"],
+    enabled: !!user,
+  });
+
+  // Fetch user statistics
+  const { data: userStats, isLoading: statsLoading } = useQuery<UserStats>({
+    queryKey: ["/api/user/stats"],
+    enabled: !!user,
+  });
+
+  // Calculate real user statistics from enrollments
+  const calculateStats = () => {
+    if (!enrollments.length) {
+      return {
+        totalEnrollments: 0,
+        completedCourses: 0,
+        totalStudyTime: 0,
+        certificatesEarned: 0,
+        currentStreak: 0,
+        averageProgress: 0
+      };
+    }
+
+    const totalEnrollments = enrollments.length;
+    const completedCourses = enrollments.filter(e => e.isCompleted === 1).length;
+    const averageProgress = enrollments.reduce((sum, e) => sum + e.progress, 0) / totalEnrollments;
+    const certificatesEarned = completedCourses;
+    
+    return {
+      totalEnrollments,
+      completedCourses,
+      totalStudyTime: completedCourses * 8, // Estimate 8 hours per completed course
+      certificatesEarned,
+      currentStreak: 3, // This would come from activity tracking
+      averageProgress: Math.round(averageProgress)
+    };
+  };
+
+  const stats = userStats || calculateStats();
+
+  if (!user) return null;
+
+  const getUserInitials = () => {
+    const firstName = user.firstName || "";
+    const lastName = user.lastName || "";
+    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+  };
+
+  const getActiveCourses = () => {
+    return enrollments.filter(e => e.isCompleted === 0 && e.progress > 0);
+  };
+
+  const getRecentActivity = () => {
+    return enrollments
+      .sort((a, b) => new Date(b.enrolledAt).getTime() - new Date(a.enrolledAt).getTime())
+      .slice(0, 5);
+  };
+
   return (
-    <div className="min-h-screen bg-neutral-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-neutral-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16 items-center">
-            <div className="flex items-center">
-              <Link href="/">
-                <div className="text-primary text-2xl font-bold font-heading cursor-pointer">Academion</div>
-              </Link>
-              <nav className="ml-10 hidden md:flex space-x-8">
-                <Link href="/courses" className="text-neutral-700 hover:text-primary font-medium">Kurzusok</Link>
-                <Link href="/degrees" className="text-neutral-700 hover:text-primary font-medium">Diplomák</Link>
-                <Link href="/trending" className="text-neutral-700 hover:text-primary font-medium">Trending</Link>
-              </nav>
-            </div>
-            <div className="flex items-center space-x-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 h-4 w-4" />
-                <input
-                  type="text"
-                  placeholder="Keresés..."
-                  className="pl-10 pr-4 py-2 border border-neutral-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                />
-              </div>
-              <button className="p-2 rounded-full text-neutral-600 hover:bg-neutral-100 relative">
-                <Bell className="h-5 w-5" />
-                <span className="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full"></span>
-              </button>
-              <div className="relative">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button className="flex items-center space-x-2 rounded-full">
-                      {user?.profileImageUrl ? (
-                        <img 
-                          src={user.profileImageUrl} 
-                          alt="Profile"
-                          className="h-8 w-8 rounded-full object-cover border border-neutral-200"
-                        />
-                      ) : (
-                        <div className="flex items-center justify-center h-8 w-8 rounded-full bg-primary text-white">
-                          <User className="h-4 w-4" />
-                        </div>
-                      )}
-                      <ChevronDown className="h-4 w-4 text-neutral-500" />
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56">
-                    <DropdownMenuGroup>
-                      <DropdownMenuItem>
-                        <User className="mr-2 h-4 w-4" />
-                        <span>Profilom</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <BookOpen className="mr-2 h-4 w-4" />
-                        <span>Kurzusaim</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <Settings className="mr-2 h-4 w-4" />
-                        <span>Beállítások</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <a href="/api/logout" className="flex items-center w-full cursor-pointer text-red-500">
-                          <LogOut className="mr-2 h-4 w-4" />
-                          <span>Kijelentkezés</span>
-                        </a>
-                      </DropdownMenuItem>
-                    </DropdownMenuGroup>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+      <div className="container mx-auto px-4 py-8">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center justify-between mb-8"
+        >
+          <div className="flex items-center space-x-4">
+            <Avatar className="h-16 w-16">
+              <AvatarImage src={user.profileImageUrl} />
+              <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white text-lg font-semibold">
+                {getUserInitials()}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                Üdvözöljük, {user.firstName}!
+              </h1>
+              <p className="text-gray-600 dark:text-gray-300">
+                Folytatjuk a tanulást? 📚
+              </p>
             </div>
           </div>
-        </div>
-      </header>
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Welcome Section with User Info */}
-        <div className="relative overflow-hidden rounded-xl mb-8">
-          <div className="absolute inset-0 bg-gradient-to-r from-primary via-teal-600 to-blue-600 opacity-95"></div>
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQ0MCIgaGVpZ2h0PSI0MDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiIGlkPSJhIj48c3RvcCBzdG9wLWNvbG9yPSIjRkZGIiBvZmZzZXQ9IjAlIi8+PHN0b3Agc3RvcC1jb2xvcj0iI0ZGRiIgc3RvcC1vcGFjaXR5PSIwIiBvZmZzZXQ9IjEwMCUiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cGF0aCBkPSJNMCAwaDcyMHY0MDBIMHoiIGZpbGw9InVybCgjYSkiIGZpbGwtcnVsZT0iZXZlbm9kZCIgZmlsbC1vcGFjaXR5PSIuMDUiLz48L3N2Zz4=')] bg-center bg-no-repeat opacity-50"></div>
-          
-          {/* Decorative elements */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl transform translate-x-1/3 -translate-y-1/2"></div>
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full blur-3xl transform -translate-x-1/3 translate-y-1/3"></div>
-          <div className="absolute top-1/2 left-1/3 w-12 h-12 bg-white/10 rounded-full blur-xl"></div>
-          
-          <div className="relative p-8 md:p-12 text-white">
-            <div className="flex flex-col md:flex-row items-center">
-              <div className="md:w-2/3 mb-6 md:mb-0">
-                <div className="inline-flex items-center px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm mb-4 text-white/90 text-sm">
-                  <GraduationCap className="h-4 w-4 mr-2" />
-                  <span>Személyes tanulási portál</span>
-                </div>
-                
-                <h1 className="text-3xl md:text-4xl font-bold mb-3">
-                  {isLoading ? 'Betöltés...' : (
-                    user?.firstName ? (
-                      <>
-                        Üdvözöljük, <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-blue-200">{user.firstName}!</span>
-                      </>
-                    ) : (
-                      'Üdvözöljük az Academion platformon!'
-                    )
-                  )}
-                </h1>
-                
-                <p className="text-white/90 mb-6 text-lg max-w-xl">
-                  Folytassa a tanulást! Az Ön személyre szabott irányítópultja minden szükséges eszközt biztosít a folyamatos fejlődéshez.
-                </p>
-                
-                <div className="flex flex-wrap gap-4">
-                  <Link href="/courses">
-                    <Button className="bg-white text-primary hover:bg-white/90 shadow-lg font-medium">
-                      <Search className="mr-2 h-4 w-4" />
-                      Kurzusok böngészése
-                    </Button>
-                  </Link>
-                  <Button variant="outline" className="bg-transparent text-white border-white hover:bg-white/20">
-                    <Calendar className="mr-2 h-4 w-4" />
-                    Órarend megtekintése
-                  </Button>
-                </div>
-                
-                <div className="flex items-center mt-8 space-x-4">
-                  <div className="flex items-center">
-                    <div className="h-4 w-4 rounded-full bg-green-300 mr-2 animate-pulse"></div>
-                    <span className="text-white/90 text-sm">Legutóbbi bejelentkezés: Ma, 14:30</span>
-                  </div>
-                  <div className="h-4 border-l border-white/20"></div>
-                  <div className="flex items-center">
-                    <Clock className="h-4 w-4 mr-2 text-white/80" />
-                    <span className="text-white/90 text-sm">Tanulási idő: {userProgress.completedHours} óra</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="md:w-1/3 flex justify-center">
-                <div className="bg-white/10 backdrop-blur-sm p-6 rounded-lg border border-white/20 shadow-lg w-full max-w-xs">
-                  <div className="flex items-center mb-4">
-                    {user?.profileImageUrl ? (
-                      <img 
-                        src={user.profileImageUrl} 
-                        alt="Profile" 
-                        className="h-16 w-16 rounded-full object-cover mr-4 border-2 border-white/30" 
-                      />
-                    ) : (
-                      <div className="h-16 w-16 rounded-full bg-white/20 flex items-center justify-center mr-4 border border-white/30">
-                        <User className="h-8 w-8 text-white" />
-                      </div>
-                    )}
-                    <div>
-                      <h2 className="text-lg font-bold text-white">
-                        {user?.firstName ? `${user.firstName} ${user.lastName || ''}` : 'Tanulói profil'}
-                      </h2>
-                      <p className="text-sm text-white/70">{user?.email || 'Nincs email cím'}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <div>
-                      <div className="flex justify-between items-center text-sm text-white/80 mb-1">
-                        <span>Tanulási haladás</span>
-                        <span className="font-bold">{userProgress.completionPercentage}%</span>
-                      </div>
-                      <div className="w-full bg-white/20 rounded-full h-2.5">
-                        <div 
-                          className="bg-white h-2.5 rounded-full" 
-                          style={{ width: `${userProgress.completionPercentage}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="bg-white/10 p-3 rounded-lg text-center">
-                        <p className="text-white text-xl font-bold">{userProgress.completedCourses}</p>
-                        <p className="text-xs text-white/80">Teljesített kurzus</p>
-                      </div>
-                      <div className="bg-white/10 p-3 rounded-lg text-center">
-                        <p className="text-white text-xl font-bold">{userProgress.certificates}</p>
-                        <p className="text-xs text-white/80">Oklevél</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div className="flex space-x-2">
+            <Button variant="outline" size="sm">
+              <Bell className="h-4 w-4 mr-2" />
+              Értesítések
+            </Button>
+            <Link href="/settings">
+              <Button variant="outline" size="sm">
+                <Settings className="h-4 w-4 mr-2" />
+                Beállítások
+              </Button>
+            </Link>
           </div>
-        </div>
+        </motion.div>
 
-        {/* Dashboard Tabs */}
-        <div className="bg-white rounded-xl shadow-sm border border-neutral-200 p-6 mb-8">
-          <Tabs defaultValue="overview" className="w-full" onValueChange={setActiveTab}>
-            <TabsList className="mb-6">
-              <TabsTrigger value="overview" className="text-sm">Áttekintés</TabsTrigger>
-              <TabsTrigger value="my-courses" className="text-sm">Kurzusaim</TabsTrigger>
-              <TabsTrigger value="saved" className="text-sm">Mentett kurzusok</TabsTrigger>
-              <TabsTrigger value="certificates" className="text-sm">Oklevelek</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="overview" className="space-y-6">
-              {/* Action Items */}
-              <div>
-                <h2 className="text-lg font-bold mb-4">Teendők</h2>
-                <div className="space-y-4">
-                  <div className="flex items-center p-3 bg-neutral-50 rounded-lg border border-neutral-200">
-                    <div className="h-8 w-8 rounded-full bg-primary/10 text-primary flex items-center justify-center mr-4">
-                      <User className="h-4 w-4" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-medium">Profil befejezése</h3>
-                      <p className="text-sm text-neutral-500">Adja meg tanulási preferenciáit a személyre szabott élményért</p>
-                    </div>
-                    <Button size="sm">Befejezés</Button>
-                  </div>
-                  <div className="flex items-center p-3 bg-neutral-50 rounded-lg border border-neutral-200">
-                    <div className="h-8 w-8 rounded-full bg-tertiary/10 text-tertiary flex items-center justify-center mr-4">
-                      <GraduationCap className="h-4 w-4" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-medium">Tanulási terv létrehozása</h3>
-                      <p className="text-sm text-neutral-500">Állítsa össze saját tanulási tervét, hogy könnyebben elérje céljait</p>
-                    </div>
-                    <Button size="sm">Létrehozás</Button>
-                  </div>
+        {/* Stats Overview */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+        >
+          <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white border-0">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-blue-100 text-sm font-medium">Beiratkozott kurzusok</p>
+                  <p className="text-3xl font-bold">{stats.totalEnrollments}</p>
                 </div>
+                <BookOpen className="h-8 w-8 text-blue-200" />
               </div>
+            </CardContent>
+          </Card>
 
-              {/* Stats Overview */}
-              <div>
-                <h2 className="text-lg font-bold mb-4">Tanulási statisztikák</h2>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <div className="bg-neutral-50 p-4 rounded-lg border border-neutral-200">
-                    <div className="flex items-center mb-2">
-                      <div className="h-8 w-8 rounded-full bg-primary/10 text-primary flex items-center justify-center mr-2">
-                        <BookOpen className="h-4 w-4" />
-                      </div>
-                      <span className="text-sm font-medium">Összes kurzus</span>
-                    </div>
-                    <p className="text-2xl font-bold">{userProgress.totalCourses}</p>
-                  </div>
-                  <div className="bg-neutral-50 p-4 rounded-lg border border-neutral-200">
-                    <div className="flex items-center mb-2">
-                      <div className="h-8 w-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center mr-2">
-                        <BadgeIcon className="h-4 w-4" />
-                      </div>
-                      <span className="text-sm font-medium">Befejezett</span>
-                    </div>
-                    <p className="text-2xl font-bold">{userProgress.completedCourses}</p>
-                  </div>
-                  <div className="bg-neutral-50 p-4 rounded-lg border border-neutral-200">
-                    <div className="flex items-center mb-2">
-                      <div className="h-8 w-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mr-2">
-                        <Clock className="h-4 w-4" />
-                      </div>
-                      <span className="text-sm font-medium">Tanulási idő</span>
-                    </div>
-                    <p className="text-2xl font-bold">{userProgress.completedHours} óra</p>
-                  </div>
-                  <div className="bg-neutral-50 p-4 rounded-lg border border-neutral-200">
-                    <div className="flex items-center mb-2">
-                      <div className="h-8 w-8 rounded-full bg-yellow-100 text-yellow-600 flex items-center justify-center mr-2">
-                        <Star className="h-4 w-4" />
-                      </div>
-                      <span className="text-sm font-medium">Oklevelek</span>
-                    </div>
-                    <p className="text-2xl font-bold">{userProgress.certificates}</p>
-                  </div>
+          <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white border-0">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-green-100 text-sm font-medium">Befejezett kurzusok</p>
+                  <p className="text-3xl font-bold">{stats.completedCourses}</p>
                 </div>
+                <CheckCircle className="h-8 w-8 text-green-200" />
               </div>
+            </CardContent>
+          </Card>
 
-              {/* Continue Learning */}
-              <div>
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-lg font-bold">Tanulás folytatása</h2>
-                  <Link href="/courses" className="text-primary hover:underline text-sm font-medium">Összes megtekintése</Link>
+          <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white border-0">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-purple-100 text-sm font-medium">Tanulási órák</p>
+                  <p className="text-3xl font-bold">{stats.totalStudyTime}h</p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {enrolledCourses.slice(0, 2).map((course) => (
-                    <div key={course.id} className="flex bg-white rounded-xl shadow-sm border border-neutral-200 overflow-hidden">
-                      <div className="w-1/3">
-                        <img 
-                          src={course.imageUrl} 
-                          alt={course.title} 
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <div className="w-2/3 p-4">
-                        <div className="flex items-center mb-1">
-                          <img 
-                            src={course.universityLogo} 
-                            alt={course.university} 
-                            className="w-5 h-5 object-contain mr-2" 
-                          />
-                          <span className="text-xs text-neutral-600">{course.university}</span>
-                        </div>
-                        <h3 className="font-bold mt-1 mb-1">{course.title}</h3>
-                        <p className="text-sm text-neutral-500 mb-2">{course.level} • {course.category}</p>
-                        <div className="w-full bg-neutral-200 rounded-full h-1.5 mb-2">
-                          <div className="bg-primary h-1.5 rounded-full" style={{ width: `${Math.round(Math.random() * 60 + 10)}%` }}></div>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-xs text-neutral-500">Hátralévő idő: {Math.round(Math.random() * 4 + 1)} hét</span>
-                          <Button size="sm" variant="outline">Folytatás</Button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                <Clock className="h-8 w-8 text-purple-200" />
               </div>
-            </TabsContent>
-            
-            <TabsContent value="my-courses">
-              <div className="mb-4">
-                <h2 className="text-lg font-bold mb-4">Felvett kurzusok</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {enrolledCourses.map((course) => (
-                    <div key={course.id} className="bg-white rounded-xl shadow-sm border border-neutral-200 overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
-                      <div className="relative">
-                        <img 
-                          src={course.imageUrl} 
-                          alt={course.title} 
-                          className="w-full h-40 object-cover"
-                        />
-                        {course.category && (
-                          <Badge className="absolute top-2 right-2 bg-secondary">{course.category}</Badge>
-                        )}
-                      </div>
-                      <div className="p-4">
-                        <div className="flex items-center mb-2">
-                          <img 
-                            src={course.universityLogo} 
-                            alt={course.university} 
-                            className="w-6 h-6 object-contain mr-2" 
-                          />
-                          <span className="text-sm text-neutral-600">{course.university}</span>
-                        </div>
-                        <h3 className="font-bold mb-1">{course.title}</h3>
-                        <p className="text-sm text-neutral-500 mb-2">{course.level} • {course.isFree ? 'Ingyenes' : 'Fizetős'}</p>
-                        <div className="w-full bg-neutral-200 rounded-full h-1.5 mb-3">
-                          <div className="bg-primary h-1.5 rounded-full" style={{ width: `${Math.round(Math.random() * 80 + 5)}%` }}></div>
-                        </div>
-                        <Button className="w-full">Folytatás</Button>
-                      </div>
-                    </div>
-                  ))}
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-orange-500 to-orange-600 text-white border-0">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-orange-100 text-sm font-medium">Megszerzett bizonyítványok</p>
+                  <p className="text-3xl font-bold">{stats.certificatesEarned}</p>
                 </div>
+                <Award className="h-8 w-8 text-orange-200" />
               </div>
-            </TabsContent>
-            
-            <TabsContent value="saved">
-              <div className="mb-4">
-                <h2 className="text-lg font-bold mb-4">Mentett kurzusok</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {savedCourses.map((course) => (
-                    <div key={course.id} className="bg-white rounded-xl shadow-sm border border-neutral-200 overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
-                      <div className="relative">
-                        <img 
-                          src={course.imageUrl} 
-                          alt={course.title} 
-                          className="w-full h-40 object-cover"
-                        />
-                        {course.isFree && (
-                          <Badge className="absolute top-2 right-2 bg-tertiary">Ingyenes</Badge>
-                        )}
-                      </div>
-                      <div className="p-4">
-                        <div className="flex items-center mb-2">
-                          <img 
-                            src={course.universityLogo} 
-                            alt={course.university} 
-                            className="w-6 h-6 object-contain mr-2" 
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Main Content Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="overview">Áttekintés</TabsTrigger>
+            <TabsTrigger value="courses">Kurzusaim</TabsTrigger>
+            <TabsTrigger value="progress">Haladás</TabsTrigger>
+            <TabsTrigger value="certificates">Bizonyítványok</TabsTrigger>
+          </TabsList>
+
+          {/* Overview Tab */}
+          <TabsContent value="overview" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Active Courses */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <PlayCircle className="h-5 w-5 mr-2 text-blue-600" />
+                    Folyamatban lévő kurzusok
+                  </CardTitle>
+                  <CardDescription>Folytassa ott, ahol abbahagyta</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {getActiveCourses().length > 0 ? (
+                    <div className="space-y-4">
+                      {getActiveCourses().slice(0, 3).map((enrollment) => (
+                        <div key={enrollment.id} className="flex items-center space-x-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                          <img
+                            src={enrollment.course.imageUrl}
+                            alt={enrollment.course.title}
+                            className="w-16 h-16 rounded-lg object-cover"
                           />
-                          <span className="text-sm text-neutral-600">{course.university}</span>
-                        </div>
-                        <h3 className="font-bold mb-1">{course.title}</h3>
-                        <p className="text-sm text-neutral-500 mb-4">{course.level} • {course.category}</p>
-                        <div className="flex space-x-2">
-                          <Button className="flex-1">Felveszem</Button>
-                          <Button variant="outline" className="w-10 p-0 flex items-center justify-center">
-                            <Bookmark className="h-4 w-4" />
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-sm">{enrollment.course.title}</h4>
+                            <p className="text-xs text-gray-600 dark:text-gray-400">{enrollment.course.level}</p>
+                            <div className="mt-2">
+                              <div className="flex items-center justify-between mb-1">
+                                <span className="text-xs text-gray-600 dark:text-gray-400">Haladás</span>
+                                <span className="text-xs font-medium">{enrollment.progress}%</span>
+                              </div>
+                              <Progress value={enrollment.progress} className="h-2" />
+                            </div>
+                          </div>
+                          <Button size="sm" variant="outline">
+                            Folytatás
                           </Button>
                         </div>
-                      </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="certificates">
-              <div className="mb-4">
-                <h2 className="text-lg font-bold mb-4">Megszerzett oklevelek</h2>
-                {userProgress.certificates > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {completedCourses.slice(0, userProgress.certificates).map((course) => (
-                      <div key={course.id} className="bg-white rounded-xl shadow-sm border border-neutral-200 overflow-hidden">
-                        <div className="p-6">
-                          <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center">
-                              <img 
-                                src={course.universityLogo} 
-                                alt={course.university} 
-                                className="w-12 h-12 object-contain mr-3" 
-                              />
-                              <div>
-                                <h3 className="font-bold text-lg">{course.title}</h3>
-                                <p className="text-sm text-neutral-600">{course.university}</p>
-                              </div>
-                            </div>
-                            <BadgeIcon className="h-10 w-10 text-yellow-500" />
-                          </div>
-                          <div className="border-t border-b border-neutral-200 py-4 mb-4">
-                            <p className="text-sm text-neutral-700 mb-2">
-                              Kiállítva: {new Date().toLocaleDateString('hu-HU', { year: 'numeric', month: 'long', day: 'numeric' })}
+                  ) : (
+                    <div className="text-center py-8">
+                      <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                      <p className="text-gray-600 dark:text-gray-400">Még nincsenek folyamatban lévő kurzusai</p>
+                      <Link href="/courses">
+                        <Button className="mt-4">
+                          Kurzusok böngészése
+                        </Button>
+                      </Link>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Recent Activity */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Calendar className="h-5 w-5 mr-2 text-green-600" />
+                    Legutóbbi tevékenység
+                  </CardTitle>
+                  <CardDescription>Az elmúlt hét tevékenysége</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {getRecentActivity().length > 0 ? (
+                    <div className="space-y-3">
+                      {getRecentActivity().map((enrollment) => (
+                        <div key={enrollment.id} className="flex items-center space-x-3 p-3 border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/20">
+                          <div className="flex-1">
+                            <p className="text-sm font-medium">{enrollment.course.title}</p>
+                            <p className="text-xs text-gray-600 dark:text-gray-400">
+                              Beiratkozott: {new Date(enrollment.enrolledAt).toLocaleDateString('hu-HU')}
                             </p>
-                            <p className="text-sm text-neutral-700">
-                              Oklevél azonosító: ACAD-{Math.floor(Math.random() * 10000).toString().padStart(4, '0')}-HU
-                            </p>
                           </div>
-                          <div className="flex space-x-3">
-                            <Button variant="outline" className="flex-1">Letöltés</Button>
-                            <Button className="flex-1">Megosztás</Button>
-                          </div>
+                          <Badge variant={enrollment.isCompleted ? "default" : "secondary"}>
+                            {enrollment.isCompleted ? "Befejezve" : `${enrollment.progress}%`}
+                          </Badge>
                         </div>
-                      </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                      <p className="text-gray-600 dark:text-gray-400">Még nincs tevékenység</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Learning Goals */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Target className="h-5 w-5 mr-2 text-purple-600" />
+                  Tanulási célok
+                </CardTitle>
+                <CardDescription>Állítsa be heti tanulási céljait</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="text-center">
+                    <div className="h-20 w-20 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Clock className="h-8 w-8 text-blue-600" />
+                    </div>
+                    <h4 className="font-semibold mb-2">Heti órák</h4>
+                    <p className="text-2xl font-bold text-blue-600">8h</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">cél: 10h</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="h-20 w-20 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <BookOpen className="h-8 w-8 text-green-600" />
+                    </div>
+                    <h4 className="font-semibold mb-2">Leckék</h4>
+                    <p className="text-2xl font-bold text-green-600">12</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">cél: 15</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="h-20 w-20 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <TrendingUp className="h-8 w-8 text-purple-600" />
+                    </div>
+                    <h4 className="font-semibold mb-2">Sorozat</h4>
+                    <p className="text-2xl font-bold text-purple-600">{stats.currentStreak}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">nap</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* My Courses Tab */}
+          <TabsContent value="courses" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Beiratkozott kurzusaim</CardTitle>
+                <CardDescription>Minden kurzus, amelyre beiratkozott</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {enrollments.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {enrollments.map((enrollment) => (
+                      <Card key={enrollment.id} className="hover:shadow-lg transition-shadow">
+                        <div className="relative">
+                          <img
+                            src={enrollment.course.imageUrl}
+                            alt={enrollment.course.title}
+                            className="w-full h-48 object-cover rounded-t-lg"
+                          />
+                          <Badge className="absolute top-4 right-4">
+                            {enrollment.course.level}
+                          </Badge>
+                        </div>
+                        <CardContent className="p-6">
+                          <h3 className="font-semibold mb-2">{enrollment.course.title}</h3>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                            {enrollment.course.description.substring(0, 100)}...
+                          </p>
+                          <div className="space-y-3">
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm text-gray-600 dark:text-gray-400">Haladás</span>
+                              <span className="text-sm font-medium">{enrollment.progress}%</span>
+                            </div>
+                            <Progress value={enrollment.progress} className="h-2" />
+                          </div>
+                          <div className="flex items-center justify-between mt-4">
+                            <Badge variant={enrollment.isCompleted ? "default" : "secondary"}>
+                              {enrollment.isCompleted ? "Befejezve" : "Folyamatban"}
+                            </Badge>
+                            <Button size="sm">
+                              {enrollment.isCompleted ? "Áttekintés" : "Folytatás"}
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
                     ))}
                   </div>
                 ) : (
-                  <div className="bg-neutral-50 p-8 rounded-lg border border-neutral-200 text-center">
-                    <BadgeIcon className="h-16 w-16 text-neutral-300 mx-auto mb-4" />
-                    <h3 className="text-lg font-bold mb-2">Még nincs oklevele</h3>
-                    <p className="text-neutral-600 mb-4">Fejezzen be egy kurzust az első oklevél megszerzéséhez!</p>
-                    <Button>Kurzusok böngészése</Button>
+                  <div className="text-center py-12">
+                    <BookOpen className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold mb-2">Még nincsenek kurzusai</h3>
+                    <p className="text-gray-600 dark:text-gray-400 mb-6">
+                      Kezdje el felfedezni a széleskörű kurzuskínálatunkat
+                    </p>
+                    <Link href="/courses">
+                      <Button>
+                        Kurzusok böngészése
+                      </Button>
+                    </Link>
                   </div>
                 )}
-              </div>
-            </TabsContent>
-          </Tabs>
-        </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        {/* Recommended Courses */}
-        <div className="mb-8">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold">Ajánlott kurzusok</h2>
-            <Link href="/courses" className="text-primary hover:underline text-sm font-medium">Összes megtekintése</Link>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {courses.slice(8, 11).map((course) => (
-              <div key={course.id} className="bg-white rounded-xl shadow-sm border border-neutral-200 overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
-                <div className="relative">
-                  <img 
-                    src={course.imageUrl}
-                    alt={course.title}
-                    className="w-full h-40 object-cover"
-                  />
-                  {course.category === "Technológia" && (
-                    <div className="absolute top-2 right-2 bg-tertiary text-tertiary-foreground text-xs font-bold px-2 py-1 rounded">Népszerű</div>
-                  )}
-                </div>
-                <div className="p-4">
-                  <div className="flex items-center mb-2">
-                    <img 
-                      src={course.universityLogo}
-                      alt={course.university}
-                      className="w-6 h-6 rounded-full object-contain mr-2"
-                    />
-                    <span className="text-sm text-neutral-600">{course.university}</span>
+          {/* Progress Tab */}
+          <TabsContent value="progress" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <BarChart3 className="h-5 w-5 mr-2" />
+                    Tanulási statisztikák
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-6">
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium">Átlagos haladás</span>
+                        <span className="text-sm text-gray-600">{stats.averageProgress}%</span>
+                      </div>
+                      <Progress value={stats.averageProgress} className="h-3" />
+                    </div>
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium">Befejezési arány</span>
+                        <span className="text-sm text-gray-600">
+                          {stats.totalEnrollments > 0 ? Math.round((stats.completedCourses / stats.totalEnrollments) * 100) : 0}%
+                        </span>
+                      </div>
+                      <Progress 
+                        value={stats.totalEnrollments > 0 ? (stats.completedCourses / stats.totalEnrollments) * 100 : 0} 
+                        className="h-3" 
+                      />
+                    </div>
                   </div>
-                  <h3 className="font-bold mb-1">{course.title}</h3>
-                  <p className="text-sm text-neutral-500 mb-4">{course.level} • {course.category}</p>
-                  <Button className="w-full">Megtekintés</Button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </main>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Teljesítmény elemzés</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                      <div className="flex items-center space-x-3">
+                        <div className="h-10 w-10 bg-green-500 rounded-full flex items-center justify-center">
+                          <TrendingUp className="h-5 w-5 text-white" />
+                        </div>
+                        <div>
+                          <p className="font-medium">Jó ritmus!</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">Tartsa fenn a tempót</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {stats.currentStreak >= 3 && (
+                      <div className="flex items-center justify-between p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                        <div className="flex items-center space-x-3">
+                          <div className="h-10 w-10 bg-purple-500 rounded-full flex items-center justify-center">
+                            <Star className="h-5 w-5 text-white" />
+                          </div>
+                          <div>
+                            <p className="font-medium">Sorozat bajnok!</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">{stats.currentStreak} napos sorozat</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* Certificates Tab */}
+          <TabsContent value="certificates" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Award className="h-5 w-5 mr-2" />
+                  Megszerzett bizonyítványok
+                </CardTitle>
+                <CardDescription>Az összes elismert bizonyítvány egy helyen</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {stats.certificatesEarned > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {enrollments
+                      .filter(e => e.isCompleted === 1)
+                      .map((enrollment) => (
+                        <Card key={enrollment.id} className="border-2 border-green-200 dark:border-green-800">
+                          <CardContent className="p-6">
+                            <div className="flex items-center space-x-4">
+                              <div className="h-16 w-16 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center">
+                                <Award className="h-8 w-8 text-white" />
+                              </div>
+                              <div className="flex-1">
+                                <h3 className="font-semibold">{enrollment.course.title}</h3>
+                                <p className="text-sm text-gray-600 dark:text-gray-400">
+                                  Befejezve: {new Date(enrollment.enrolledAt).toLocaleDateString('hu-HU')}
+                                </p>
+                                <div className="flex space-x-2 mt-3">
+                                  <Button size="sm" variant="outline">
+                                    <Download className="h-4 w-4 mr-2" />
+                                    Letöltés
+                                  </Button>
+                                  <Button size="sm" variant="outline">
+                                    <Share2 className="h-4 w-4 mr-2" />
+                                    Megosztás
+                                  </Button>
+                                </div>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))
+                    }
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <Award className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold mb-2">Még nincsenek bizonyítványai</h3>
+                    <p className="text-gray-600 dark:text-gray-400 mb-6">
+                      Fejezzen be kurzusokat, hogy bizonyítványokat szerezzen
+                    </p>
+                    <Link href="/courses">
+                      <Button>
+                        Kurzusok böngészése
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
-};
-
-export default Dashboard;
+}

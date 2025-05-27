@@ -7,6 +7,7 @@ import { useRealTimeData } from "@/hooks/useRealTimeData";
 import Home from "@/pages/Home";
 import OnboardingPage from "@/pages/OnboardingPage";
 import Dashboard from "@/pages/Dashboard";
+import Settings from "@/pages/Settings";
 import CourseDetail from "@/pages/CourseDetail";
 import Trending from "@/pages/Trending";
 import Courses from "@/pages/Courses";
@@ -43,6 +44,7 @@ function Router() {
       <Route path="/onboarding" component={OnboardingPage} />
       <Route path="/auth" component={AuthPageClean} />
       <Route path="/dashboard" component={Dashboard} />
+      <Route path="/settings" component={Settings} />
       <Route path="/course/:id" component={CourseDetail} />
       <Route path="/trending" component={Trending} />
       <Route path="/courses" component={Courses} />

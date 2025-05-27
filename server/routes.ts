@@ -88,6 +88,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // User statistics endpoint
+  app.get("/api/user/stats", async (req: Request, res: Response) => {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({ message: "User not authenticated" });
+      }
+
+      const enrollments = await storage.getUserEnrollments(userId);
+      
+      const totalEnrollments = enrollments.length;
+      const completedCourses = enrollments.filter(e => e.isCompleted === 1).length;
+      const averageProgress = enrollments.length > 0 
+        ? Math.round(enrollments.reduce((sum, e) => sum + e.progress, 0) / totalEnrollments)
+        : 0;
+      
+      const stats = {
+        totalEnrollments,
+        completedCourses,
+        totalStudyTime: completedCourses * 8, // Estimate 8 hours per completed course
+        certificatesEarned: completedCourses,
+        currentStreak: 3, // This would come from activity tracking
+        averageProgress
+      };
+
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching user stats:", error);
+      res.status(500).json({ message: "Failed to fetch user statistics" });
+    }
+  });
+
   // Enrollment routes
   app.post("/api/enrollments", async (req: Request, res: Response) => {
     try {
