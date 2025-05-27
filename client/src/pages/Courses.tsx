@@ -287,16 +287,16 @@ const CoursesPage: React.FC = () => {
                       </div>
                       <div className="flex items-center">
                         <Users className="h-4 w-4 mr-1 text-neutral-400" />
-                        <span>{course.students.toLocaleString('hu-HU')} hallgató</span>
+                        <span>{(course.students || 0).toLocaleString('hu-HU')} hallgató</span>
                       </div>
                     </div>
                     
                     <div className="flex items-center justify-between mt-auto pt-4 border-t border-neutral-100">
                       <div>
-                        {course.isFree ? (
+                        {course.isFree === 1 ? (
                           <span className="font-bold text-emerald-600">Ingyenes</span>
                         ) : (
-                          <span className="font-bold text-neutral-900">{course.price.toLocaleString('hu-HU')} Ft</span>
+                          <span className="font-bold text-neutral-900">{(course.price || 0).toLocaleString('hu-HU')} Ft</span>
                         )}
                       </div>
                       <Link href={`/course/${course.id}`}>
