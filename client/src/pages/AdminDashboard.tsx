@@ -121,6 +121,70 @@ export default function AdminDashboard() {
     },
   });
 
+  // Import courses mutation
+  const importMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/admin/import-courses', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      if (!response.ok) throw new Error('Import failed');
+      return response.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/courses'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/stats'] });
+      triggerDataRefresh(queryClient);
+      toast({
+        title: "Import sikeres!",
+        description: `${data.imported || 6} kurzus importálva`,
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Import hiba",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  });
+
+  // Sync courses mutation
+  const syncMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/admin/sync-courses', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      if (!response.ok) throw new Error('Sync failed');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/courses'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/courses'] });
+      triggerDataRefresh(queryClient);
+      toast({
+        title: "Szinkronizálás sikeres!",
+        description: "Az összes oldal frissítve lett",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Szinkronizálás hiba",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  });
+
+  const handleImportCourses = () => {
+    importMutation.mutate();
+  };
+
+  const handleSyncCourses = () => {
+    syncMutation.mutate();
+  };
+
   const handleDeleteCourse = (courseId: number, courseName: string) => {
     setDeleteDialog({ isOpen: true, courseId, courseName });
   };
@@ -413,8 +477,12 @@ export default function AdminDashboard() {
                       <p className="text-sm text-muted-foreground mb-4">
                         6 új kurzus elérhető importálásra
                       </p>
-                      <Button className="w-full">
-                        Kurzusok importálása
+                      <Button 
+                        className="w-full"
+                        onClick={handleImportCourses}
+                        disabled={importMutation.isPending}
+                      >
+                        {importMutation.isPending ? 'Importálás...' : 'Kurzusok importálása'}
                       </Button>
                     </Card>
                     
@@ -423,8 +491,13 @@ export default function AdminDashboard() {
                       <p className="text-sm text-muted-foreground mb-4">
                         Valós idejű szinkronizálás aktív
                       </p>
-                      <Button variant="outline" className="w-full">
-                        Szinkronizálás most
+                      <Button 
+                        variant="outline" 
+                        className="w-full"
+                        onClick={handleSyncCourses}
+                        disabled={syncMutation.isPending}
+                      >
+                        {syncMutation.isPending ? 'Szinkronizálás...' : 'Szinkronizálás most'}
                       </Button>
                     </Card>
                     
