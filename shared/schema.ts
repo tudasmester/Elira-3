@@ -46,6 +46,13 @@ export const users = pgTable("users", {
   stripeSubscriptionId: varchar("stripe_subscription_id"),
   subscriptionEndDate: timestamp("subscription_end_date"),
   
+  // Onboarding preferences - store as JSON text
+  interests: text("interests"), // JSON array of selected interests
+  goals: text("goals"), // JSON array of selected goals
+  experienceLevel: text("experience_level"), // beginner, intermediate, advanced
+  preferredLearningStyle: text("preferred_learning_style"), // visual, auditory, hands-on
+  isOnboardingComplete: integer("is_onboarding_complete").default(0),
+  
   // Admin fields
   isAdmin: integer("is_admin").default(0),
   

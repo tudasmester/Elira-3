@@ -4,16 +4,38 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle, BookOpen, Trophy, Users, ArrowRight, Sparkles } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { CheckCircle, BookOpen, Trophy, Users, ArrowRight, Sparkles, Eye, EyeOff } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
+import { useMutation } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 export default function OnboardingPage() {
   const [location, navigate] = useLocation();
-  const { user, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
+  const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
+  const [showPassword, setShowPassword] = useState(false);
+  
+  // Registration form state
+  const [registrationData, setRegistrationData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    password: "",
+    confirmPassword: "",
+  });
+  
+  // Onboarding preferences state
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [selectedGoals, setSelectedGoals] = useState<string[]>([]);
+  const [experienceLevel, setExperienceLevel] = useState("");
+  const [learningStyle, setLearningStyle] = useState("");
 
   const interests = [
     { id: "web-development", label: "Webfejlesztés", icon: "💻" },
@@ -35,12 +57,34 @@ export default function OnboardingPage() {
     { id: "business-start", label: "Vállalkozás indítása", icon: "💡" },
   ];
 
-  // Redirect if not authenticated
+  // Redirect if already authenticated
   useEffect(() => {
-    if (!isAuthenticated) {
-      navigate('/auth');
+    if (isAuthenticated) {
+      navigate('/dashboard');
     }
   }, [isAuthenticated, navigate]);
+
+  // Registration mutation
+  const registerMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await apiRequest("POST", "/api/auth/onboarding-register", data);
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Sikeresen regisztrált!",
+        description: "Üdvözöljük az Academion platformon!",
+      });
+      navigate('/dashboard');
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Regisztráció sikertelen",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
 
   const handleInterestToggle = (interestId: string) => {
     setSelectedInterests(prev => 

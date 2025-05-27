@@ -3,7 +3,75 @@ import { hashPassword, comparePasswords, generateToken, requireAuth } from "./au
 import { storage } from "./storage";
 
 export function setupAuthRoutes(app: Express) {
-  // Email/Password Registration
+  // Onboarding Registration - handles complete user registration with preferences
+  app.post("/api/auth/onboarding-register", async (req: Request, res: Response) => {
+    try {
+      const { 
+        email, password, firstName, lastName, phone, 
+        interests, goals, experienceLevel, learningStyle 
+      } = req.body;
+
+      // Validate required fields
+      if (!email || !password || !firstName || !lastName) {
+        return res.status(400).json({ 
+          message: "Email, jelszó, vezetéknév és keresztnév kötelező" 
+        });
+      }
+
+      // Check if user already exists
+      const existingUser = await storage.getUserByEmail(email);
+      if (existingUser) {
+        return res.status(400).json({ 
+          message: "Ez az email cím már regisztrált" 
+        });
+      }
+
+      // Hash password
+      const hashedPassword = await hashPassword(password);
+
+      // Create user with onboarding preferences
+      const user = await storage.createUser({
+        email,
+        password: hashedPassword,
+        firstName,
+        lastName,
+        phone: phone || null,
+        interests: JSON.stringify(interests || []),
+        goals: JSON.stringify(goals || []),
+        experienceLevel: experienceLevel || null,
+        preferredLearningStyle: learningStyle || null,
+        isOnboardingComplete: 1,
+        isEmailVerified: 1, // Auto-verify for now to simplify UX
+      });
+
+      // Generate token
+      const token = generateToken(user.id);
+
+      res.status(201).json({
+        message: "Sikeres regisztráció",
+        token,
+        user: {
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          phone: user.phone,
+          interests: user.interests ? JSON.parse(user.interests) : [],
+          goals: user.goals ? JSON.parse(user.goals) : [],
+          experienceLevel: user.experienceLevel,
+          preferredLearningStyle: user.preferredLearningStyle,
+          isOnboardingComplete: user.isOnboardingComplete,
+        }
+      });
+    } catch (error: any) {
+      console.error("Onboarding registration error:", error);
+      res.status(500).json({ 
+        message: "Regisztráció során hiba történt" 
+      });
+    }
+  });
+
+  // Email/Password Registration (deprecated - redirect to onboarding)
   app.post("/api/auth/register", async (req: Request, res: Response) => {
     try {
       const { email, password, firstName, lastName, phone } = req.body;
