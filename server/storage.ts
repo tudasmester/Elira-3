@@ -21,6 +21,8 @@ export interface IStorage {
   getCoursesByUniversity(universityId: number): Promise<Course[]>;
   getFreeCourses(): Promise<Course[]>;
   createCourse(course: InsertCourse): Promise<Course>;
+  updateCourse(id: number, course: InsertCourse): Promise<Course>;
+  deleteCourse(id: number): Promise<void>;
   
   // University operations
   getUniversity(id: number): Promise<University | undefined>;
@@ -127,6 +129,23 @@ export class DatabaseStorage implements IStorage {
     };
     const results = await db.insert(courses).values(courseToInsert).returning();
     return results[0];
+  }
+
+  async updateCourse(id: number, courseData: InsertCourse): Promise<Course> {
+    const courseToUpdate = {
+      ...courseData,
+      isFree: courseData.isFree ?? 0
+    };
+    const results = await db
+      .update(courses)
+      .set(courseToUpdate)
+      .where(eq(courses.id, id))
+      .returning();
+    return results[0];
+  }
+
+  async deleteCourse(id: number): Promise<void> {
+    await db.delete(courses).where(eq(courses.id, id));
   }
   
   // University operations
