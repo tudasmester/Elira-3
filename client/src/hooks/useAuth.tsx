@@ -32,7 +32,7 @@ export function useAuth() {
       await apiRequest("POST", "/api/auth/logout");
     },
     onSuccess: () => {
-      localStorage.removeItem('auth_token');
+      localStorage.removeItem('authToken');
       queryClient.setQueryData(["/api/auth/user"], null);
       toast({
         title: "Sikeres kijelentkezés",

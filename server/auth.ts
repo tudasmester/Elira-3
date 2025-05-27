@@ -142,11 +142,12 @@ export function requireAuth(req: AuthRequest, res: Response, next: NextFunction)
 
   const payload = verifyToken(token);
   if (!payload) {
+    console.log("Token verification failed for token:", token.substring(0, 20) + "...");
     return res.status(401).json({ message: "Invalid token" });
   }
 
-  // Set user ID for downstream middleware
-  (req as any).userId = payload.userId;
+  // Set user object for downstream middleware
+  req.user = { id: payload.userId };
   next();
 }
 

@@ -140,8 +140,10 @@ export default function OnboardingRegistrationClean() {
           description: "Üdvözöljük az Academion-ban!",
         });
         
-        // Force refresh user data and redirect to dashboard with tutorial flag
-        window.location.href = '/dashboard?tutorial=true';
+        // Small delay to ensure token is stored, then redirect
+        setTimeout(() => {
+          window.location.href = '/dashboard?tutorial=true';
+        }, 100);
       } else {
         const error = await response.text();
         console.error('Registration failed with status:', response.status, error);
