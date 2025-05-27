@@ -309,7 +309,7 @@ export default function OnboardingRegistration() {
                 </motion.div>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
                 {interestOptions.map((interest, index) => (
                   <motion.div
                     key={interest.id}
@@ -318,18 +318,20 @@ export default function OnboardingRegistration() {
                     transition={{ delay: index * 0.1 }}
                   >
                     <Card
-                      className={`p-6 cursor-pointer transition-all duration-300 hover:scale-105 border-2 ${
+                      className={`p-8 cursor-pointer transition-all duration-300 hover:scale-105 hover:-translate-y-2 border-2 aspect-square flex items-center justify-center ${
                         formData.interests.includes(interest.id)
-                          ? 'border-blue-500 bg-blue-50 shadow-xl'
-                          : 'border-neutral-200 bg-white hover:border-neutral-300 hover:shadow-lg'
+                          ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-blue-100 shadow-2xl ring-4 ring-blue-200/50'
+                          : 'border-neutral-200 bg-white hover:border-neutral-300 hover:shadow-xl hover:bg-gray-50'
                       }`}
                       onClick={() => handleInterestToggle(interest.id)}
                     >
                       <div className="text-center">
-                        <div className={`w-16 h-16 ${interest.color} rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg`}>
-                          <interest.icon className="h-8 w-8 text-white" />
+                        <div className={`w-20 h-20 ${interest.color} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg transition-transform duration-300 ${
+                          formData.interests.includes(interest.id) ? 'scale-110' : ''
+                        }`}>
+                          <interest.icon className="h-10 w-10 text-white" />
                         </div>
-                        <h3 className="font-semibold text-neutral-900 mb-2">{interest.label}</h3>
+                        <h3 className="font-bold text-neutral-900 text-lg">{interest.label}</h3>
                       </div>
                     </Card>
                   </motion.div>
@@ -363,7 +365,7 @@ export default function OnboardingRegistration() {
                 </motion.div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
                 {goalOptions.map((goal, index) => (
                   <motion.div
                     key={goal.id}
@@ -372,19 +374,21 @@ export default function OnboardingRegistration() {
                     transition={{ delay: index * 0.1 }}
                   >
                     <Card
-                      className={`p-8 cursor-pointer transition-all duration-300 hover:scale-105 border-2 ${
+                      className={`p-8 cursor-pointer transition-all duration-300 hover:scale-105 hover:-translate-y-2 border-2 min-h-[140px] flex items-center ${
                         formData.goals.includes(goal.id)
-                          ? 'border-blue-500 bg-blue-50 shadow-xl'
-                          : 'border-neutral-200 bg-white hover:border-neutral-300 hover:shadow-lg'
+                          ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-blue-100 shadow-2xl ring-4 ring-blue-200/50'
+                          : 'border-neutral-200 bg-white hover:border-neutral-300 hover:shadow-xl hover:bg-gray-50'
                       }`}
                       onClick={() => handleGoalToggle(goal.id)}
                     >
-                      <div className="flex items-center space-x-4">
-                        <div className={`w-16 h-16 ${goal.color} rounded-full flex items-center justify-center shadow-lg`}>
-                          <goal.icon className="h-8 w-8 text-white" />
+                      <div className="flex items-center space-x-6 w-full">
+                        <div className={`w-20 h-20 ${goal.color} rounded-2xl flex items-center justify-center shadow-lg transition-transform duration-300 ${
+                          formData.goals.includes(goal.id) ? 'scale-110' : ''
+                        }`}>
+                          <goal.icon className="h-10 w-10 text-white" />
                         </div>
-                        <div>
-                          <h3 className="text-xl font-semibold text-neutral-900">{goal.label}</h3>
+                        <div className="flex-1">
+                          <h3 className="text-2xl font-bold text-neutral-900">{goal.label}</h3>
                         </div>
                       </div>
                     </Card>
@@ -422,8 +426,8 @@ export default function OnboardingRegistration() {
               <div className="space-y-8">
                 {/* Experience Level */}
                 <div>
-                  <h3 className="text-xl font-semibold text-neutral-900 mb-4">Tapasztalati szint</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <h3 className="text-2xl font-bold text-neutral-900 mb-6 text-center">Tapasztalati szint</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
                     {experienceLevels.map((level, index) => (
                       <motion.div
                         key={level.id}
@@ -432,17 +436,17 @@ export default function OnboardingRegistration() {
                         transition={{ delay: index * 0.1 }}
                       >
                         <Card
-                          className={`p-6 cursor-pointer transition-all duration-300 hover:scale-105 border-2 ${
+                          className={`p-8 cursor-pointer transition-all duration-300 hover:scale-105 hover:-translate-y-2 border-2 min-h-[180px] flex flex-col justify-center ${
                             formData.experienceLevel === level.id
-                              ? 'border-blue-500 bg-blue-50 shadow-xl'
-                              : 'border-neutral-200 bg-white hover:border-neutral-300 hover:shadow-lg'
+                              ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-blue-100 shadow-2xl ring-4 ring-blue-200/50'
+                              : 'border-neutral-200 bg-white hover:border-neutral-300 hover:shadow-xl hover:bg-gray-50'
                           }`}
                           onClick={() => setFormData(prev => ({ ...prev, experienceLevel: level.id }))}
                         >
                           <div className="text-center">
-                            <div className="text-4xl mb-3">{level.icon}</div>
-                            <h4 className="font-semibold text-neutral-900 mb-2">{level.label}</h4>
-                            <p className="text-sm text-neutral-600">{level.description}</p>
+                            <div className="text-6xl mb-4 transition-transform duration-300">{level.icon}</div>
+                            <h4 className="font-bold text-xl text-neutral-900 mb-3">{level.label}</h4>
+                            <p className="text-neutral-600 leading-relaxed">{level.description}</p>
                           </div>
                         </Card>
                       </motion.div>
@@ -452,8 +456,8 @@ export default function OnboardingRegistration() {
 
                 {/* Learning Style */}
                 <div>
-                  <h3 className="text-xl font-semibold text-neutral-900 mb-4">Tanulási stílus</h3>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <h3 className="text-2xl font-bold text-neutral-900 mb-6 text-center">Tanulási stílus</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
                     {learningStyleOptions.map((style, index) => (
                       <motion.div
                         key={style.id}
@@ -462,18 +466,20 @@ export default function OnboardingRegistration() {
                         transition={{ delay: index * 0.1 }}
                       >
                         <Card
-                          className={`p-6 cursor-pointer transition-all duration-300 hover:scale-105 border-2 ${
+                          className={`p-6 cursor-pointer transition-all duration-300 hover:scale-105 hover:-translate-y-2 border-2 min-h-[140px] flex flex-col justify-center ${
                             formData.learningStyle.includes(style.id)
-                              ? 'border-blue-500 bg-blue-50 shadow-xl'
-                              : 'border-neutral-200 bg-white hover:border-neutral-300 hover:shadow-lg'
+                              ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-blue-100 shadow-2xl ring-4 ring-blue-200/50'
+                              : 'border-neutral-200 bg-white hover:border-neutral-300 hover:shadow-xl hover:bg-gray-50'
                           }`}
                           onClick={() => handleLearningStyleToggle(style.id)}
                         >
                           <div className="text-center">
-                            <div className={`w-12 h-12 ${style.color} rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg`}>
-                              <style.icon className="h-6 w-6 text-white" />
+                            <div className={`w-16 h-16 ${style.color} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg transition-transform duration-300 ${
+                              formData.learningStyle.includes(style.id) ? 'scale-110' : ''
+                            }`}>
+                              <style.icon className="h-8 w-8 text-white" />
                             </div>
-                            <h4 className="font-semibold text-neutral-900 text-sm">{style.label}</h4>
+                            <h4 className="font-bold text-neutral-900">{style.label}</h4>
                           </div>
                         </Card>
                       </motion.div>
