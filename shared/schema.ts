@@ -1,4 +1,5 @@
-import { pgTable, text, serial, integer, timestamp, varchar, jsonb, index } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, timestamp, varchar, jsonb, index, boolean } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -342,7 +343,7 @@ export const learningPaths = pgTable("learning_paths", {
   userId: varchar("user_id").notNull(),
   difficulty: varchar("difficulty", { length: 50 }).notNull().default("beginner"),
   tags: text("tags").array().default([]),
-  isPublic: boolean("is_public").default(false),
+  isPublic: boolean("is_public").notNull().default(false),
   totalDuration: varchar("total_duration", { length: 100 }),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
@@ -353,7 +354,7 @@ export const learningPathSteps = pgTable("learning_path_steps", {
   learningPathId: integer("learning_path_id").notNull(),
   courseId: integer("course_id").notNull(),
   orderIndex: integer("order_index").notNull(),
-  isCompleted: boolean("is_completed").default(false),
+  isCompleted: boolean("is_completed").notNull().default(false),
   estimatedDuration: varchar("estimated_duration", { length: 100 }),
   createdAt: timestamp("created_at").defaultNow(),
 });

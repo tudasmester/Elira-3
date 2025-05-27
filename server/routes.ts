@@ -4,6 +4,7 @@ import { createServer, type Server } from "http";
 // import { requireAuth } from "./auth";
 import { storage } from "./storage";
 import { registerAdminRoutes } from "./admin-routes";
+import { registerLearningPathRoutes } from "./learning-path-routes";
 import { generateCareerPathInfo, getCareerRecommendation, generateSkillsAnalysis } from "./openai";
 import { contentManager } from "./content-manager";
 import type { Request, Response } from "express";
@@ -211,9 +212,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Subscription routes temporarily disabled during auth system cleanup
+  // Learning Path Builder routes
+  registerLearningPathRoutes(app);
   
-  // Admin routes temporarily disabled during auth system cleanup
+  // Admin routes
+  registerAdminRoutes(app);
 
   const httpServer = createServer(app);
   return httpServer;
