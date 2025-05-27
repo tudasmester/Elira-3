@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useRealTimeData } from "@/hooks/useRealTimeData";
 import Home from "@/pages/Home";
-import OnboardingPage from "@/pages/OnboardingPage";
+import OnboardingRegistration from "@/pages/OnboardingRegistration";
 import Dashboard from "@/pages/Dashboard";
 import Settings from "@/pages/Settings";
 import CourseDetail from "@/pages/CourseDetail";
@@ -24,7 +24,7 @@ import AdminCourseForm from "@/pages/AdminCourseForm";
 import AdminCourseDetail from "@/pages/AdminCourseDetail";
 import AdminContentSync from "@/pages/AdminContentSync";
 import AdminSetup from "@/pages/AdminSetup";
-import AuthPageClean from "@/pages/AuthPageClean";
+import AuthPageLogin from "@/pages/AuthPageLogin";
 import NotFound from "@/pages/not-found";
 import Layout from "@/components/Layout";
 import ScrollToTop from "@/components/ui/ScrollToTop";
@@ -41,8 +41,8 @@ function Router() {
   const content = (
     <Switch>
       <Route path="/" component={Home} />
-      <Route path="/onboarding" component={OnboardingPage} />
-      <Route path="/auth" component={AuthPageClean} />
+      <Route path="/onboarding" component={OnboardingRegistration} />
+      <Route path="/auth" component={AuthPageLogin} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/settings" component={Settings} />
       <Route path="/course/:id" component={CourseDetail} />
