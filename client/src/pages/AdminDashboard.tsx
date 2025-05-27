@@ -81,6 +81,52 @@ export default function AdminDashboard() {
     retry: false,
   });
 
+  // Delete course mutation
+  const deleteMutation = useMutation({
+    mutationFn: async (courseId: number) => {
+      const response = await fetch(`/api/courses/${courseId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        throw new Error('Failed to delete course');
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/courses'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/stats'] });
+      toast({
+        title: "Course deleted",
+        description: "The course has been successfully deleted.",
+      });
+      setDeleteDialog({ isOpen: false, courseId: null, courseName: '' });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to delete course. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleDeleteCourse = (courseId: number, courseName: string) => {
+    setDeleteDialog({ isOpen: true, courseId, courseName });
+  };
+
+  const confirmDelete = () => {
+    if (deleteDialog.courseId) {
+      deleteMutation.mutate(deleteDialog.courseId);
+    }
+  };
+
+  // Filter courses based on search term
+  const filteredCourses = courses?.filter((course: Course) =>
+    course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    course.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    course.category.toLowerCase().includes(searchTerm.toLowerCase())
+  ) || [];
+
   if (statsLoading || coursesLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -232,26 +278,49 @@ export default function AdminDashboard() {
           </TabsContent>
 
           <TabsContent value="courses" className="space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <h2 className="text-2xl font-bold">Kurzuskezelés</h2>
-              <Link href="/admin/courses/new">
-                <Button className="flex items-center gap-2">
-                  <Plus className="h-4 w-4" />
-                  Új kurzus
-                </Button>
-              </Link>
+              <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                <div className="relative flex-1 sm:flex-initial">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Input
+                    placeholder="Keresés kurzusok között..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10 w-full sm:w-64"
+                  />
+                </div>
+                <Link href="/admin/courses/new">
+                  <Button className="flex items-center gap-2 w-full sm:w-auto">
+                    <Plus className="h-4 w-4" />
+                    Új kurzus
+                  </Button>
+                </Link>
+              </div>
             </div>
 
             <Card>
               <CardHeader>
-                <CardTitle>Kurzusok listája</CardTitle>
-                <CardDescription>
-                  Összes kurzus kezelése és szerkesztése
-                </CardDescription>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <CardTitle>Kurzusok listája</CardTitle>
+                    <CardDescription>
+                      {filteredCourses.length} kurzus találva {searchTerm && `"${searchTerm}" keresésre`}
+                    </CardDescription>
+                  </div>
+                  <Badge variant="secondary" className="text-sm">
+                    Összes: {courses?.length || 0}
+                  </Badge>
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {courses?.map((course: Course) => (
+                  {filteredCourses.length === 0 ? (
+                    <div className="text-center py-8 text-gray-500">
+                      {searchTerm ? 'Nincs találat a keresési feltételekre.' : 'Még nincsenek kurzusok.'}
+                    </div>
+                  ) : (
+                    filteredCourses.map((course: Course) => (
                     <div key={course.id} className="flex items-center justify-between p-4 border rounded-lg">
                       <div className="flex items-center space-x-4">
                         <img 
@@ -280,12 +349,19 @@ export default function AdminDashboard() {
                             <Edit3 className="h-4 w-4" />
                           </Button>
                         </Link>
-                        <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="text-red-600 hover:text-red-700"
+                          onClick={() => handleDeleteCourse(course.id, course.title)}
+                          disabled={deleteMutation.isPending}
+                        >
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
-                  ))}
+                    ))
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -342,7 +418,19 @@ export default function AdminDashboard() {
           </TabsContent>
         </Tabs>
       </div>
-    </div>
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={deleteDialog.isOpen}
+        onClose={() => setDeleteDialog({ isOpen: false, courseId: null, courseName: '' })}
+        onConfirm={confirmDelete}
+        title="Kurzus törlése"
+        description={`Biztosan törölni szeretnéd a(z) "${deleteDialog.courseName}" kurzust? Ez a művelet visszavonhatatlan.`}
+        confirmText="Törlés"
+        cancelText="Mégse"
+        isDestructive={true}
+        isLoading={deleteMutation.isPending}
+      />
     </AdminGuard>
   );
 }
