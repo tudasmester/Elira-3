@@ -174,7 +174,7 @@ export function registerAdminRoutes(app: Express) {
   });
 
   // Get course analytics
-  apiRouter.get('/courses/:id/analytics', isAdmin, async (req: Request, res: Response) => {
+  app.get('/api/admin/courses/:id/analytics', isAdmin, async (req: Request, res: Response) => {
     try {
       const courseId = parseInt(req.params.id);
       const analytics = await storage.getCourseAnalytics(courseId);

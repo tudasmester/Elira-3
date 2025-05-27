@@ -17,6 +17,7 @@ import CareerDevelopment from "@/pages/CareerDevelopment";
 import CareerDetail from "@/pages/CareerDetail";
 import CareerPathsAI from "@/pages/CareerPathsAI";
 import PremiumSubscription from "@/pages/PremiumSubscription";
+import SubscriptionPlans from "@/pages/SubscriptionPlans";
 import AdminDashboard from "@/pages/AdminDashboard";
 import AdminCourseForm from "@/pages/AdminCourseForm";
 import AdminCourseDetail from "@/pages/AdminCourseDetail";
@@ -51,6 +52,7 @@ function Router() {
       <Route path="/career-paths-ai" component={CareerPathsAI} />
       <Route path="/career-paths/:careerId" component={CareerPathsAI} />
       <Route path="/premium" component={PremiumSubscription} />
+      <Route path="/subscription-plans" component={SubscriptionPlans} />
       <Route path="/admin-setup" component={AdminSetup} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/admin/sync" component={AdminContentSync} />
