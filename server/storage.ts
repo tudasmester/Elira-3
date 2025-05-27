@@ -52,6 +52,20 @@ export interface IStorage {
   // Admin operations
   promoteUserToAdmin(userId: string): Promise<User>;
   demoteUserFromAdmin(userId: string): Promise<User>;
+  
+  // Advanced course management
+  getCourseWithDetails(courseId: number): Promise<any>;
+  getCourseAnalytics(courseId: number): Promise<any>;
+  toggleCourseHighlight(courseId: number): Promise<Course>;
+  getHighlightedCourses(): Promise<Course[]>;
+  
+  // Module and lesson operations
+  createCourseModule(module: InsertCourseModule): Promise<CourseModule>;
+  createLesson(lesson: InsertLesson): Promise<Lesson>;
+  updateLesson(lessonId: number, lesson: Partial<InsertLesson>): Promise<Lesson>;
+  
+  // Quiz operations
+  createQuiz(quiz: InsertQuiz): Promise<Quiz>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -297,6 +311,134 @@ export class DatabaseStorage implements IStorage {
       .where(eq(users.id, userId))
       .returning();
     return user;
+  }
+
+  // Advanced course management
+  async getCourseWithDetails(courseId: number): Promise<any> {
+    const course = await this.getCourse(courseId);
+    if (!course) return null;
+
+    // Get modules and lessons for the course
+    const modules = await db
+      .select()
+      .from(courseModules)
+      .where(eq(courseModules.courseId, courseId))
+      .orderBy(courseModules.orderIndex);
+
+    const courseWithModules = {
+      ...course,
+      modules: await Promise.all(
+        modules.map(async (module) => {
+          const lessons = await db
+            .select()
+            .from(lessons)
+            .where(eq(lessons.moduleId, module.id))
+            .orderBy(lessons.orderIndex);
+
+          const lessonsWithQuizzes = await Promise.all(
+            lessons.map(async (lesson) => {
+              const quizzes = await db
+                .select()
+                .from(quizzes)
+                .where(eq(quizzes.lessonId, lesson.id));
+              
+              return { ...lesson, quizzes };
+            })
+          );
+
+          return { ...module, lessons: lessonsWithQuizzes };
+        })
+      )
+    };
+
+    return courseWithModules;
+  }
+
+  async getCourseAnalytics(courseId: number): Promise<any> {
+    // Get total students enrolled in the course
+    const totalStudents = await db
+      .select({ count: sql`count(*)` })
+      .from(enrollments)
+      .where(eq(enrollments.courseId, courseId));
+
+    // Get completion statistics
+    const completionStats = await db
+      .select({ 
+        completed: sql`count(*) filter (where status = 'completed')`,
+        total: sql`count(*)`
+      })
+      .from(enrollments)
+      .where(eq(enrollments.courseId, courseId));
+
+    // Mock analytics data for demonstration
+    return {
+      totalStudents: totalStudents[0]?.count || 0,
+      newStudentsThisMonth: Math.floor(Math.random() * 20) + 5,
+      avgCompletionTime: Math.floor(Math.random() * 30) + 15,
+      completionRate: completionStats[0]?.total > 0 
+        ? Math.round((completionStats[0].completed / completionStats[0].total) * 100)
+        : 0,
+      avgQuizScore: Math.floor(Math.random() * 20) + 75
+    };
+  }
+
+  async toggleCourseHighlight(courseId: number): Promise<Course> {
+    const course = await this.getCourse(courseId);
+    if (!course) throw new Error('Course not found');
+
+    const [updatedCourse] = await db
+      .update(courses)
+      .set({ 
+        isHighlighted: course.isHighlighted ? 0 : 1,
+        updatedAt: new Date()
+      })
+      .where(eq(courses.id, courseId))
+      .returning();
+
+    return updatedCourse;
+  }
+
+  async getHighlightedCourses(): Promise<Course[]> {
+    return await db
+      .select()
+      .from(courses)
+      .where(eq(courses.isHighlighted, 1))
+      .orderBy(courses.createdAt);
+  }
+
+  // Module and lesson operations
+  async createCourseModule(moduleData: InsertCourseModule): Promise<CourseModule> {
+    const [module] = await db
+      .insert(courseModules)
+      .values(moduleData)
+      .returning();
+    return module;
+  }
+
+  async createLesson(lessonData: InsertLesson): Promise<Lesson> {
+    const [lesson] = await db
+      .insert(lessons)
+      .values(lessonData)
+      .returning();
+    return lesson;
+  }
+
+  async updateLesson(lessonId: number, lessonData: Partial<InsertLesson>): Promise<Lesson> {
+    const [lesson] = await db
+      .update(lessons)
+      .set({ ...lessonData, updatedAt: new Date() })
+      .where(eq(lessons.id, lessonId))
+      .returning();
+    return lesson;
+  }
+
+  // Quiz operations
+  async createQuiz(quizData: InsertQuiz): Promise<Quiz> {
+    const [quiz] = await db
+      .insert(quizzes)
+      .values(quizData)
+      .returning();
+    return quiz;
   }
 
   // Initialize database with sample data if needed

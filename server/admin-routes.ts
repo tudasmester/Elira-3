@@ -155,6 +155,112 @@ export function registerAdminRoutes(app: Express) {
     }
   });
 
+  // Get detailed course with modules, lessons, and analytics
+  apiRouter.get('/courses/:id/detailed', isAdmin, async (req: Request, res: Response) => {
+    try {
+      const courseId = parseInt(req.params.id);
+      const course = await storage.getCourseWithDetails(courseId);
+      
+      if (!course) {
+        return res.status(404).json({ message: "Course not found" });
+      }
+
+      res.json(course);
+    } catch (error) {
+      console.error("Error fetching detailed course:", error);
+      res.status(500).json({ message: "Failed to fetch course details" });
+    }
+  });
+
+  // Get course analytics
+  apiRouter.get('/courses/:id/analytics', isAdmin, async (req: Request, res: Response) => {
+    try {
+      const courseId = parseInt(req.params.id);
+      const analytics = await storage.getCourseAnalytics(courseId);
+      res.json(analytics);
+    } catch (error) {
+      console.error("Error fetching course analytics:", error);
+      res.status(500).json({ message: "Failed to fetch course analytics" });
+    }
+  });
+
+  // Create new module for a course
+  apiRouter.post('/courses/:id/modules', isAdmin, async (req: Request, res: Response) => {
+    try {
+      const courseId = parseInt(req.params.id);
+      const moduleData = { ...req.body, courseId };
+      
+      const module = await storage.createCourseModule(moduleData);
+      res.json(module);
+    } catch (error) {
+      console.error("Error creating module:", error);
+      res.status(500).json({ message: "Failed to create module" });
+    }
+  });
+
+  // Create new lesson for a module
+  apiRouter.post('/modules/:id/lessons', isAdmin, async (req: Request, res: Response) => {
+    try {
+      const moduleId = parseInt(req.params.id);
+      const lessonData = { ...req.body, moduleId };
+      
+      const lesson = await storage.createLesson(lessonData);
+      res.json(lesson);
+    } catch (error) {
+      console.error("Error creating lesson:", error);
+      res.status(500).json({ message: "Failed to create lesson" });
+    }
+  });
+
+  // Toggle course highlight status
+  apiRouter.post('/courses/:id/toggle-highlight', isAdmin, async (req: Request, res: Response) => {
+    try {
+      const courseId = parseInt(req.params.id);
+      const course = await storage.toggleCourseHighlight(courseId);
+      res.json(course);
+    } catch (error) {
+      console.error("Error toggling course highlight:", error);
+      res.status(500).json({ message: "Failed to toggle course highlight" });
+    }
+  });
+
+  // Update lesson content
+  apiRouter.put('/lessons/:id', isAdmin, async (req: Request, res: Response) => {
+    try {
+      const lessonId = parseInt(req.params.id);
+      const lesson = await storage.updateLesson(lessonId, req.body);
+      res.json(lesson);
+    } catch (error) {
+      console.error("Error updating lesson:", error);
+      res.status(500).json({ message: "Failed to update lesson" });
+    }
+  });
+
+  // Create quiz for a lesson
+  apiRouter.post('/lessons/:id/quizzes', isAdmin, async (req: Request, res: Response) => {
+    try {
+      const lessonId = parseInt(req.params.id);
+      const quizData = { ...req.body, lessonId };
+      
+      const quiz = await storage.createQuiz(quizData);
+      res.json(quiz);
+    } catch (error) {
+      console.error("Error creating quiz:", error);
+      res.status(500).json({ message: "Failed to create quiz" });
+    }
+  });
+
+  // Get all highlighted courses for frontend
+  app.get('/api/courses/highlighted', async (req: Request, res: Response) => {
+    try {
+      const highlightedCourses = await storage.getHighlightedCourses();
+      res.json({ success: true, data: { courses: highlightedCourses } });
+    } catch (error) {
+      console.error("Error fetching highlighted courses:", error);
+      res.status(500).json({ message: "Failed to fetch highlighted courses" });
+    }
+  });
+
   // Super admin endpoint to promote users to admin (protected by environment variable)
   app.post('/api/admin/setup-admin', async (req, res) => {
     try {

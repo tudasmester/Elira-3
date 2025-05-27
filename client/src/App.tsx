@@ -19,6 +19,7 @@ import CareerPathsAI from "@/pages/CareerPathsAI";
 import PremiumSubscription from "@/pages/PremiumSubscription";
 import AdminDashboard from "@/pages/AdminDashboard";
 import AdminCourseForm from "@/pages/AdminCourseForm";
+import AdminCourseDetail from "@/pages/AdminCourseDetail";
 import AdminSetup from "@/pages/AdminSetup";
 import NotFound from "@/pages/not-found";
 import Layout from "@/components/Layout";
