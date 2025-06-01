@@ -13,7 +13,7 @@ import {
   BarChart3, TrendingUp, TrendingDown, Clock, Users, 
   Target, AlertTriangle, CheckCircle2, XCircle, 
   Brain, Award, Calendar, Download, Filter,
-  PieChart, LineChart, Activity, Zap, Eye
+  PieChart, LineChart, Activity, Zap, Eye, Lightbulb
 } from 'lucide-react';
 
 interface QuizAnalyticsProps {
