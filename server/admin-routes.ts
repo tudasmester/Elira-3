@@ -128,12 +128,58 @@ export function registerAdminRoutes(app: Express) {
   // Create new course
   app.post("/api/admin/courses", async (req, res) => {
     try {
-      const validatedData = insertCourseSchema.parse(req.body);
+      console.log("📝 Creating course with data:", req.body);
+      
+      // Transform wizard data to match course schema
+      const courseData = {
+        title: req.body.title,
+        subtitle: req.body.subtitle || '',
+        description: req.body.description,
+        category: req.body.category,
+        level: req.body.level,
+        universityId: req.body.universityId || 1,
+        instructorName: req.body.instructorName || 'Admin User',
+        language: req.body.language || 'Hungarian',
+        duration: String(req.body.estimatedDuration || 1),
+        price: req.body.isPaid ? (req.body.price || 0) : 0,
+        originalPrice: req.body.originalPrice || req.body.price || 0,
+        maxEnrollments: req.body.enrollmentLimit || req.body.maxEnrollments || 100,
+        imageUrl: req.body.imageUrl || '/placeholder-course.jpg',
+        status: req.body.status || 'published',
+        prerequisites: Array.isArray(req.body.prerequisites) ? req.body.prerequisites.join(', ') : (req.body.prerequisites || ''),
+        tags: Array.isArray(req.body.tags) ? req.body.tags.filter(tag => tag && tag.trim()).join(', ') : (req.body.tags || ''),
+        metaDescription: req.body.metaDescription || req.body.description?.substring(0, 160) || '',
+        isHighlighted: false
+      };
+      
+      console.log("📊 Transformed course data:", courseData);
+      
+      const validatedData = insertCourseSchema.parse(courseData);
       const course = await storage.createCourse(validatedData);
+      
+      console.log("✅ Course created successfully:", course);
+      
+      // Store modules and objectives separately if provided
+      if (req.body.modules && req.body.modules.length > 0) {
+        console.log("📚 Creating modules:", req.body.modules);
+        // Note: We'll implement module storage later
+      }
+      
+      if (req.body.learningObjectives && req.body.learningObjectives.length > 0) {
+        console.log("🎯 Learning objectives:", req.body.learningObjectives);
+        // Note: We'll implement objectives storage later
+      }
+      
       res.status(201).json(course);
     } catch (error) {
-      console.error("Error creating course:", error);
-      res.status(500).json({ message: "Failed to create course" });
+      console.error("❌ Error creating course:", error);
+      if (error instanceof Error) {
+        console.error("Error details:", error.message);
+      }
+      res.status(500).json({ 
+        message: "Failed to create course",
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
     }
   });
 

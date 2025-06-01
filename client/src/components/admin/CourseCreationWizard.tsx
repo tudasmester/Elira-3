@@ -409,12 +409,27 @@ export function CourseCreationWizard({ onComplete, onCancel, initialData }: Cour
               </Button>
             ) : (
               <Button 
-                onClick={handleSubmit(onSubmit)}
+                type="button"
+                onClick={() => {
+                  console.log('Create Course button clicked');
+                  const formData = getValues();
+                  console.log('Form data to submit:', formData);
+                  onSubmit(formData);
+                }}
                 disabled={createCourseMutation.isPending}
                 className="bg-green-600 hover:bg-green-700"
               >
-                <CheckCircle className="h-4 w-4 mr-2" />
-                Create Course
+                {createCourseMutation.isPending ? (
+                  <>
+                    <div className="animate-spin w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full" />
+                    Creating...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle className="h-4 w-4 mr-2" />
+                    Create Course
+                  </>
+                )}
               </Button>
             )}
           </div>
