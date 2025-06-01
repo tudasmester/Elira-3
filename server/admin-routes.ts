@@ -314,7 +314,7 @@ export function registerAdminRoutes(app: Express) {
   });
 
   // Create new module for a course
-  app.post('/api/courses/:id/modules', isAdmin, async (req: Request, res: Response) => {
+  app.post('/api/courses/:id/modules', requireAuth, isAdmin, async (req: Request, res: Response) => {
     try {
       const courseId = parseInt(req.params.id);
       const moduleData = { ...req.body, courseId };
@@ -328,7 +328,7 @@ export function registerAdminRoutes(app: Express) {
   });
 
   // Create new lesson for a module
-  app.post('/api/modules/:id/lessons', isAdmin, async (req: Request, res: Response) => {
+  app.post('/api/modules/:id/lessons', requireAuth, isAdmin, async (req: Request, res: Response) => {
     try {
       const moduleId = parseInt(req.params.id);
       const lessonData = { ...req.body, moduleId };
