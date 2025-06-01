@@ -25,9 +25,15 @@ import {
   BarChart3,
   Users,
   Clock,
-  Star
+  Star,
+  Settings,
+  Eye,
+  Copy
 } from 'lucide-react';
 import { Link } from 'wouter';
+import { QuizManager } from '@/components/admin/QuizManager';
+import { QuestionBank } from '@/components/admin/QuestionBank';
+import { QuizAnalytics } from '@/components/admin/QuizAnalytics';
 
 interface CourseModule {
   id: number;
@@ -78,6 +84,9 @@ export default function AdminCourseDetail() {
   const [newModuleDialog, setNewModuleDialog] = useState(false);
   const [newLessonDialog, setNewLessonDialog] = useState(false);
   const [selectedModuleId, setSelectedModuleId] = useState<number | null>(null);
+  const [quizManagerOpen, setQuizManagerOpen] = useState(false);
+  const [selectedLessonId, setSelectedLessonId] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState('overview');
 
   // Fetch course details with modules and lessons
   const { data: course, isLoading } = useQuery({
@@ -366,16 +375,27 @@ export default function AdminCourseDetail() {
           <TabsContent value="quizzes" className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-semibold">Kvízek kezelése</h2>
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                Új kvíz
-              </Button>
             </div>
             
-            <div className="text-center py-8">
-              <HelpCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">Kvíz kezelési funkciók hamarosan...</p>
-            </div>
+            <Tabs defaultValue="quiz-manager" className="space-y-4">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="quiz-manager">Kvíz kezelő</TabsTrigger>
+                <TabsTrigger value="question-bank">Kérdésbank</TabsTrigger>
+                <TabsTrigger value="analytics">Elemzések</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="quiz-manager">
+                <QuizManager courseId={courseId} />
+              </TabsContent>
+
+              <TabsContent value="question-bank">
+                <QuestionBank courseId={courseId} />
+              </TabsContent>
+
+              <TabsContent value="analytics">
+                <QuizAnalytics courseId={courseId} />
+              </TabsContent>
+            </Tabs>
           </TabsContent>
 
           {/* Settings Tab */}

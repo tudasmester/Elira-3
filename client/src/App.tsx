@@ -76,7 +76,7 @@ function Router() {
       <Route path="/admin-setup" component={AdminSetup} />
       <Route path="/admin" component={AdminDashboardNew} />
       <Route path="/admin/courses" component={AdminCoursesPage} />
-      <Route path="/admin/quizzes" component={AdminQuizPage} />
+
       <Route path="/admin/users" component={AdminUsersPage} />
       <Route path="/admin/universities" component={AdminUniversitiesPage} />
       <Route path="/admin/analytics" component={AdminAnalyticsPage} />
