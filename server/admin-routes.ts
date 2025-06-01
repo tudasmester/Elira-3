@@ -1,13 +1,13 @@
 import type { Express } from "express";
 import { storage } from "./storage";
-import { isAuthenticated } from "./replitAuth";
+import { requireAuth } from "./auth-working";
 import { isAdmin } from "./adminAuth";
 import { insertCourseSchema, insertUniversitySchema } from "@shared/schema";
 import { contentSync } from "./content-sync";
 
 export function registerAdminRoutes(app: Express) {
   // Admin setup endpoint - only requires authentication, not admin privileges
-  app.post('/api/admin/setup-admin', isAuthenticated, async (req, res) => {
+  app.post('/api/admin/setup-admin', requireAuth, async (req, res) => {
     try {
       const { userId, adminSecret } = req.body;
       console.log("Admin setup request:", { userId, hasSecret: !!adminSecret });
@@ -39,7 +39,7 @@ export function registerAdminRoutes(app: Express) {
   });
 
   // Admin middleware for all other admin routes
-  app.use('/api/admin/*', isAuthenticated, isAdmin);
+  app.use('/api/admin/*', requireAuth, isAdmin);
 
   // Get all courses with pagination for admin
   app.get("/api/admin/courses", async (req, res) => {

@@ -5,16 +5,12 @@ export const isAdmin: RequestHandler = async (req, res, next) => {
   try {
     const user = req.user as any;
 
-    if (!req.isAuthenticated() || !user.expires_at) {
+    // Check if user is authenticated
+    if (!user || !user.id) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const now = Math.floor(Date.now() / 1000);
-    if (now > user.expires_at) {
-      return res.status(401).json({ message: "Session expired" });
-    }
-
-    const userId = user.claims.sub;
+    const userId = user.id;
     const userRecord = await storage.getUser(userId);
     
     if (!userRecord || userRecord.isAdmin !== 1) {
