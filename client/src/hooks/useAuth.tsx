@@ -29,21 +29,36 @@ export function useAuth() {
       await apiRequest("POST", "/api/auth/logout");
     },
     onSuccess: () => {
+      // Clear all authentication data
       localStorage.removeItem('auth_token');
+      localStorage.clear(); // Clear all localStorage to remove any cached auth data
+      
+      // Clear all queries and set user to null
+      queryClient.clear();
       queryClient.setQueryData(["/api/auth/user"], null);
-      queryClient.invalidateQueries();
+      
       toast({
         title: "Sikeres kijelentkezés",
         description: "Viszlát!",
       });
+      
+      // Navigate to home and force page reload to clear any remaining state
       navigate('/');
+      window.location.reload();
     },
     onError: () => {
+      // Even if backend fails, clear frontend state
+      localStorage.removeItem('auth_token');
+      queryClient.setQueryData(["/api/auth/user"], null);
+      queryClient.clear();
+      
       toast({
-        title: "Hiba történt",
-        description: "Kérjük, próbáld újra",
-        variant: "destructive",
+        title: "Kijelentkezés",
+        description: "Sikeresen kijelentkeztél",
       });
+      
+      navigate('/');
+      window.location.reload();
     },
   });
 
