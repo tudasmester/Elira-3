@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { Shield, Lock, User } from 'lucide-react';
-import { apiRequest } from '@/lib/queryClient';
+import { apiRequest, queryClient } from '@/lib/queryClient';
 
 export default function AdminSetup() {
   const [adminSecret, setAdminSecret] = useState('');
@@ -32,6 +32,10 @@ export default function AdminSetup() {
         title: "Admin access granted!",
         description: "You now have administrator privileges.",
       });
+      
+      // Force refresh all authentication and admin related queries
+      window.location.reload();
+      
       
       // Redirect to admin panel
       window.location.href = '/admin';
