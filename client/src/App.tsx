@@ -13,29 +13,9 @@ import { initCacheCleanup, warmCache } from "@/lib/caching";
 import {
   LazyHome,
   LazyDashboard,
-  LazySettings,
   LazyCourseDetail,
-  LazyTrending,
-  LazyCourses,
-  LazyDegrees,
-  LazyDegreeDetail,
-  LazyCategoryPage,
-  LazyCareerDevelopment,
-  LazyCareerDetail,
-  LazyCareerPathsAI,
-  LazyPremiumSubscription,
-  LazySubscriptionPlans,
-  LazyAdminDashboard,
-  LazyAdminCourseForm,
-  LazyAdminCourseDetail,
-  LazyAdminContentSync,
-  LazyAdminContentBuilder,
-  LazyOnboardingRegister,
-  LazyAuthPageLogin,
-  LazyPasswordReset,
-  LazySearchPage,
-  LazyAdminSetup,
-  preloadCriticalComponents
+  LazyCoursesPage,
+  LazyAuthPage
 } from "@/components/LazyComponents";
 import NotFound from "@/pages/not-found";
 import Layout from "@/components/Layout";
@@ -53,32 +33,10 @@ function Router() {
   const content = (
     <Switch>
       <Route path="/" component={LazyHome} />
-      <Route path="/onboarding" component={LazyOnboardingRegister} />
-      <Route path="/auth" component={LazyAuthPageLogin} />
-      <Route path="/password-reset" component={LazyPasswordReset} />
+      <Route path="/auth" component={LazyAuthPage} />
       <Route path="/dashboard" component={LazyDashboard} />
-      <Route path="/settings" component={LazySettings} />
       <Route path="/course/:id" component={LazyCourseDetail} />
-      <Route path="/trending" component={LazyTrending} />
-      <Route path="/courses" component={LazyCourses} />
-      <Route path="/search" component={LazySearchPage} />
-      <Route path="/degrees" component={LazyDegrees} />
-      <Route path="/degree/:id" component={LazyDegreeDetail} />
-      <Route path="/category/:slug" component={LazyCategoryPage} />
-      <Route path="/careers" component={LazyCareerDevelopment} />
-      <Route path="/career/:id" component={LazyCareerDetail} />
-      <Route path="/career-paths-ai" component={LazyCareerPathsAI} />
-      <Route path="/career-paths/:careerId" component={LazyCareerPathsAI} />
-      <Route path="/premium" component={LazyPremiumSubscription} />
-      <Route path="/subscription-plans" component={LazySubscriptionPlans} />
-      <Route path="/admin-setup" component={LazyAdminSetup} />
-      <Route path="/admin" component={LazyAdminDashboard} />
-      <Route path="/admin/sync" component={LazyAdminContentSync} />
-      <Route path="/admin/courses/new" component={LazyAdminCourseForm} />
-      <Route path="/admin/courses/:id" component={LazyAdminCourseDetail} />
-      <Route path="/admin/courses/:id/edit" component={LazyAdminCourseForm} />
-      <Route path="/admin/courses/:id/content" component={LazyAdminContentBuilder} />
-
+      <Route path="/courses" component={LazyCoursesPage} />
       <Route component={NotFound} />
     </Switch>
   );
