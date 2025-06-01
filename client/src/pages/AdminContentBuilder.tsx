@@ -14,6 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 import { AdminGuard } from '@/components/AdminGuard';
+import HierarchicalCourseBuilder from '@/components/admin/HierarchicalCourseBuilder';
 import { 
   ArrowLeft, 
   Plus, 
@@ -317,10 +318,14 @@ export default function AdminContentBuilder() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="settings" className="flex items-center gap-2">
               <Settings className="h-4 w-4" />
               Alapbeállítások
+            </TabsTrigger>
+            <TabsTrigger value="structure" className="flex items-center gap-2">
+              <TreePine className="h-4 w-4" />
+              Struktúra
             </TabsTrigger>
             <TabsTrigger value="modules" className="flex items-center gap-2">
               <BookOpen className="h-4 w-4" />
