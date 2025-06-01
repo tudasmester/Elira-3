@@ -317,7 +317,12 @@ export function registerAdminRoutes(app: Express) {
   app.post('/api/courses/:id/modules', requireAuth, isAdmin, async (req: Request, res: Response) => {
     try {
       const courseId = parseInt(req.params.id);
-      const moduleData = { ...req.body, courseId };
+      
+      // Get existing modules to determine the next order index
+      const existingModules = await storage.getCourseModules(courseId);
+      const orderIndex = existingModules.length;
+      
+      const moduleData = { ...req.body, courseId, orderIndex };
       
       const module = await storage.createCourseModule(moduleData);
       res.json(module);
@@ -331,7 +336,12 @@ export function registerAdminRoutes(app: Express) {
   app.post('/api/modules/:id/lessons', requireAuth, isAdmin, async (req: Request, res: Response) => {
     try {
       const moduleId = parseInt(req.params.id);
-      const lessonData = { ...req.body, moduleId };
+      
+      // Get existing lessons to determine the next order index
+      const existingLessons = await storage.getLessonsByModule(moduleId);
+      const order = existingLessons.length;
+      
+      const lessonData = { ...req.body, moduleId, order };
       
       const lesson = await storage.createLesson(lessonData);
       res.json(lesson);
