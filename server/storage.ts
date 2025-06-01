@@ -656,7 +656,7 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(lessons)
       .where(eq(lessons.moduleId, moduleId))
-      .orderBy(lessons.orderIndex);
+      .orderBy(lessons.order);
   }
 
   async deleteLesson(lessonId: number): Promise<void> {

@@ -426,15 +426,11 @@ export default function AdminCoursesPage() {
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={() => setLocation(`/admin/courses/${course.id}`)}>
                             <Eye className="h-4 w-4 mr-2" />
-                            View Details
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => setLocation(`/admin/courses/${course.id}/edit`)}>
-                            <Edit className="h-4 w-4 mr-2" />
-                            Edit Course
+                            Részletek megtekintése
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => setLocation(`/admin/courses/${course.id}/content`)}>
                             <BookOpen className="h-4 w-4 mr-2" />
-                            Manage Content & Lessons
+                            Tartalom és leckék kezelése
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           {course.status === 'published' ? (
