@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useToast } from '@/hooks/use-toast';
+import { apiRequest, queryClient } from '@/lib/queryClient';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -211,6 +213,7 @@ const CourseCard: React.FC<{
 };
 
 export default function AdminCourseManager() {
+  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState('all');
@@ -228,14 +231,56 @@ export default function AdminCourseManager() {
     console.log('Edit course:', course.id);
   };
 
-  const handleDeleteCourse = (course: Course) => {
-    // TODO: Implement delete confirmation
-    console.log('Delete course:', course.id);
+  const handleDeleteCourse = async (course: Course) => {
+    if (!confirm(`Biztosan törölni szeretnéd a "${course.title}" kurzust? Ez a művelet visszavonhatatlan.`)) {
+      return;
+    }
+
+    try {
+      await apiRequest('DELETE', `/api/admin/courses/${course.id}`);
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/courses'] });
+      toast({
+        title: "Sikeres törlés",
+        description: `A "${course.title}" kurzus sikeresen törölve lett.`,
+      });
+    } catch (error) {
+      toast({
+        title: "Hiba történt",
+        description: "A kurzus törlése nem sikerült. Kérjük, próbálja újra.",
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleDuplicateCourse = (course: Course) => {
-    // TODO: Implement course duplication
-    console.log('Duplicate course:', course.id);
+  const handleDuplicateCourse = async (course: Course) => {
+    try {
+      const duplicatedCourse = {
+        ...course,
+        title: `${course.title} (másolat)`,
+        status: 'draft' as const,
+        enrollmentCount: 0,
+        isHighlighted: false,
+      };
+      
+      // Remove fields that shouldn't be copied
+      delete (duplicatedCourse as any).id;
+      delete (duplicatedCourse as any).createdAt;
+      delete (duplicatedCourse as any).updatedAt;
+
+      await apiRequest('POST', '/api/admin/courses', duplicatedCourse);
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/courses'] });
+      
+      toast({
+        title: "Sikeres duplikálás",
+        description: `A "${course.title}" kurzus sikeresen lemásolásra került.`,
+      });
+    } catch (error) {
+      toast({
+        title: "Hiba történt",
+        description: "A kurzus duplikálása nem sikerült. Kérjük, próbálja újra.",
+        variant: "destructive",
+      });
+    }
   };
 
   const filteredAndSortedCourses = React.useMemo(() => {
