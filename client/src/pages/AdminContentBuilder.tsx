@@ -29,7 +29,8 @@ import {
   DollarSign,
   Clock,
   Users,
-  Tag
+  Tag,
+  Network
 } from 'lucide-react';
 
 interface Module {
@@ -324,7 +325,7 @@ export default function AdminContentBuilder() {
               Alapbeállítások
             </TabsTrigger>
             <TabsTrigger value="structure" className="flex items-center gap-2">
-              <TreePine className="h-4 w-4" />
+              <Network className="h-4 w-4" />
               Struktúra
             </TabsTrigger>
             <TabsTrigger value="modules" className="flex items-center gap-2">
@@ -557,6 +558,31 @@ export default function AdminContentBuilder() {
                   <Save className="h-4 w-4 mr-2" />
                   {updateCourseMutation.isPending ? 'Mentés...' : 'Beállítások mentése'}
                 </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Structure Tab */}
+          <TabsContent value="structure" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Network className="h-5 w-5" />
+                  Kurzus struktúra kezelése
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Hierarchikus kurzusstruktúra létrehozása és szerkesztése drag-and-drop funkcióval. 
+                  Támogatja a 4 szintű hierarchiát: Kurzus → Modulok → Leckék → Al-leckék
+                </p>
+              </CardHeader>
+              <CardContent>
+                <HierarchicalCourseBuilder 
+                  courseId={courseId}
+                  onSave={(structure) => {
+                    console.log('Kurzus struktúra mentve:', structure);
+                    // A hierarchikus builder automatikusan menti a változásokat
+                  }}
+                />
               </CardContent>
             </Card>
           </TabsContent>
