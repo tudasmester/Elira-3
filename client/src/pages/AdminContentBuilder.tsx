@@ -15,6 +15,7 @@ import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 import { AdminGuard } from '@/components/AdminGuard';
 import HierarchicalCourseBuilder from '@/components/admin/HierarchicalCourseBuilder';
+import AdvancedLessonEditor from '@/components/admin/AdvancedLessonEditor';
 import { 
   ArrowLeft, 
   Plus, 
