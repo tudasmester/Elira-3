@@ -159,9 +159,9 @@ export default function AdminCoursesPage() {
 
   // Filter and search logic
   const filteredCourses = courses.filter(course => {
-    const matchesSearch = course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         course.instructor.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         course.university.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = (course.title || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         (course.instructor || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         (course.university || '').toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = statusFilter === 'all' || course.status === statusFilter;
     const matchesCategory = categoryFilter === 'all' || course.category === categoryFilter;
@@ -226,7 +226,7 @@ export default function AdminCoursesPage() {
     }
   };
 
-  const categories = [...new Set(courses.map(course => course.category))];
+  const categories = Array.from(new Set(courses.map(course => course.category).filter(Boolean)));
 
   if (isLoading) {
     return (

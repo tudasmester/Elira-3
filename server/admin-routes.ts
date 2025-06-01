@@ -113,13 +113,22 @@ export function registerAdminRoutes(app: Express) {
   app.put("/api/admin/courses/:id", async (req, res) => {
     try {
       const courseId = parseInt(req.params.id);
-      const validatedData = insertCourseSchema.parse(req.body);
       
       // Check if course exists
       const existingCourse = await storage.getCourse(courseId);
       if (!existingCourse) {
         return res.status(404).json({ message: "Course not found" });
       }
+
+      // For partial updates (like status change), merge with existing data
+      const updateData = {
+        ...existingCourse,
+        ...req.body,
+        id: courseId // Ensure ID is preserved
+      };
+
+      // Validate the merged data
+      const validatedData = insertCourseSchema.parse(updateData);
       
       const updatedCourse = await storage.updateCourse(courseId, validatedData);
       res.json(updatedCourse);
