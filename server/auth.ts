@@ -73,9 +73,9 @@ export async function sendVerificationEmail(email: string, token: string): Promi
   await emailTransporter.sendMail({
     from: process.env.FROM_EMAIL || "noreply@academion.hu",
     to: email,
-    subject: "Erősítsd meg az email címed - Academion",
+    subject: "Erősítsd meg az email címed - Elira",
     html: `
-      <h2>Üdvözlünk az Academion-ban!</h2>
+      <h2>Üdvözlünk az Elira-ban!</h2>
       <p>Kérjük, erősítsd meg az email címed az alábbi linkre kattintva:</p>
       <a href="${verificationUrl}" style="background: #3B82F6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">Email cím megerősítése</a>
       <p>Ha nem te regisztráltál, figyelmen kívül hagyhatod ezt az emailt.</p>
@@ -94,7 +94,7 @@ export async function sendPasswordResetEmail(email: string, token: string): Prom
   await emailTransporter.sendMail({
     from: process.env.FROM_EMAIL || "noreply@academion.hu",
     to: email,
-    subject: "Jelszó visszaállítás - Academion",
+    subject: "Jelszó visszaállítás - Elira",
     html: `
       <h2>Jelszó visszaállítás</h2>
       <p>Jelszó visszaállítási kérelmet kaptunk a fiókodhoz. Kattints az alábbi linkre a jelszó megváltoztatásához:</p>
@@ -120,7 +120,7 @@ export async function sendPhoneVerification(phone: string, code: string): Promis
   }
 
   await twilioClient.messages.create({
-    body: `Az Academion ellenőrzési kódod: ${code}`,
+    body: `Az Elira ellenőrzési kódod: ${code}`,
     from: process.env.TWILIO_PHONE_NUMBER,
     to: phone,
   });

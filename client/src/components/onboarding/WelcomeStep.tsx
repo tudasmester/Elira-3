@@ -17,7 +17,7 @@ const WelcomeStep: React.FC<WelcomeStepProps> = ({ onNext }) => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <div className="text-primary text-3xl font-bold font-heading mb-8">Academion</div>
+              <div className="text-primary text-3xl font-bold font-heading mb-8">Elira</div>
               <h1 className="text-3xl font-bold mb-6">
                 Új módja a <span className="text-primary">tanulásnak</span>
               </h1>
