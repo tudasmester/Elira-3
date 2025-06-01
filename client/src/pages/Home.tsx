@@ -9,11 +9,11 @@ import DegreePrograms from "@/components/DegreePrograms";
 import FreeCourses from "@/components/FreeCourses";
 import HowItWorks from "@/components/HowItWorks";
 import OnboardingTour from "@/components/OnboardingTour";
-import InteractiveOnboarding from "@/components/InteractiveOnboarding";
+
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useLocation } from "wouter";
-import { ArrowRight, BarChart3, LightbulbIcon, Users, BookOpen, Award, Zap, Send, CheckCircle, HelpCircle } from "lucide-react";
+import { ArrowRight, BarChart3, LightbulbIcon, Users, BookOpen, Award, Send, CheckCircle, Zap } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useOnboardingTour } from "@/hooks/useOnboardingTour";
 import { Link } from "wouter";
@@ -22,7 +22,7 @@ const Home: React.FC = () => {
   const [, setLocation] = useLocation();
   const { isAuthenticated } = useAuth();
   const { showTour, startTour, closeTour, completeTour } = useOnboardingTour();
-  const [showInteractiveOnboarding, setShowInteractiveOnboarding] = useState(false);
+
   
   const handleJoinClick = () => {
     if (isAuthenticated) {
@@ -355,60 +355,7 @@ const Home: React.FC = () => {
         </div>
       </section>
       
-      {/* Floating Help Buttons */}
-      {!showTour && !showInteractiveOnboarding && (
-        <div className="fixed bottom-6 right-6 z-50 flex flex-col space-y-3">
-          {/* Interactive Onboarding Button */}
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 2, duration: 0.3 }}
-            className="relative"
-          >
-            <Button
-              onClick={() => setShowInteractiveOnboarding(true)}
-              size="lg"
-              className="rounded-full w-14 h-14 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 shadow-xl hover:shadow-2xl transition-all duration-300 group"
-            >
-              <Zap className="h-6 w-6 group-hover:scale-110 transition-transform" />
-            </Button>
-            <motion.div
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 3, duration: 0.5 }}
-              className="absolute right-full mr-4 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-purple-900 to-blue-900 text-white px-3 py-2 rounded-lg text-sm whitespace-nowrap shadow-lg"
-            >
-              Interaktív bemutató
-              <div className="absolute top-1/2 -right-1 transform -translate-y-1/2 w-2 h-2 bg-purple-900 rotate-45"></div>
-            </motion.div>
-          </motion.div>
 
-          {/* Basic Tour Button */}
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 2.2, duration: 0.3 }}
-            className="relative"
-          >
-            <Button
-              onClick={startTour}
-              size="lg"
-              className="rounded-full w-14 h-14 bg-blue-600 hover:bg-blue-700 shadow-xl hover:shadow-2xl transition-all duration-300 group"
-            >
-              <HelpCircle className="h-6 w-6 group-hover:scale-110 transition-transform" />
-            </Button>
-            <motion.div
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 3.2, duration: 0.5 }}
-              className="absolute right-full mr-4 top-1/2 transform -translate-y-1/2 bg-gray-900 text-white px-3 py-2 rounded-lg text-sm whitespace-nowrap shadow-lg"
-            >
-              Gyors bemutató
-              <div className="absolute top-1/2 -right-1 transform -translate-y-1/2 w-2 h-2 bg-gray-900 rotate-45"></div>
-            </motion.div>
-          </motion.div>
-        </div>
-      )}
       
       {/* Onboarding Tour */}
       <OnboardingTour
@@ -417,15 +364,7 @@ const Home: React.FC = () => {
         onComplete={completeTour}
       />
       
-      {/* Enhanced Interactive Onboarding */}
-      <InteractiveOnboarding
-        isOpen={showInteractiveOnboarding}
-        onClose={() => setShowInteractiveOnboarding(false)}
-        onComplete={() => {
-          setShowInteractiveOnboarding(false);
-          localStorage.setItem('elira_interactive_onboarding_completed', 'true');
-        }}
-      />
+
     </>
   );
 };
