@@ -250,107 +250,279 @@ const Navbar: React.FC = () => {
           </div>
         </div>
         
-        {/* Mobile Menu */}
+        {/* Enhanced Mobile Menu */}
         {isOpen && (
-          <div className="md:hidden px-4 py-3 border-t border-gray-200 bg-white">
-            <nav className="space-y-1 mb-4">
+          <div className="md:hidden absolute top-full left-0 right-0 bg-white shadow-2xl border-t border-gray-100 z-50 animate-in slide-in-from-top-4 duration-300">
+            {/* Menu Header */}
+            <div className="px-6 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                  <BookOpen className="h-4 w-4 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 text-sm">Felfedezés</h3>
+                  <p className="text-xs text-gray-600">Válassz a kategóriák közül</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Navigation Items */}
+            <nav className="px-4 py-2 space-y-1">
               <Link 
                 href="/courses" 
-                className="flex items-center px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 touch-manipulation"
+                className={`group flex items-center px-4 py-4 rounded-xl text-base font-medium transition-all duration-200 touch-manipulation ${
+                  isActive("/courses") 
+                    ? "bg-blue-50 text-blue-700 shadow-sm" 
+                    : "text-gray-700 hover:bg-gray-50 active:bg-gray-100"
+                }`}
                 onClick={() => handleNavClick('/courses', 'courses-mobile')}
               >
-                <BookOpen className="h-5 w-5 mr-3 text-gray-500" />
-                Kurzusok
+                <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-blue-100 group-hover:bg-blue-200 transition-colors mr-4">
+                  <BookOpen className="h-5 w-5 text-blue-600" />
+                </div>
+                <div className="flex-1">
+                  <div className="font-semibold">Kurzusok</div>
+                  <div className="text-sm text-gray-500">Tanfolyamok és képzések</div>
+                </div>
+                <div className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                </div>
               </Link>
+
               <Link 
                 href="/degrees" 
-                className="flex items-center px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 touch-manipulation"
+                className={`group flex items-center px-4 py-4 rounded-xl text-base font-medium transition-all duration-200 touch-manipulation ${
+                  isActive("/degrees") 
+                    ? "bg-green-50 text-green-700 shadow-sm" 
+                    : "text-gray-700 hover:bg-gray-50 active:bg-gray-100"
+                }`}
                 onClick={() => handleNavClick('/degrees', 'degrees-mobile')}
               >
-                <GraduationCap className="h-5 w-5 mr-3 text-gray-500" />
-                Diplomák
+                <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-green-100 group-hover:bg-green-200 transition-colors mr-4">
+                  <GraduationCap className="h-5 w-5 text-green-600" />
+                </div>
+                <div className="flex-1">
+                  <div className="font-semibold">Diplomák</div>
+                  <div className="text-sm text-gray-500">Egyetemi programok</div>
+                </div>
+                <div className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                </div>
               </Link>
+
               <Link 
                 href="/trending" 
-                className="flex items-center px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 touch-manipulation"
+                className={`group flex items-center px-4 py-4 rounded-xl text-base font-medium transition-all duration-200 touch-manipulation ${
+                  isActive("/trending") 
+                    ? "bg-orange-50 text-orange-700 shadow-sm" 
+                    : "text-gray-700 hover:bg-gray-50 active:bg-gray-100"
+                }`}
                 onClick={() => handleNavClick('/trending', 'trending-mobile')}
               >
-                <BarChart className="h-5 w-5 mr-3 text-gray-500" />
-                Trending
-                <Badge className="ml-2 bg-orange-100 text-orange-800 text-xs px-2 py-0.5">Új</Badge>
+                <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-orange-100 group-hover:bg-orange-200 transition-colors mr-4">
+                  <BarChart className="h-5 w-5 text-orange-600" />
+                </div>
+                <div className="flex-1">
+                  <div className="font-semibold flex items-center">
+                    Trending
+                    <Badge className="ml-2 bg-orange-500 text-white text-xs px-2 py-1 animate-pulse">Új</Badge>
+                  </div>
+                  <div className="text-sm text-gray-500">Népszerű tartalmak</div>
+                </div>
+                <div className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                </div>
               </Link>
+
               <Link 
                 href="/careers" 
-                className="flex items-center px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 touch-manipulation"
+                className={`group flex items-center px-4 py-4 rounded-xl text-base font-medium transition-all duration-200 touch-manipulation ${
+                  isActive("/careers") 
+                    ? "bg-purple-50 text-purple-700 shadow-sm" 
+                    : "text-gray-700 hover:bg-gray-50 active:bg-gray-100"
+                }`}
                 onClick={() => handleNavClick('/careers', 'careers-mobile')}
               >
-                <TrendingUp className="h-5 w-5 mr-3 text-gray-500" />
-                Karrierutak
+                <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-purple-100 group-hover:bg-purple-200 transition-colors mr-4">
+                  <TrendingUp className="h-5 w-5 text-purple-600" />
+                </div>
+                <div className="flex-1">
+                  <div className="font-semibold">Karrierutak</div>
+                  <div className="text-sm text-gray-500">Szakmai fejlődés</div>
+                </div>
+                <div className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                </div>
               </Link>
+
               <Link 
                 href="/career-paths-ai" 
-                className="flex items-center px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 touch-manipulation"
+                className={`group flex items-center px-4 py-4 rounded-xl text-base font-medium transition-all duration-200 touch-manipulation ${
+                  isActive("/career-paths-ai") 
+                    ? "bg-indigo-50 text-indigo-700 shadow-sm" 
+                    : "text-gray-700 hover:bg-gray-50 active:bg-gray-100"
+                }`}
                 onClick={() => handleNavClick('/career-paths-ai', 'ai-careers-mobile')}
               >
-                <BrainCircuit className="h-5 w-5 mr-3 text-gray-500" />
-                AI Karriertervező
-                <Badge className="ml-2 bg-purple-100 text-purple-800 text-xs px-2 py-0.5">AI</Badge>
+                <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-100 to-purple-100 group-hover:from-indigo-200 group-hover:to-purple-200 transition-all mr-4">
+                  <BrainCircuit className="h-5 w-5 text-indigo-600" />
+                </div>
+                <div className="flex-1">
+                  <div className="font-semibold flex items-center">
+                    AI Karriertervező
+                    <Badge className="ml-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-xs px-2 py-1">AI</Badge>
+                  </div>
+                  <div className="text-sm text-gray-500">Mesterséges intelligencia</div>
+                </div>
+                <div className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
+                </div>
               </Link>
+
               <Link 
                 href="/search" 
-                className="flex items-center px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 touch-manipulation"
+                className={`group flex items-center px-4 py-4 rounded-xl text-base font-medium transition-all duration-200 touch-manipulation ${
+                  isActive("/search") 
+                    ? "bg-gray-50 text-gray-700 shadow-sm" 
+                    : "text-gray-700 hover:bg-gray-50 active:bg-gray-100"
+                }`}
                 onClick={() => handleNavClick('/search', 'search-mobile')}
               >
-                <Search className="h-5 w-5 mr-3 text-gray-500" />
-                Keresés
+                <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gray-100 group-hover:bg-gray-200 transition-colors mr-4">
+                  <Search className="h-5 w-5 text-gray-600" />
+                </div>
+                <div className="flex-1">
+                  <div className="font-semibold">Keresés</div>
+                  <div className="text-sm text-gray-500">Találd meg amit keresel</div>
+                </div>
+                <div className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
+                </div>
               </Link>
             </nav>
             
-            <div className="pt-2 flex flex-col space-y-3">
+            {/* User Section */}
+            <div className="border-t border-gray-100 bg-gradient-to-b from-gray-50 to-white">
               {isAuthenticated ? (
-                <>
-                  <div className="flex items-center space-x-3 px-3 py-2 mb-2">
-                    {user?.profileImageUrl ? (
-                      <img 
-                        src={user.profileImageUrl} 
-                        alt="Profile" 
-                        className="h-10 w-10 rounded-full object-cover"
-                      />
-                    ) : (
-                      <UserCircle className="h-10 w-10 text-neutral-500" />
-                    )}
-                    <div>
-                      <p className="font-medium text-neutral-800">{user?.firstName || 'Felhasználó'}</p>
-                      <p className="text-xs text-neutral-500">{user?.email}</p>
+                <div className="px-4 py-4">
+                  {/* User Profile Card */}
+                  <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 mb-4">
+                    <div className="flex items-center space-x-4">
+                      <div className="relative">
+                        {user?.profileImageUrl ? (
+                          <img 
+                            src={user.profileImageUrl} 
+                            alt="Profile" 
+                            className="h-12 w-12 rounded-xl object-cover border-2 border-blue-100"
+                          />
+                        ) : (
+                          <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center">
+                            <UserCircle className="h-7 w-7 text-blue-600" />
+                          </div>
+                        )}
+                        <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-semibold text-gray-900 truncate">
+                          {user?.firstName || 'Felhasználó'}
+                        </h4>
+                        <p className="text-sm text-gray-500 truncate">{user?.email}</p>
+                        <div className="flex items-center mt-1">
+                          <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                          <span className="text-xs text-green-600 font-medium">Online</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <Link href="/dashboard">
-                    <Button variant="outline" className="w-full justify-center">
-                      <UserCircle className="mr-2 h-4 w-4" />
-                      Profilom
+
+                  {/* Action Buttons */}
+                  <div className="space-y-3">
+                    <Link href="/dashboard">
+                      <Button 
+                        variant="outline" 
+                        className="w-full justify-between h-12 rounded-xl border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all group"
+                      >
+                        <div className="flex items-center">
+                          <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center mr-3 group-hover:bg-blue-200 transition-colors">
+                            <UserCircle className="h-4 w-4 text-blue-600" />
+                          </div>
+                          <span className="font-medium">Profilom</span>
+                        </div>
+                        <div className="w-2 h-2 bg-blue-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                      </Button>
+                    </Link>
+                    
+                    <Button 
+                      onClick={logout}
+                      className="w-full justify-between h-12 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 hover:border-red-300 transition-all group"
+                    >
+                      <div className="flex items-center">
+                        <div className="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center mr-3 group-hover:bg-red-200 transition-colors">
+                          <LogOut className="h-4 w-4 text-red-600" />
+                        </div>
+                        <span className="font-medium">Kijelentkezés</span>
+                      </div>
+                      <div className="w-2 h-2 bg-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     </Button>
-                  </Link>
-                  <Button 
-                    onClick={logout}
-                    className="w-full justify-center bg-red-50 hover:bg-red-100 text-red-600 border border-red-200"
-                  >
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Kijelentkezés
-                  </Button>
-                </>
+                  </div>
+                </div>
               ) : (
-                <>
-                  <Link href="/auth">
-                    <Button variant="outline" className="w-full justify-center">
-                      Bejelentkezés
-                    </Button>
-                  </Link>
-                  <Link href="/auth">
-                    <Button className="w-full justify-center bg-primary hover:bg-primary/90 text-white">
-                      Csatlakozzon ingyen
-                    </Button>
-                  </Link>
-                </>
+                <div className="px-4 py-6">
+                  {/* Welcome Section */}
+                  <div className="text-center mb-6">
+                    <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                      <UserCircle className="h-8 w-8 text-blue-600" />
+                    </div>
+                    <h3 className="font-semibold text-gray-900 mb-1">Üdvözlünk az Elirában!</h3>
+                    <p className="text-sm text-gray-600">Csatlakozz hozzánk és kezdd el a tanulást</p>
+                  </div>
+
+                  {/* Auth Buttons */}
+                  <div className="space-y-3">
+                    <Link href="/auth">
+                      <Button 
+                        variant="outline" 
+                        className="w-full justify-center h-12 rounded-xl border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all group"
+                      >
+                        <div className="flex items-center">
+                          <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center mr-3 group-hover:bg-blue-100 transition-colors">
+                            <UserCircle className="h-4 w-4 text-gray-600 group-hover:text-blue-600" />
+                          </div>
+                          <span className="font-medium">Bejelentkezés</span>
+                        </div>
+                      </Button>
+                    </Link>
+                    
+                    <Link href="/auth">
+                      <Button className="w-full justify-center h-12 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all transform hover:scale-[1.02] active:scale-[0.98]">
+                        <div className="flex items-center">
+                          <div className="w-8 h-8 rounded-lg bg-white bg-opacity-20 flex items-center justify-center mr-3">
+                            <UserCircle className="h-4 w-4 text-white" />
+                          </div>
+                          <span className="font-semibold">Csatlakozás ingyen</span>
+                        </div>
+                      </Button>
+                    </Link>
+                  </div>
+
+                  {/* Benefits */}
+                  <div className="mt-4 bg-blue-50 rounded-xl p-3">
+                    <div className="flex items-center justify-center space-x-6 text-xs text-blue-700">
+                      <div className="flex items-center">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full mr-1"></div>
+                        Ingyenes kurzusok
+                      </div>
+                      <div className="flex items-center">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full mr-1"></div>
+                        AI támogatás
+                      </div>
+                      <div className="flex items-center">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full mr-1"></div>
+                        Diplomák
+                      </div>
+                    </div>
+                  </div>
+                </div>
               )}
             </div>
           </div>
