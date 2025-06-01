@@ -23,6 +23,7 @@ import AdminDashboard from "@/pages/AdminDashboard";
 import AdminCourseForm from "@/pages/AdminCourseForm";
 import AdminCourseDetail from "@/pages/AdminCourseDetail";
 import AdminContentSync from "@/pages/AdminContentSync";
+import AdminContentBuilder from "@/pages/AdminContentBuilder";
 import AdminSetup from "@/pages/AdminSetup";
 import AuthPageLogin from "@/pages/AuthPageLogin";
 import NotFound from "@/pages/not-found";
@@ -63,6 +64,7 @@ function Router() {
       <Route path="/admin/courses/new" component={AdminCourseForm} />
       <Route path="/admin/courses/:id" component={AdminCourseDetail} />
       <Route path="/admin/courses/:id/edit" component={AdminCourseForm} />
+      <Route path="/admin/courses/:id/content" component={AdminContentBuilder} />
 
       <Route component={NotFound} />
     </Switch>

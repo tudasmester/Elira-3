@@ -181,6 +181,12 @@ export default function AdminCourseDetail() {
               <Star className="h-4 w-4 mr-2" />
               {course?.isHighlighted ? "Kiemelt" : "Kiemelés"}
             </Button>
+            <Link href={`/admin/courses/${courseId}/content`}>
+              <Button variant="outline" size="sm">
+                <FileText className="h-4 w-4 mr-2" />
+                Tartalom kezelés
+              </Button>
+            </Link>
             <Link href={`/admin/courses/${courseId}/edit`}>
               <Button variant="outline" size="sm">
                 <Edit className="h-4 w-4 mr-2" />
