@@ -22,6 +22,107 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const { setupSessionTimeoutRoutes } = await import("./session-timeout");
   setupSessionTimeoutRoutes(app);
 
+  // Setup database management routes
+  const { databaseManager } = await import("./database-manager");
+  const { migrationRunner } = await import("./migrations");
+  const { backupManager } = await import("./backup-manager");
+
+  // Database health and monitoring endpoints
+  app.get("/api/admin/database/health", async (req: Request, res: Response) => {
+    try {
+      const healthCheck = await databaseManager.performHealthCheck();
+      const stats = databaseManager.getConnectionStats();
+      const detailedHealth = await backupManager.performDetailedHealthCheck();
+      
+      res.json({
+        healthy: healthCheck,
+        connectionStats: stats,
+        detailedMetrics: detailedHealth.success ? detailedHealth.metrics : null
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Health check failed" });
+    }
+  });
+
+  // Database statistics endpoint
+  app.get("/api/admin/database/stats", async (req: Request, res: Response) => {
+    try {
+      const stats = await databaseManager.getDatabaseStats();
+      res.json(stats);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to get database statistics" });
+    }
+  });
+
+  // Migration management endpoints
+  app.get("/api/admin/database/migrations", async (req: Request, res: Response) => {
+    try {
+      const status = await migrationRunner.getMigrationStatus();
+      res.json(status);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to get migration status" });
+    }
+  });
+
+  app.post("/api/admin/database/migrations/run", async (req: Request, res: Response) => {
+    try {
+      const result = await migrationRunner.runMigrations();
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ message: "Migration execution failed" });
+    }
+  });
+
+  app.post("/api/admin/database/migrations/rollback", async (req: Request, res: Response) => {
+    try {
+      const { migrationName } = req.body;
+      const result = await migrationRunner.rollbackMigration(migrationName);
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ message: "Migration rollback failed" });
+    }
+  });
+
+  // Backup management endpoints
+  app.post("/api/admin/database/backup", async (req: Request, res: Response) => {
+    try {
+      const { type = 'full', includeData = true } = req.body;
+      await backupManager.initializeBackupTracking();
+      const result = await backupManager.createFullBackup({ type, compression: true, includeData });
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ message: "Backup creation failed" });
+    }
+  });
+
+  app.get("/api/admin/database/backups", async (req: Request, res: Response) => {
+    try {
+      const result = await backupManager.listBackups();
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to list backups" });
+    }
+  });
+
+  app.post("/api/admin/database/optimize", async (req: Request, res: Response) => {
+    try {
+      const result = await databaseManager.optimizeDatabase();
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ message: "Database optimization failed" });
+    }
+  });
+
+  app.delete("/api/admin/database/backups/cleanup", async (req: Request, res: Response) => {
+    try {
+      const { retentionDays = 30 } = req.body;
+      const result = await backupManager.cleanupOldBackups(retentionDays);
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ message: "Backup cleanup failed" });
+    }
+  });
+
   // Initialize admin content (one-time setup)
   app.post("/api/admin/initialize", async (req: Request, res: Response) => {
     try {
