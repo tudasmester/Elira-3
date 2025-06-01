@@ -26,7 +26,9 @@ export function useAuth() {
   // Logout mutation
   const logoutMutation = useMutation({
     mutationFn: async () => {
+      console.log("Logout mutation called, making API request...");
       await apiRequest("POST", "/api/auth/logout");
+      console.log("Logout API request completed");
     },
     onSuccess: () => {
       // Clear all authentication data
@@ -63,6 +65,7 @@ export function useAuth() {
   });
 
   const logout = () => {
+    console.log("Logout function called");
     logoutMutation.mutate();
   };
 
