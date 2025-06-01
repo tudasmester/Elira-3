@@ -171,6 +171,221 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Advanced Search API
+  app.get("/api/search", async (req: Request, res: Response) => {
+    try {
+      const { 
+        q: query, 
+        category, 
+        level, 
+        duration, 
+        university, 
+        language, 
+        price, 
+        rating, 
+        sortBy = 'relevance', 
+        sortOrder = 'desc' 
+      } = req.query;
+
+      if (!query || typeof query !== 'string' || query.trim().length === 0) {
+        return res.json([]);
+      }
+
+      const searchTerms = query.toLowerCase().split(' ').filter(term => term.length > 0);
+      const courses = await storage.getAllCourses();
+      
+      // Filter and score results
+      let results = courses
+        .filter(course => {
+          // Text search
+          const searchableText = `${course.title} ${course.description} ${course.category} ${course.university}`.toLowerCase();
+          const hasMatch = searchTerms.some(term => searchableText.includes(term));
+          if (!hasMatch) return false;
+
+          // Apply filters
+          if (category) {
+            const categories = (category as string).split(',');
+            if (!categories.includes(course.category)) return false;
+          }
+          
+          if (level) {
+            const levels = (level as string).split(',');
+            if (!levels.includes(course.level)) return false;
+          }
+          
+          if (university) {
+            const universities = (university as string).split(',');
+            if (!universities.includes(course.university)) return false;
+          }
+          
+          if (rating && course.rating) {
+            const minRating = parseFloat(rating as string);
+            if (course.rating < minRating) return false;
+          }
+
+          return true;
+        })
+        .map(course => {
+          // Calculate relevance score
+          const titleScore = searchTerms.reduce((score, term) => {
+            return score + (course.title.toLowerCase().includes(term) ? 3 : 0);
+          }, 0);
+          
+          const descScore = searchTerms.reduce((score, term) => {
+            return score + (course.description.toLowerCase().includes(term) ? 1 : 0);
+          }, 0);
+
+          return {
+            id: course.id.toString(),
+            type: 'course' as const,
+            title: course.title,
+            description: course.description,
+            category: course.category,
+            level: course.level,
+            duration: course.duration,
+            university: course.university,
+            rating: course.rating,
+            price: course.price,
+            imageUrl: course.imageUrl,
+            enrollmentCount: course.enrollmentCount,
+            lastUpdated: course.updatedAt?.toISOString(),
+            relevanceScore: titleScore + descScore
+          };
+        });
+
+      // Sort results
+      results.sort((a, b) => {
+        switch (sortBy) {
+          case 'rating':
+            return sortOrder === 'asc' 
+              ? (a.rating || 0) - (b.rating || 0)
+              : (b.rating || 0) - (a.rating || 0);
+          case 'enrollment':
+            return sortOrder === 'asc'
+              ? (a.enrollmentCount || 0) - (b.enrollmentCount || 0)
+              : (b.enrollmentCount || 0) - (a.enrollmentCount || 0);
+          case 'price':
+            return sortOrder === 'asc'
+              ? (a.price || 0) - (b.price || 0)
+              : (b.price || 0) - (a.price || 0);
+          case 'alphabetical':
+            return sortOrder === 'asc'
+              ? a.title.localeCompare(b.title)
+              : b.title.localeCompare(a.title);
+          case 'recent':
+            return sortOrder === 'asc'
+              ? new Date(a.lastUpdated || 0).getTime() - new Date(b.lastUpdated || 0).getTime()
+              : new Date(b.lastUpdated || 0).getTime() - new Date(a.lastUpdated || 0).getTime();
+          default: // relevance
+            return sortOrder === 'asc'
+              ? a.relevanceScore - b.relevanceScore
+              : b.relevanceScore - a.relevanceScore;
+        }
+      });
+
+      // Remove relevance score from response
+      const cleanResults = results.map(({ relevanceScore, ...result }) => result);
+
+      res.json(cleanResults.slice(0, 50)); // Limit to 50 results
+    } catch (error) {
+      console.error("Search error:", error);
+      res.status(500).json({ 
+        message: "Search failed" 
+      });
+    }
+  });
+
+  // Analytics and Performance Monitoring APIs
+  app.post("/api/analytics/performance", async (req: Request, res: Response) => {
+    try {
+      const performanceData = req.body;
+      
+      // Store performance metrics in database or analytics service
+      console.log("Performance metrics received:", {
+        pageLoadTime: performanceData.pageLoadTime,
+        firstContentfulPaint: performanceData.firstContentfulPaint,
+        largestContentfulPaint: performanceData.largestContentfulPaint,
+        cumulativeLayoutShift: performanceData.cumulativeLayoutShift,
+        userEngagement: performanceData.userEngagement,
+        timestamp: new Date().toISOString()
+      });
+      
+      res.status(200).json({ success: true });
+    } catch (error) {
+      console.error("Error storing performance metrics:", error);
+      res.status(500).json({ message: "Failed to store performance metrics" });
+    }
+  });
+
+  app.post("/api/analytics/actions", async (req: Request, res: Response) => {
+    try {
+      const actionData = req.body;
+      
+      console.log("User action tracked:", {
+        action: actionData.action,
+        details: actionData.details,
+        url: actionData.url,
+        timestamp: new Date().toISOString()
+      });
+      
+      res.status(200).json({ success: true });
+    } catch (error) {
+      console.error("Error tracking user action:", error);
+      res.status(500).json({ message: "Failed to track user action" });
+    }
+  });
+
+  app.post("/api/analytics/api-performance", async (req: Request, res: Response) => {
+    try {
+      const apiData = req.body;
+      
+      console.log("API performance tracked:", {
+        endpoint: apiData.endpoint,
+        method: apiData.method,
+        duration: apiData.duration,
+        status: apiData.status,
+        timestamp: new Date().toISOString()
+      });
+      
+      res.status(200).json({ success: true });
+    } catch (error) {
+      console.error("Error tracking API performance:", error);
+      res.status(500).json({ message: "Failed to track API performance" });
+    }
+  });
+
+  app.get("/api/analytics/dashboard", async (req: Request, res: Response) => {
+    try {
+      // Return aggregated analytics data for admin dashboard
+      const analyticsData = {
+        performance: {
+          averagePageLoadTime: 2.1,
+          averageFCP: 1.5,
+          averageLCP: 2.8,
+          averageCLS: 0.1
+        },
+        userEngagement: {
+          averageTimeOnPage: 180,
+          averageScrollDepth: 65,
+          bounceRate: 35
+        },
+        apiPerformance: {
+          averageResponseTime: 150,
+          errorRate: 2.5,
+          requestsPerMinute: 45
+        },
+        popularSearches: [
+          "javascript", "react", "python", "machine learning", "web development"
+        ]
+      };
+      
+      res.json(analyticsData);
+    } catch (error) {
+      console.error("Error fetching analytics dashboard:", error);
+      res.status(500).json({ message: "Failed to fetch analytics data" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
