@@ -9,10 +9,7 @@ interface User {
   firstName: string;
   lastName: string;
   phone?: string;
-  subscriptionType: string;
-  subscriptionStatus: string;
-  isEmailVerified: boolean;
-  isPhoneVerified: boolean;
+  profileImageUrl?: string;
 }
 
 export function useAuth() {
@@ -32,8 +29,9 @@ export function useAuth() {
       await apiRequest("POST", "/api/auth/logout");
     },
     onSuccess: () => {
-      localStorage.removeItem('authToken');
+      localStorage.removeItem('auth_token');
       queryClient.setQueryData(["/api/auth/user"], null);
+      queryClient.invalidateQueries();
       toast({
         title: "Sikeres kijelentkezés",
         description: "Viszlát!",

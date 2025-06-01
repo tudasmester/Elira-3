@@ -23,7 +23,7 @@ const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [location] = useLocation();
   const isMobile = useIsMobile();
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
   const { isAdmin } = useAdminAuth();
   
   const toggleMenu = () => {
@@ -149,10 +149,7 @@ const Navbar: React.FC = () => {
                             </DropdownMenuItem>
                           )}
                           <DropdownMenuItem asChild>
-                            <button onClick={() => {
-                              localStorage.removeItem('auth_token');
-                              window.location.href = '/';
-                            }} className="flex items-center cursor-pointer text-red-500 w-full text-left">
+                            <button onClick={logout} className="flex items-center cursor-pointer text-red-500 w-full text-left">
                               <LogOut className="h-4 w-4 mr-2" />
                               <span>Kijelentkezés</span>
                             </button>
@@ -231,10 +228,7 @@ const Navbar: React.FC = () => {
                     </Button>
                   </Link>
                   <Button 
-                    onClick={() => {
-                      localStorage.removeItem('auth_token');
-                      window.location.href = '/';
-                    }}
+                    onClick={logout}
                     className="w-full justify-center bg-red-50 hover:bg-red-100 text-red-600 border border-red-200"
                   >
                     <LogOut className="mr-2 h-4 w-4" />
