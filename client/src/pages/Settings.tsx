@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/hooks/useAuth.tsx";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -29,7 +29,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { apiRequest } from "@/lib/queryClient";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import ProfileImageUpload from '@/components/ProfileImageUpload';
 
 interface UserProfile {
@@ -54,9 +54,10 @@ interface PrivacySettings {
 }
 
 export default function Settings() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [, navigate] = useLocation();
   
   const [activeTab, setActiveTab] = useState("profile");
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -186,6 +187,27 @@ export default function Settings() {
 
   const handleSettingsUpdate = () => {
     updateSettingsMutation.mutate({ notifications, privacy });
+  };
+
+  // Logout functionality
+  const handleLogout = async () => {
+    try {
+      await apiRequest("POST", "/api/auth/logout");
+      localStorage.removeItem('auth_token');
+      queryClient.setQueryData(["/api/auth/user"], null);
+      queryClient.invalidateQueries();
+      toast({
+        title: "Sikeres kijelentkezés",
+        description: "Viszlát!",
+      });
+      navigate('/');
+    } catch (error) {
+      toast({
+        title: "Hiba történt",
+        description: "Kérjük, próbálja újra",
+        variant: "destructive",
+      });
+    }
   };
 
   const getUserInitials = () => {
