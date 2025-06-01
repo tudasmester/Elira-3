@@ -1,4 +1,4 @@
-// Career paths data for Academion platform
+// Career paths data for Elira platform
 
 // Career paths categorization 
 export const careerCategories = {

@@ -42,7 +42,7 @@ const Navbar: React.FC = () => {
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link href="/" className="flex items-center">
-              <img src={logo} alt="Academion logo" className="h-8" />
+              <img src={logo} alt="Elira logo" className="h-8" />
             </Link>
             
             {/* Mobile menu button */}

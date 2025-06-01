@@ -546,7 +546,7 @@ const PremiumSubscription = () => {
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold mb-4">Prémium Előnyök</h2>
           <p className="text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto">
-            Az Academion Prémium előfizetés kiemelkedő tanulási élményt biztosít, személyre szabott 
+            Az Elira Prémium előfizetés kiemelkedő tanulási élményt biztosít, személyre szabott 
             támogatással a karrierfejlesztés minden szakaszában.
           </p>
         </div>
