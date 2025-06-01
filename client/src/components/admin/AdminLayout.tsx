@@ -57,6 +57,11 @@ const navigationItems = [
     href: '/admin/analytics',
     icon: BarChart3,
   },
+  {
+    title: 'Aktivitásrendszer',
+    href: '/admin/activity-system',
+    icon: Zap,
+  },
 ];
 
 const quickActions = [

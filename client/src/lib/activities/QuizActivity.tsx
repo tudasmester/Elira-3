@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { BaseActivityClass } from '../activity-factory';
-import { QuizActivity as QuizActivityType, QuizQuestion, QuizSettings } from '@shared/activity-types';
+import { QuizActivity as QuizActivityType, QuizQuestion, QuizSettings, IActivity, ValidationResult } from '@shared/activity-types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -10,11 +9,10 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Clock, HelpCircle, CheckCircle2, XCircle } from 'lucide-react';
 
-export class QuizActivity extends BaseActivityClass {
+export class QuizActivity implements IActivity {
   data: QuizActivityType;
 
   constructor(data: QuizActivityType) {
-    super(data);
     this.data = data;
   }
 

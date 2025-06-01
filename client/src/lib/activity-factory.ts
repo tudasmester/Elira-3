@@ -190,5 +190,3 @@ ActivityRegistry.register('forum', ForumActivity);
 ActivityRegistry.register('workshop', WorkshopActivity);
 ActivityRegistry.register('resource', ResourceActivity);
 ActivityRegistry.register('scorm', SCORMActivity);
-
-export { ActivityRegistry, ActivityFactory };
