@@ -15,7 +15,7 @@ import {
   DropdownMenuGroup,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import logo from "@assets/eliranavbar.png";
+import logo from "@assets/eliranavbarszeles.png";
 import { Badge } from "@/components/ui/badge";
 import { useDeviceDetection, useTouchGestures } from "@/components/MobileResponsive";
 import { useUserActionTracking } from "@/hooks/usePerformanceMonitoring";
