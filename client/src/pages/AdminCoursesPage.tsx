@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useLocation } from 'wouter';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -76,6 +77,7 @@ interface Course {
 export default function AdminCoursesPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [, setLocation] = useLocation();
   
   // State management
   const [searchTerm, setSearchTerm] = useState('');
@@ -249,7 +251,7 @@ export default function AdminCoursesPage() {
               Manage your courses, track enrollments, and monitor performance.
             </p>
           </div>
-          <Button className="gap-2">
+          <Button className="gap-2" onClick={() => setLocation("/admin/courses/new")}>
             <Plus className="h-4 w-4" />
             Add New Course
           </Button>
