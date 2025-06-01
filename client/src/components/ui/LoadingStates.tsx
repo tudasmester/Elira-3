@@ -144,17 +144,17 @@ export function ContentLoadingState({
     courses: {
       icon: BookOpen,
       message: message || 'Kurzusok betöltése...',
-      color: 'text-blue-500'
+      color: 'text-blue-600 dark:text-blue-400'
     },
     users: {
       icon: Users,
       message: message || 'Felhasználók betöltése...',
-      color: 'text-green-500'
+      color: 'text-green-600 dark:text-green-400'
     },
     analytics: {
       icon: Clock,
       message: message || 'Adatok elemzése...',
-      color: 'text-purple-500'
+      color: 'text-purple-600 dark:text-purple-400'
     }
   };
 
@@ -162,12 +162,12 @@ export function ContentLoadingState({
   const LoadingIcon = Icon || DefaultIcon;
 
   return (
-    <div className="flex flex-col items-center justify-center py-12 space-y-4">
+    <div className="flex flex-col items-center justify-center py-12 space-y-4 bg-white dark:bg-gray-900">
       <div className={`p-3 rounded-full bg-gray-100 dark:bg-gray-800 ${color}`}>
         <LoadingIcon className="h-8 w-8" />
       </div>
-      <LoadingSpinner size="lg" className="text-primary" />
-      <p className="text-muted-foreground text-center max-w-md">
+      <LoadingSpinner size="lg" className="text-blue-600 dark:text-blue-400" />
+      <p className="text-gray-800 dark:text-gray-200 text-center max-w-md">
         {message || defaultMessage}
       </p>
     </div>
