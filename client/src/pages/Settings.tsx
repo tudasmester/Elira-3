@@ -30,6 +30,7 @@ import {
 import { motion } from "framer-motion";
 import { apiRequest } from "@/lib/queryClient";
 import { Link } from "wouter";
+import ProfileImageUpload from '@/components/ProfileImageUpload';
 
 interface UserProfile {
   firstName: string;
@@ -240,21 +241,13 @@ export default function Settings() {
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Profile Picture */}
-                <div className="flex items-center space-x-6">
-                  <Avatar className="h-24 w-24">
-                    <AvatarImage src={profileData.profileImageUrl} />
-                    <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white text-xl font-semibold">
-                      {getUserInitials()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <Button variant="outline" size="sm">
-                      <Camera className="h-4 w-4 mr-2" />
-                      Profilkép feltöltése
-                    </Button>
-                    <p className="text-sm text-gray-500 mt-2">JPG, PNG. Max 2MB.</p>
-                  </div>
-                </div>
+                <ProfileImageUpload
+                  currentImageUrl={profileData.profileImageUrl}
+                  userName={`${profileData.firstName} ${profileData.lastName}`}
+                  onImageUpdate={(imageUrl) => {
+                    setProfileData({...profileData, profileImageUrl: imageUrl});
+                  }}
+                />
 
                 <Separator />
 

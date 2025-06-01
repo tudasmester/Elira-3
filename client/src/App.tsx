@@ -26,6 +26,7 @@ import AdminContentSync from "@/pages/AdminContentSync";
 import AdminContentBuilder from "@/pages/AdminContentBuilder";
 import AdminSetup from "@/pages/AdminSetup";
 import AuthPageLogin from "@/pages/AuthPageLogin";
+import PasswordReset from "@/pages/PasswordReset";
 import NotFound from "@/pages/not-found";
 import Layout from "@/components/Layout";
 import ScrollToTop from "@/components/ui/ScrollToTop";

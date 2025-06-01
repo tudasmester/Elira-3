@@ -364,6 +364,14 @@ export default function AuthPageLogin() {
 
             {/* Social Login */}
             <div className="mt-6">
+              <div className="text-center">
+                <Link href="/password-reset">
+                  <Button variant="ghost" className="text-sm text-blue-600 hover:text-blue-700">
+                    Elfelejtette jelszavát?
+                  </Button>
+                </Link>
+              </div>
+              
               <Separator className="my-4" />
               <p className="text-center text-sm text-neutral-600 mb-4">
                 Vagy folytassa közösségi fiókkal
