@@ -156,7 +156,7 @@ const Hero: React.FC = () => {
             </div>
             
             <p className="text-lg mb-8 max-w-lg text-neutral-700 leading-relaxed">
-              Az Academion összeköti Önt Magyarország vezető egyetemeivel és oktatóival. 
+              Az Elira összeköti Önt Magyarország vezető egyetemeivel és oktatóival. 
               Fedezzen fel szakértői tudást, szerezzen elismert képesítéseket, és fejlessze karrierjét.
             </p>
             
@@ -317,14 +317,14 @@ const Hero: React.FC = () => {
                     ></motion.span>
                   </div>
                   <div className="flex-1 bg-neutral-100 h-7 rounded-full overflow-hidden flex items-center justify-center">
-                    <div className="text-xs text-neutral-500 font-medium">academion.hu</div>
+                    <div className="text-xs text-neutral-500 font-medium">elira.hu</div>
                   </div>
                 </div>
                 
                 {/* Main platform content */}
                 <img 
                   src={heroImage} 
-                  alt="Academion platform" 
+                  alt="Elira platform" 
                   className="w-full h-auto object-contain"
                 />
                 
