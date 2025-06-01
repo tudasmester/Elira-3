@@ -1,5 +1,5 @@
 import React from 'react';
-import { Loader2, BookOpen, Users, Clock } from 'lucide-react';
+import { Loader2, BookOpen, Users, Clock, GraduationCap } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
@@ -19,24 +19,34 @@ export function LoadingSpinner({ size = 'default', className = '' }: {
   );
 }
 
-// Course card loading skeleton
+// Enhanced course card loading skeleton
 export function CourseCardSkeleton() {
   return (
-    <Card className="w-full">
+    <Card className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
       <CardHeader className="p-0">
-        <Skeleton className="h-48 w-full rounded-t-lg" />
+        <Skeleton className="h-48 w-full rounded-t-lg bg-gray-200 dark:bg-gray-700" />
       </CardHeader>
       <CardContent className="p-4 space-y-3">
-        <Skeleton className="h-6 w-3/4" />
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-2/3" />
-        <div className="flex items-center space-x-2">
-          <Skeleton className="h-4 w-16" />
-          <Skeleton className="h-4 w-20" />
+        {/* Course title */}
+        <Skeleton className="h-6 w-3/4 bg-gray-200 dark:bg-gray-700" />
+        
+        {/* Course description lines */}
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-full bg-gray-200 dark:bg-gray-700" />
+          <Skeleton className="h-4 w-2/3 bg-gray-200 dark:bg-gray-700" />
         </div>
-        <div className="flex justify-between items-center">
-          <Skeleton className="h-6 w-20" />
-          <Skeleton className="h-8 w-24" />
+        
+        {/* University and level */}
+        <div className="flex items-center space-x-2">
+          <Skeleton className="h-4 w-16 bg-gray-200 dark:bg-gray-700" />
+          <div className="w-1 h-1 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
+          <Skeleton className="h-4 w-20 bg-gray-200 dark:bg-gray-700" />
+        </div>
+        
+        {/* Price and button */}
+        <div className="flex justify-between items-center pt-2">
+          <Skeleton className="h-6 w-20 bg-gray-200 dark:bg-gray-700" />
+          <Skeleton className="h-8 w-24 rounded-md bg-gray-200 dark:bg-gray-700" />
         </div>
       </CardContent>
     </Card>
@@ -90,13 +100,17 @@ export function TableSkeleton({ rows = 5, columns = 4 }: { rows?: number; column
   );
 }
 
-// Full page loading
+// Full page loading with proper contrast
 export function PageLoadingSpinner({ message = "Betöltés..." }: { message?: string }) {
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center">
+    <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
       <div className="text-center space-y-4">
-        <LoadingSpinner size="lg" className="mx-auto text-primary" />
-        <p className="text-muted-foreground">{message}</p>
+        <div className="relative">
+          <div className="w-16 h-16 border-4 border-blue-200 dark:border-blue-800 border-t-blue-600 dark:border-t-blue-400 rounded-full animate-spin"></div>
+          <BookOpen className="absolute inset-0 m-auto h-8 w-8 text-blue-600 dark:text-blue-400" />
+        </div>
+        <p className="text-lg font-medium text-gray-800 dark:text-gray-200">{message}</p>
+        <p className="text-sm text-gray-600 dark:text-gray-400">Kérjük, várjon...</p>
       </div>
     </div>
   );
