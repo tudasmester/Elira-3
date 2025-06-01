@@ -516,20 +516,20 @@ export class DatabaseStorage implements IStorage {
       ...course,
       modules: await Promise.all(
         modules.map(async (module) => {
-          const lessons = await db
+          const moduleLessons = await db
             .select()
             .from(lessons)
             .where(eq(lessons.moduleId, module.id))
             .orderBy(lessons.order);
 
           const lessonsWithQuizzes = await Promise.all(
-            lessons.map(async (lesson) => {
-              const quizzes = await db
+            moduleLessons.map(async (lesson) => {
+              const lessonQuizzes = await db
                 .select()
                 .from(quizzes)
                 .where(eq(quizzes.lessonId, lesson.id));
               
-              return { ...lesson, quizzes };
+              return { ...lesson, quizzes: lessonQuizzes };
             })
           );
 
