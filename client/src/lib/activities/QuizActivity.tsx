@@ -20,7 +20,44 @@ export class QuizActivity implements IActivity {
     return <QuizRenderer activity={this} />;
   }
 
-  protected validateSpecific(): { errors: string[]; warnings: string[] } {
+  validate(): ValidationResult {
+    const errors: string[] = [];
+    const warnings: string[] = [];
+
+    // Common validation rules
+    if (!this.data.title || this.data.title.trim().length === 0) {
+      errors.push("Activity title is required");
+    }
+
+    if (this.data.title && this.data.title.length > 255) {
+      errors.push("Activity title must be less than 255 characters");
+    }
+
+    if (this.data.weight < 0 || this.data.weight > 100) {
+      errors.push("Activity weight must be between 0 and 100");
+    }
+
+    if (this.data.maxGrade < 0) {
+      errors.push("Maximum grade must be a positive number");
+    }
+
+    if (this.data.dueDate && this.data.dueDate <= new Date()) {
+      warnings.push("Due date is in the past");
+    }
+
+    // Quiz-specific validation
+    const specificValidation = this.validateSpecific();
+    errors.push(...specificValidation.errors);
+    warnings.push(...specificValidation.warnings);
+
+    return {
+      isValid: errors.length === 0,
+      errors,
+      warnings
+    };
+  }
+
+  private validateSpecific(): { errors: string[]; warnings: string[] } {
     const errors: string[] = [];
     const warnings: string[] = [];
     const settings = this.data.settings as QuizSettings;
@@ -73,6 +110,25 @@ export class QuizActivity implements IActivity {
 
     const percentage = totalPoints > 0 ? (earnedPoints / totalPoints) * 100 : 0;
     return Math.min(percentage, this.data.maxGrade);
+  }
+
+  exportData() {
+    return {
+      activityData: this.data,
+      submissions: [],
+      grades: [],
+      analytics: {}
+    };
+  }
+
+  async checkCompletion(userId: string): Promise<boolean> {
+    const tracking = this.data.completionTracking;
+    if (!tracking.enabled) return true;
+    return false;
+  }
+
+  async trackProgress(userId: string, progressData: any): Promise<void> {
+    // Implementation for progress tracking
   }
 
   private isAnswerCorrect(question: QuizQuestion, userAnswer: any): boolean {

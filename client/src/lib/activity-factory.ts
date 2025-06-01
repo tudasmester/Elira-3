@@ -1,11 +1,6 @@
 // Activity Factory - Plugin-like architecture for activity management
 import { BaseActivity, ActivityType, IActivity, ValidationResult, ActivityExportData } from "@shared/activity-types";
 import { QuizActivity } from "./activities/QuizActivity";
-import { AssignmentActivity } from "./activities/AssignmentActivity";
-import { ForumActivity } from "./activities/ForumActivity";
-import { WorkshopActivity } from "./activities/WorkshopActivity";
-import { ResourceActivity } from "./activities/ResourceActivity";
-import { SCORMActivity } from "./activities/SCORMActivity";
 
 // Activity registry for dynamic activity management
 export class ActivityRegistry {
@@ -185,8 +180,3 @@ export class ActivityFactory {
 
 // Initialize the registry with default activities
 ActivityRegistry.register('quiz', QuizActivity);
-ActivityRegistry.register('assignment', AssignmentActivity);
-ActivityRegistry.register('forum', ForumActivity);
-ActivityRegistry.register('workshop', WorkshopActivity);
-ActivityRegistry.register('resource', ResourceActivity);
-ActivityRegistry.register('scorm', SCORMActivity);
