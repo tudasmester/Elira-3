@@ -361,7 +361,7 @@ export default function AdminCourseManager() {
               Kategóriák kezelése
             </Button>
             <Button 
-              onClick={() => window.location.href = '/admin/content-builder'}
+              onClick={() => window.location.href = '/admin/courses/wizard'}
             >
               <Plus className="h-4 w-4 mr-2" />
               Kurzus létrehozása
