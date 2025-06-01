@@ -136,22 +136,17 @@ const CourseCard: React.FC<{
   }
 
   return (
-    <Card className="group hover:shadow-lg transition-shadow">
+    <Card className="group hover:shadow-lg transition-all duration-200 border-0 shadow-sm">
       <CardHeader className="p-0">
-        <div className="aspect-video bg-gray-200 rounded-t-lg flex items-center justify-center relative">
+        <div className="aspect-video bg-gradient-to-br from-blue-50 to-indigo-100 rounded-t-lg flex items-center justify-center relative">
           {course.imageUrl ? (
             <img src={course.imageUrl} alt={course.title} className="w-full h-full object-cover rounded-t-lg" />
           ) : (
-            <BookOpen className="h-12 w-12 text-gray-400" />
+            <BookOpen className="h-12 w-12 text-blue-400" />
           )}
-          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-            <Button variant="secondary" size="sm">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </div>
-          <div className="absolute top-2 left-2">
-            <Badge className={getStatusColor(course.status)}>
-              {course.status}
+          <div className="absolute top-3 right-3">
+            <Badge className={`${getStatusColor(course.status)} shadow-sm`}>
+              {course.status === 'published' ? 'Élő' : course.status === 'draft' ? 'Tervezet' : 'Archivált'}
             </Badge>
           </div>
         </div>
@@ -412,15 +407,15 @@ export default function AdminCourseManager() {
                     <SelectValue placeholder="Válassz kategóriát" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">📚 Minden kategória</SelectItem>
-                    <SelectItem value="technology">💻 Technológia</SelectItem>
-                    <SelectItem value="business">💼 Üzlet & Vállalkozás</SelectItem>
-                    <SelectItem value="design">🎨 Dizájn & Kreatív</SelectItem>
-                    <SelectItem value="marketing">📢 Marketing & Eladás</SelectItem>
-                    <SelectItem value="language">🌍 Nyelvek</SelectItem>
-                    <SelectItem value="science">🔬 Tudomány</SelectItem>
-                    <SelectItem value="health">🏥 Egészségügy</SelectItem>
-                    <SelectItem value="finance">💰 Pénzügyek</SelectItem>
+                    <SelectItem value="all">Minden kategória</SelectItem>
+                    <SelectItem value="technology">Technológia</SelectItem>
+                    <SelectItem value="business">Üzlet & Vállalkozás</SelectItem>
+                    <SelectItem value="design">Dizájn & Kreatív</SelectItem>
+                    <SelectItem value="marketing">Marketing & Eladás</SelectItem>
+                    <SelectItem value="language">Nyelvek</SelectItem>
+                    <SelectItem value="science">Tudomány</SelectItem>
+                    <SelectItem value="health">Egészségügy</SelectItem>
+                    <SelectItem value="finance">Pénzügyek</SelectItem>
                   </SelectContent>
                 </Select>
 
@@ -430,9 +425,9 @@ export default function AdminCourseManager() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Minden státusz</SelectItem>
-                    <SelectItem value="published">✅ Publikált</SelectItem>
-                    <SelectItem value="draft">📝 Tervezet</SelectItem>
-                    <SelectItem value="archived">📦 Archivált</SelectItem>
+                    <SelectItem value="published">Publikált</SelectItem>
+                    <SelectItem value="draft">Tervezet</SelectItem>
+                    <SelectItem value="archived">Archivált</SelectItem>
                   </SelectContent>
                 </Select>
 
@@ -442,9 +437,9 @@ export default function AdminCourseManager() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Minden típus</SelectItem>
-                    <SelectItem value="free">🆓 Ingyenes</SelectItem>
-                    <SelectItem value="paid">💳 Fizetős</SelectItem>
-                    <SelectItem value="private">🔒 Privát</SelectItem>
+                    <SelectItem value="free">Ingyenes</SelectItem>
+                    <SelectItem value="paid">Fizetős</SelectItem>
+                    <SelectItem value="private">Privát</SelectItem>
                   </SelectContent>
                 </Select>
 
