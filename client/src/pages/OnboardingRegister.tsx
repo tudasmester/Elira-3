@@ -9,7 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { ArrowRight, ArrowLeft, CheckCircle } from "lucide-react";
+import { ArrowRight, ArrowLeft, CheckCircle, Shield, AlertCircle, Eye, EyeOff } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -19,9 +19,12 @@ const personalInfoSchema = z.object({
   firstName: z.string().min(2, "A keresztnév legalább 2 karakter kell legyen"),
   lastName: z.string().min(2, "A vezetéknév legalább 2 karakter kell legyen"),
   email: z.string().email("Érvényes email címet adjon meg"),
-  password: z.string().min(6, "A jelszó legalább 6 karakter kell legyen"),
+  password: z.string()
+    .min(8, "A jelszó legalább 8 karakter kell legyen")
+    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, "A jelszónak tartalmaznia kell kis- és nagybetűt, valamint számot"),
   confirmPassword: z.string(),
   phone: z.string().optional(),
+  acceptTerms: z.boolean().refine(val => val === true, "El kell fogadnia a felhasználási feltételeket"),
 }).refine(data => data.password === data.confirmPassword, {
   message: "A jelszavak nem egyeznek",
   path: ["confirmPassword"],
@@ -57,15 +60,54 @@ const goals = [
   { id: "personal_growth", label: "Személyes fejlődés" },
 ];
 
+// Password strength helper
+const calculatePasswordStrength = (password: string): { score: number; feedback: string; color: string } => {
+  let score = 0;
+  let feedback = "Gyenge";
+  
+  if (password.length >= 8) score += 1;
+  if (/[a-z]/.test(password)) score += 1;
+  if (/[A-Z]/.test(password)) score += 1;
+  if (/\d/.test(password)) score += 1;
+  if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) score += 1;
+  
+  switch (score) {
+    case 0:
+    case 1:
+      feedback = "Nagyon gyenge";
+      break;
+    case 2:
+      feedback = "Gyenge";
+      break;
+    case 3:
+      feedback = "Közepes";
+      break;
+    case 4:
+      feedback = "Erős";
+      break;
+    case 5:
+      feedback = "Nagyon erős";
+      break;
+  }
+  
+  const colors = ["#ef4444", "#f97316", "#eab308", "#22c55e", "#10b981"];
+  return { score, feedback, color: colors[score - 1] || colors[0] };
+};
+
 export default function OnboardingRegister() {
   const [step, setStep] = useState(1);
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { toast } = useToast();
   const [, navigate] = useLocation();
 
   const personalForm = useForm<PersonalInfo>({
     resolver: zodResolver(personalInfoSchema),
+    defaultValues: {
+      acceptTerms: false,
+    },
   });
 
   const preferencesForm = useForm<Preferences>({
@@ -227,12 +269,54 @@ export default function OnboardingRegister() {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="password">Jelszó</Label>
-                        <Input
-                          id="password"
-                          type="password"
-                          {...personalForm.register("password")}
-                          placeholder="••••••••"
-                        />
+                        <div className="relative">
+                          <Input
+                            id="password"
+                            type={showPassword ? "text" : "password"}
+                            {...personalForm.register("password")}
+                            placeholder="••••••••"
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                            onClick={() => setShowPassword(!showPassword)}
+                          >
+                            {showPassword ? (
+                              <EyeOff className="h-4 w-4" />
+                            ) : (
+                              <Eye className="h-4 w-4" />
+                            )}
+                          </Button>
+                        </div>
+                        {personalForm.watch("password") && (
+                          <div className="mt-2">
+                            {(() => {
+                              const strength = calculatePasswordStrength(personalForm.watch("password"));
+                              return (
+                                <div className="space-y-1">
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-xs text-gray-500">Jelszó erőssége:</span>
+                                    <span 
+                                      className="text-xs font-medium"
+                                      style={{ color: strength.color }}
+                                    >
+                                      {strength.feedback}
+                                    </span>
+                                  </div>
+                                  <Progress 
+                                    value={(strength.score / 5) * 100} 
+                                    className="h-1"
+                                    style={{ 
+                                      background: `linear-gradient(to right, ${strength.color} ${(strength.score / 5) * 100}%, #e5e7eb ${(strength.score / 5) * 100}%)`
+                                    }}
+                                  />
+                                </div>
+                              );
+                            })()}
+                          </div>
+                        )}
                         {personalForm.formState.errors.password && (
                           <p className="text-sm text-red-600 mt-1">
                             {personalForm.formState.errors.password.message}
@@ -241,15 +325,56 @@ export default function OnboardingRegister() {
                       </div>
                       <div>
                         <Label htmlFor="confirmPassword">Jelszó megerősítése</Label>
-                        <Input
-                          id="confirmPassword"
-                          type="password"
-                          {...personalForm.register("confirmPassword")}
-                          placeholder="••••••••"
-                        />
+                        <div className="relative">
+                          <Input
+                            id="confirmPassword"
+                            type={showConfirmPassword ? "text" : "password"}
+                            {...personalForm.register("confirmPassword")}
+                            placeholder="••••••••"
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          >
+                            {showConfirmPassword ? (
+                              <EyeOff className="h-4 w-4" />
+                            ) : (
+                              <Eye className="h-4 w-4" />
+                            )}
+                          </Button>
+                        </div>
                         {personalForm.formState.errors.confirmPassword && (
                           <p className="text-sm text-red-600 mt-1">
                             {personalForm.formState.errors.confirmPassword.message}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Terms and Conditions */}
+                    <div className="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg">
+                      <Checkbox
+                        id="acceptTerms"
+                        {...personalForm.register("acceptTerms")}
+                        className="mt-1"
+                      />
+                      <div className="flex-1">
+                        <Label htmlFor="acceptTerms" className="text-sm leading-relaxed cursor-pointer">
+                          Elfogadom a{" "}
+                          <a href="#" className="text-blue-600 hover:underline">
+                            Felhasználási Feltételeket
+                          </a>{" "}
+                          és az{" "}
+                          <a href="#" className="text-blue-600 hover:underline">
+                            Adatvédelmi Szabályzatot
+                          </a>
+                        </Label>
+                        {personalForm.formState.errors.acceptTerms && (
+                          <p className="text-sm text-red-600 mt-1">
+                            {personalForm.formState.errors.acceptTerms.message}
                           </p>
                         )}
                       </div>
