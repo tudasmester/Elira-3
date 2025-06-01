@@ -15,7 +15,7 @@ import {
   DropdownMenuGroup,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import logo from "@assets/eliralogoicon.png";
+import logo from "@assets/eliraicon.png";
 import { Badge } from "@/components/ui/badge";
 import { useIsMobile } from "@/hooks/use-mobile";
 
