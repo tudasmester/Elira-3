@@ -45,6 +45,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/onboarding" component={OnboardingRegistrationClean} />
       <Route path="/auth" component={AuthPageLogin} />
+      <Route path="/password-reset" component={PasswordReset} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/settings" component={Settings} />
       <Route path="/course/:id" component={CourseDetail} />

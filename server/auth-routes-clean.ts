@@ -307,4 +307,89 @@ export function setupAuthRoutes(app: Express) {
       message: "Apple bejelentkezés hamarosan elérhető" 
     });
   });
+
+  // Password reset functionality
+  app.post("/api/auth/forgot-password", async (req: Request, res: Response) => {
+    try {
+      const { email } = req.body;
+      
+      if (!email) {
+        return res.status(400).json({ message: "Email cím kötelező" });
+      }
+
+      const user = await storage.getUserByEmail(email);
+      if (!user) {
+        // Don't reveal if email exists for security
+        return res.json({ message: "Ha az email cím regisztrált, elküldtük a visszaállítási linket" });
+      }
+
+      // Generate reset token
+      const resetToken = generateToken(user.id);
+      
+      // Store token with expiration (1 hour)
+      await storage.createPasswordResetToken(user.id, resetToken, new Date(Date.now() + 3600000));
+      
+      // In production, send email here
+      console.log(`Password reset link: /password-reset?token=${resetToken}`);
+      
+      res.json({ message: "Ha az email cím regisztrált, elküldtük a visszaállítási linket" });
+    } catch (error) {
+      console.error("Password reset error:", error);
+      res.status(500).json({ message: "Szerver hiba történt" });
+    }
+  });
+
+  app.post("/api/auth/reset-password", async (req: Request, res: Response) => {
+    try {
+      const { token, newPassword } = req.body;
+      
+      if (!token || !newPassword) {
+        return res.status(400).json({ message: "Token és új jelszó kötelező" });
+      }
+
+      // Verify token and get user
+      const resetData = await storage.getPasswordResetToken(token);
+      if (!resetData || resetData.expiresAt < new Date()) {
+        return res.status(400).json({ message: "Érvénytelen vagy lejárt token" });
+      }
+
+      // Hash new password
+      const hashedPassword = await hashPassword(newPassword);
+      
+      // Update user password
+      await storage.updateUserPassword(resetData.userId, hashedPassword);
+      
+      // Delete used token
+      await storage.deletePasswordResetToken(token);
+      
+      res.json({ message: "Jelszó sikeresen megváltoztatva" });
+    } catch (error) {
+      console.error("Password reset error:", error);
+      res.status(500).json({ message: "Szerver hiba történt" });
+    }
+  });
+
+  // Profile image upload endpoints
+  app.post("/api/upload/profile-image", requireAuth, async (req: Request, res: Response) => {
+    try {
+      // In production, implement actual file upload logic
+      // For now, return a placeholder URL
+      const imageUrl = `/uploads/profiles/user-${Date.now()}.jpg`;
+      
+      res.json({ imageUrl });
+    } catch (error) {
+      console.error("Image upload error:", error);
+      res.status(500).json({ message: "Kép feltöltési hiba" });
+    }
+  });
+
+  app.delete("/api/upload/profile-image", requireAuth, async (req: Request, res: Response) => {
+    try {
+      // In production, delete the actual file
+      res.json({ message: "Profilkép törölve" });
+    } catch (error) {
+      console.error("Image delete error:", error);
+      res.status(500).json({ message: "Kép törlési hiba" });
+    }
+  });
 }

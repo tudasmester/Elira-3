@@ -11,6 +11,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Mail, Phone, Eye, EyeOff, Chrome, UserPlus } from "lucide-react";
 import { FaFacebook, FaApple } from "react-icons/fa";
 import { apiRequest } from "@/lib/queryClient";
+import { Link } from "wouter";
 
 interface LoginFormData {
   email: string;
