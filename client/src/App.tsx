@@ -25,7 +25,6 @@ import AdminCourseDetail from "@/pages/AdminCourseDetail";
 import AdminContentSync from "@/pages/AdminContentSync";
 import AdminSetup from "@/pages/AdminSetup";
 import AuthPageLogin from "@/pages/AuthPageLogin";
-import LearningPathBuilder from "@/pages/LearningPathBuilder";
 import NotFound from "@/pages/not-found";
 import Layout from "@/components/Layout";
 import ScrollToTop from "@/components/ui/ScrollToTop";
@@ -64,7 +63,7 @@ function Router() {
       <Route path="/admin/courses/new" component={AdminCourseForm} />
       <Route path="/admin/courses/:id" component={AdminCourseDetail} />
       <Route path="/admin/courses/:id/edit" component={AdminCourseForm} />
-      <Route path="/learning-path-builder" component={LearningPathBuilder} />
+
       <Route component={NotFound} />
     </Switch>
   );

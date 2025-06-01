@@ -106,15 +106,7 @@ const Navbar: React.FC = () => {
                   AI Karriertervező
                   <Badge className="ml-2 bg-purple-100 text-purple-800 text-[10px] py-0 px-1.5">Új</Badge>
                 </Link>
-                <Link href="/learning-path-builder" className={`flex items-center px-3 py-2 rounded-md text-sm font-medium ${
-                  isActive("/learning-path-builder") 
-                    ? "text-primary bg-primary/5" 
-                    : "text-neutral-700 hover:text-primary hover:bg-neutral-50"
-                }`}>
-                  <Target className="h-4 w-4 mr-1" />
-                  Útvonaltervező
-                  <Badge className="ml-2 bg-green-100 text-green-800 text-[10px] py-0 px-1.5">Új</Badge>
-                </Link>
+
               </nav>
             </div>
           )}
