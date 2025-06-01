@@ -1,8 +1,25 @@
 import React from 'react';
+import { Loader2, BookOpen, Users, Clock } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
-// Simple course card skeleton - only when needed
+// Generic loading spinner
+export function LoadingSpinner({ size = 'default', className = '' }: { 
+  size?: 'sm' | 'default' | 'lg'; 
+  className?: string; 
+}) {
+  const sizeClasses = {
+    sm: 'h-4 w-4',
+    default: 'h-6 w-6',
+    lg: 'h-8 w-8'
+  };
+
+  return (
+    <Loader2 className={`animate-spin ${sizeClasses[size]} ${className}`} />
+  );
+}
+
+// Course card loading skeleton
 export function CourseCardSkeleton() {
   return (
     <Card className="w-full">
@@ -11,24 +28,22 @@ export function CourseCardSkeleton() {
       </CardHeader>
       <CardContent className="p-4 space-y-3">
         <Skeleton className="h-6 w-3/4" />
-        <div className="space-y-2">
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-2/3" />
-        </div>
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-2/3" />
         <div className="flex items-center space-x-2">
           <Skeleton className="h-4 w-16" />
           <Skeleton className="h-4 w-20" />
         </div>
-        <div className="flex justify-between items-center pt-2">
+        <div className="flex justify-between items-center">
           <Skeleton className="h-6 w-20" />
-          <Skeleton className="h-8 w-24 rounded-md" />
+          <Skeleton className="h-8 w-24" />
         </div>
       </CardContent>
     </Card>
   );
 }
 
-// Course grid skeleton - only when loading multiple courses
+// Course grid loading
 export function CourseGridSkeleton({ count = 6 }: { count?: number }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -39,22 +54,7 @@ export function CourseGridSkeleton({ count = 6 }: { count?: number }) {
   );
 }
 
-// Simple table skeleton - only when loading table data
-export function TableSkeleton({ rows = 5, columns = 4 }: { rows?: number; columns?: number }) {
-  return (
-    <div className="space-y-3">
-      {Array.from({ length: rows }).map((_, i) => (
-        <div key={i} className="flex space-x-4">
-          {Array.from({ length: columns }).map((_, j) => (
-            <Skeleton key={j} className="h-6 flex-1" />
-          ))}
-        </div>
-      ))}
-    </div>
-  );
-}
-
-// Dashboard stats skeleton - only when loading dashboard
+// Dashboard stats loading
 export function DashboardStatsSkeleton() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -71,6 +71,115 @@ export function DashboardStatsSkeleton() {
           </CardContent>
         </Card>
       ))}
+    </div>
+  );
+}
+
+// Table loading skeleton
+export function TableSkeleton({ rows = 5, columns = 4 }: { rows?: number; columns?: number }) {
+  return (
+    <div className="space-y-3">
+      {Array.from({ length: rows }).map((_, i) => (
+        <div key={i} className="flex space-x-4">
+          {Array.from({ length: columns }).map((_, j) => (
+            <Skeleton key={j} className="h-6 flex-1" />
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// Full page loading
+export function PageLoadingSpinner({ message = "Betöltés..." }: { message?: string }) {
+  return (
+    <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="text-center space-y-4">
+        <LoadingSpinner size="lg" className="mx-auto text-primary" />
+        <p className="text-muted-foreground">{message}</p>
+      </div>
+    </div>
+  );
+}
+
+// Inline loading for buttons
+export function ButtonLoading({ children, loading, ...props }: { 
+  children: React.ReactNode; 
+  loading: boolean;
+  [key: string]: any;
+}) {
+  return (
+    <button disabled={loading} {...props}>
+      {loading && <LoadingSpinner size="sm" className="mr-2" />}
+      {children}
+    </button>
+  );
+}
+
+// Content loading with context
+export function ContentLoadingState({ 
+  type = 'courses',
+  message,
+  icon: Icon
+}: { 
+  type?: 'courses' | 'users' | 'analytics';
+  message?: string;
+  icon?: React.ComponentType<any>;
+}) {
+  const config = {
+    courses: {
+      icon: BookOpen,
+      message: message || 'Kurzusok betöltése...',
+      color: 'text-blue-500'
+    },
+    users: {
+      icon: Users,
+      message: message || 'Felhasználók betöltése...',
+      color: 'text-green-500'
+    },
+    analytics: {
+      icon: Clock,
+      message: message || 'Adatok elemzése...',
+      color: 'text-purple-500'
+    }
+  };
+
+  const { icon: DefaultIcon, message: defaultMessage, color } = config[type];
+  const LoadingIcon = Icon || DefaultIcon;
+
+  return (
+    <div className="flex flex-col items-center justify-center py-12 space-y-4">
+      <div className={`p-3 rounded-full bg-gray-100 dark:bg-gray-800 ${color}`}>
+        <LoadingIcon className="h-8 w-8" />
+      </div>
+      <LoadingSpinner size="lg" className="text-primary" />
+      <p className="text-muted-foreground text-center max-w-md">
+        {message || defaultMessage}
+      </p>
+    </div>
+  );
+}
+
+// Search loading state
+export function SearchLoadingState() {
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center space-x-2">
+        <LoadingSpinner size="sm" />
+        <span className="text-sm text-muted-foreground">Keresés folyamatban...</span>
+      </div>
+      <div className="space-y-3">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="flex space-x-3 p-3 border rounded-lg">
+            <Skeleton className="h-12 w-12 rounded" />
+            <div className="space-y-2 flex-1">
+              <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-3 w-full" />
+              <Skeleton className="h-3 w-1/2" />
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

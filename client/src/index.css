@@ -4,52 +4,44 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
 :root {
-  /* Base Colors - High Contrast */
-  --background: 0 0% 100%; /* Pure white */
-  --foreground: 0 0% 9%; /* Almost black for maximum contrast */
+  /* Base Colors */
+  --background: 0 0% 100%;
+  --foreground: 220 14.3% 4.1%;
   
   /* Primary Brand Colors */
-  --primary: 175 78% 26%; /* #0f766e - Teal primary */
-  --primary-foreground: 0 0% 100%; /* White text on primary */
+  --primary: 175 78% 26%; /* #0f766e */
+  --primary-foreground: 210 100% 98%;
   
   /* Secondary Colors */
-  --secondary: 220 14.3% 96%; /* Light gray background */
-  --secondary-foreground: 0 0% 9%; /* Dark text on secondary */
+  --secondary: 354 100% 70%; /* #FF6B6B */
+  --secondary-foreground: 0 0% 100%;
   
-  /* Accent Colors */
-  --accent: 164 94% 43%; /* #06D6A0 - Bright teal accent */
-  --accent-foreground: 0 0% 100%; /* White text on accent */
+  /* Tertiary */
+  --tertiary: 41 100% 70%; /* #FFD166 */
+  --tertiary-foreground: 220 14.3% 4.1%;
   
-  /* Muted Colors for subtle elements */
-  --muted: 220 14.3% 96%; /* Very light gray */
-  --muted-foreground: 0 0% 45%; /* Medium gray for readable text */
+  /* Accent */
+  --accent: 164 94% 43%; /* #06D6A0 */
+  --accent-foreground: 0 0% 100%;
   
-  /* Card and Popover */
-  --card: 0 0% 100%; /* White cards */
-  --card-foreground: 0 0% 9%; /* Dark text on cards */
+  /* UI Component Colors */
+  --muted: 220 14.3% 95.9%;
+  --muted-foreground: 220 8.9% 46.1%;
   
-  --popover: 0 0% 100%; /* White popover */
-  --popover-foreground: 0 0% 9%; /* Dark text on popover */
+  --popover: 0 0% 100%;
+  --popover-foreground: 220 14.3% 4.1%;
   
-  /* Form Elements */
-  --border: 220 13% 85%; /* Visible border */
-  --input: 0 0% 100%; /* White input background */
-  --input-foreground: 0 0% 9%; /* Dark input text */
+  --card: 0 0% 100%;
+  --card-foreground: 220 14.3% 4.1%;
   
-  /* Status Colors */
-  --destructive: 0 84.2% 60.2%; /* Red for errors */
-  --destructive-foreground: 0 0% 100%; /* White text on red */
+  --border: 220 13% 91%;
+  --input: 220 13% 91%;
   
-  --success: 142 76% 36%; /* Green for success */
-  --success-foreground: 0 0% 100%; /* White text on green */
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 100% 98%;
   
-  --warning: 38 92% 50%; /* Orange for warnings */
-  --warning-foreground: 0 0% 9%; /* Dark text on orange */
-  
-  --ring: 175 78% 26%; /* Focus ring matches primary */
+  --ring: 235 75% 59%;
   
   /* Neutral Colors */
   --neutral-100: 210 50% 98%; /* #F8F9FA */
@@ -66,49 +58,37 @@
 }
 
 .dark {
-  /* Dark Mode - High Contrast */
-  --background: 0 0% 8%; /* Very dark background */
-  --foreground: 0 0% 98%; /* Almost white text */
+  --background: 220 36% 4%;
+  --foreground: 210 40% 98%;
   
-  /* Primary Brand Colors */
-  --primary: 175 78% 35%; /* Lighter teal for dark mode */
-  --primary-foreground: 0 0% 100%; /* White text on primary */
+  --primary: 175 78% 26%; /* #0f766e */
+  --primary-foreground: 210 100% 98%;
   
-  /* Secondary Colors */
-  --secondary: 220 14.3% 12%; /* Dark gray background */
-  --secondary-foreground: 0 0% 98%; /* Light text on secondary */
+  --secondary: 354 100% 70%;
+  --secondary-foreground: 0 0% 100%;
   
-  /* Accent Colors */
-  --accent: 164 94% 50%; /* Brighter accent for dark mode */
-  --accent-foreground: 0 0% 8%; /* Dark text on bright accent */
+  --tertiary: 41 100% 70%;
+  --tertiary-foreground: 220 14.3% 4.1%;
   
-  /* Muted Colors */
-  --muted: 220 14.3% 12%; /* Dark muted background */
-  --muted-foreground: 0 0% 70%; /* Light gray for readable text */
+  --accent: 164 94% 43%;
+  --accent-foreground: 0 0% 100%;
   
-  /* Card and Popover */
-  --card: 0 0% 10%; /* Dark cards */
-  --card-foreground: 0 0% 98%; /* Light text on cards */
+  --muted: 220 14.3% 10%;
+  --muted-foreground: 220 8.9% 60%;
   
-  --popover: 0 0% 10%; /* Dark popover */
-  --popover-foreground: 0 0% 98%; /* Light text on popover */
+  --popover: 220 36% 4%;
+  --popover-foreground: 210 40% 98%;
   
-  /* Form Elements */
-  --border: 220 14.3% 20%; /* Visible border in dark mode */
-  --input: 0 0% 10%; /* Dark input background */
-  --input-foreground: 0 0% 98%; /* Light input text */
+  --card: 220 36% 4%;
+  --card-foreground: 210 40% 98%;
   
-  /* Status Colors */
-  --destructive: 0 84.2% 60.2%; /* Bright red for errors */
-  --destructive-foreground: 0 0% 100%; /* White text on red */
+  --border: 220 14.3% 15%;
+  --input: 220 14.3% 15%;
   
-  --success: 142 76% 45%; /* Brighter green for dark mode */
-  --success-foreground: 0 0% 8%; /* Dark text on green */
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
   
-  --warning: 38 92% 60%; /* Brighter orange for dark mode */
-  --warning-foreground: 0 0% 8%; /* Dark text on orange */
-  
-  --ring: 175 78% 35%; /* Focus ring matches primary */
+  --ring: 235 75% 59%;
 }
 
 @layer base {
@@ -117,201 +97,28 @@
   }
   
   body {
-    @apply bg-background text-foreground antialiased;
-    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    @apply font-body antialiased bg-neutral-100 text-foreground;
   }
-
-  /* Ensure all headings have proper contrast */
+  
   h1, h2, h3, h4, h5, h6 {
-    @apply text-foreground font-semibold;
-    font-family: 'Montserrat', sans-serif;
-  }
-
-  /* Ensure all text elements have proper contrast */
-  p, span, div, li, td, th {
-    @apply text-foreground;
-  }
-
-  /* Links with proper contrast and hover states */
-  a {
-    @apply text-primary hover:text-primary/80 transition-colors duration-200;
-  }
-
-  /* Form elements with proper contrast */
-  input, textarea, select {
-    @apply bg-input text-foreground border-border;
-    @apply focus:border-primary focus:ring-1 focus:ring-primary;
-  }
-
-  /* Button base styles */
-  button {
-    @apply transition-all duration-200;
-  }
-
-  /* Ensure cards have proper contrast */
-  .card {
-    @apply bg-card text-card-foreground;
-  }
-
-  /* Improved focus states for accessibility */
-  *:focus-visible {
-    @apply outline-none ring-2 ring-primary ring-offset-2;
+    @apply font-heading;
   }
 }
 
 @layer components {
-  /* Enhanced Hero Pattern */
   .hero-pattern {
-    @apply bg-primary text-primary-foreground;
+    @apply bg-primary;
     background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
   }
   
-  /* Enhanced Course Card with proper contrast */
   .course-card {
-    @apply bg-card text-card-foreground border border-border rounded-lg p-4;
-    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
-    @apply focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2;
+    @apply transition-all duration-300;
   }
-
-  .course-card h3 {
-    @apply text-card-foreground font-semibold mb-2;
+  
+  .course-card:hover {
+    @apply -translate-y-1 shadow-lg;
   }
-
-  .course-card p {
-    @apply text-muted-foreground;
-  }
-
-  /* Button Components with proper contrast */
-  .btn {
-    @apply px-4 py-2 rounded-md font-medium transition-all duration-200;
-    @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
-    @apply disabled:opacity-50 disabled:cursor-not-allowed;
-  }
-
-  .btn-primary {
-    @apply bg-primary text-primary-foreground hover:bg-primary/90;
-    @apply focus:ring-primary;
-  }
-
-  .btn-secondary {
-    @apply bg-secondary text-secondary-foreground hover:bg-secondary/80;
-    @apply border border-border focus:ring-secondary;
-  }
-
-  .btn-accent {
-    @apply bg-accent text-accent-foreground hover:bg-accent/90;
-    @apply focus:ring-accent;
-  }
-
-  .btn-outline {
-    @apply border border-border text-foreground hover:bg-accent hover:text-accent-foreground;
-    @apply focus:ring-accent;
-  }
-
-  .btn-ghost {
-    @apply text-foreground hover:bg-secondary hover:text-secondary-foreground;
-    @apply focus:ring-secondary;
-  }
-
-  /* Form Components */
-  .form-input {
-    @apply w-full px-3 py-2 border border-border rounded-md;
-    @apply bg-input text-foreground placeholder:text-muted-foreground;
-    @apply focus:border-primary focus:ring-1 focus:ring-primary;
-    @apply disabled:opacity-50 disabled:cursor-not-allowed;
-  }
-
-  .form-label {
-    @apply block text-sm font-medium text-foreground mb-1;
-  }
-
-  .form-error {
-    @apply text-sm text-destructive mt-1;
-  }
-
-  .form-help {
-    @apply text-sm text-muted-foreground mt-1;
-  }
-
-  /* Navigation Components */
-  .nav-link {
-    @apply text-foreground hover:text-primary transition-colors duration-200;
-    @apply px-3 py-2 rounded-md hover:bg-secondary;
-  }
-
-  .nav-link.active {
-    @apply text-primary bg-secondary;
-  }
-
-  /* Status Badges */
-  .badge {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
-  }
-
-  .badge-success {
-    @apply bg-success text-success-foreground;
-  }
-
-  .badge-warning {
-    @apply bg-warning text-warning-foreground;
-  }
-
-  .badge-error {
-    @apply bg-destructive text-destructive-foreground;
-  }
-
-  .badge-neutral {
-    @apply bg-secondary text-secondary-foreground;
-  }
-
-  /* Container Utilities */
-  .container-padding {
-    @apply px-4 sm:px-6 lg:px-8;
-  }
-
-  .section-spacing {
-    @apply py-12 lg:py-16;
-  }
-
-  /* Loading States */
-  .skeleton {
-    @apply bg-muted animate-pulse rounded;
-  }
-
-  .skeleton-text {
-    @apply h-4 bg-muted rounded animate-pulse;
-  }
-
-  .skeleton-heading {
-    @apply h-6 bg-muted rounded animate-pulse;
-  }
-
-  /* Interactive Elements */
-  .interactive {
-    @apply transition-all duration-200 hover:scale-105 active:scale-95;
-  }
-
-  /* Typography Utilities */
-  .text-primary-emphasis {
-    @apply text-primary font-semibold;
-  }
-
-  .text-secondary-emphasis {
-    @apply text-muted-foreground font-medium;
-  }
-
-  /* Layout Utilities */
-  .center-content {
-    @apply flex items-center justify-center;
-  }
-
-  .space-content {
-    @apply flex items-center justify-between;
-  }
-
+  
   .category-pill {
     @apply transition-all duration-200;
   }

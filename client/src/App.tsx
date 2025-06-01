@@ -8,15 +8,30 @@ import { useRealTimeData } from "@/hooks/useRealTimeData";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AppStateProvider } from "@/hooks/useAppState";
 import { SkipToContent } from "@/components/ui/AccessibilityFeatures";
-import { initializePerformanceOptimizations } from "@/lib/cdnOptimization";
-import { initCacheCleanup, warmCache } from "@/lib/caching";
-import {
-  LazyHome,
-  LazyDashboard,
-  LazyCourseDetail,
-  LazyCoursesPage,
-  LazyAuthPage
-} from "@/components/LazyComponents";
+import Home from "@/pages/Home";
+import OnboardingRegister from "@/pages/OnboardingRegister";
+import Dashboard from "@/pages/Dashboard";
+import Settings from "@/pages/Settings";
+import CourseDetail from "@/pages/CourseDetail";
+import Trending from "@/pages/Trending";
+import Courses from "@/pages/Courses";
+import Degrees from "@/pages/Degrees";
+import DegreeDetail from "@/pages/DegreeDetail";
+import CategoryPage from "@/pages/CategoryPage";
+import CareerDevelopment from "@/pages/CareerDevelopment";
+import CareerDetail from "@/pages/CareerDetail";
+import CareerPathsAI from "@/pages/CareerPathsAI";
+import PremiumSubscription from "@/pages/PremiumSubscription";
+import SubscriptionPlans from "@/pages/SubscriptionPlans";
+import AdminDashboard from "@/pages/AdminDashboard";
+import AdminCourseForm from "@/pages/AdminCourseForm";
+import AdminCourseDetail from "@/pages/AdminCourseDetail";
+import AdminContentSync from "@/pages/AdminContentSync";
+import AdminContentBuilder from "@/pages/AdminContentBuilder";
+import AdminSetup from "@/pages/AdminSetup";
+import AuthPageLogin from "@/pages/AuthPageLogin";
+import PasswordReset from "@/pages/PasswordReset";
+import SearchPage from "@/pages/SearchPage";
 import NotFound from "@/pages/not-found";
 import Layout from "@/components/Layout";
 import ScrollToTop from "@/components/ui/ScrollToTop";
@@ -32,11 +47,33 @@ function Router() {
   
   const content = (
     <Switch>
-      <Route path="/" component={LazyHome} />
-      <Route path="/auth" component={LazyAuthPage} />
-      <Route path="/dashboard" component={LazyDashboard} />
-      <Route path="/course/:id" component={LazyCourseDetail} />
-      <Route path="/courses" component={LazyCoursesPage} />
+      <Route path="/" component={Home} />
+      <Route path="/onboarding" component={OnboardingRegister} />
+      <Route path="/auth" component={AuthPageLogin} />
+      <Route path="/password-reset" component={PasswordReset} />
+      <Route path="/dashboard" component={Dashboard} />
+      <Route path="/settings" component={Settings} />
+      <Route path="/course/:id" component={CourseDetail} />
+      <Route path="/trending" component={Trending} />
+      <Route path="/courses" component={Courses} />
+      <Route path="/search" component={SearchPage} />
+      <Route path="/degrees" component={Degrees} />
+      <Route path="/degree/:id" component={DegreeDetail} />
+      <Route path="/category/:slug" component={CategoryPage} />
+      <Route path="/careers" component={CareerDevelopment} />
+      <Route path="/career/:id" component={CareerDetail} />
+      <Route path="/career-paths-ai" component={CareerPathsAI} />
+      <Route path="/career-paths/:careerId" component={CareerPathsAI} />
+      <Route path="/premium" component={PremiumSubscription} />
+      <Route path="/subscription-plans" component={SubscriptionPlans} />
+      <Route path="/admin-setup" component={AdminSetup} />
+      <Route path="/admin" component={AdminDashboard} />
+      <Route path="/admin/sync" component={AdminContentSync} />
+      <Route path="/admin/courses/new" component={AdminCourseForm} />
+      <Route path="/admin/courses/:id" component={AdminCourseDetail} />
+      <Route path="/admin/courses/:id/edit" component={AdminCourseForm} />
+      <Route path="/admin/courses/:id/content" component={AdminContentBuilder} />
+
       <Route component={NotFound} />
     </Switch>
   );
