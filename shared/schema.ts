@@ -190,15 +190,52 @@ export const lessons = pgTable("lessons", {
   id: serial("id").primaryKey(),
   moduleId: integer("module_id").notNull().references(() => courseModules.id),
   title: text("title").notNull(),
-  description: text("description").notNull(),
+  description: text("description"),
   content: text("content").notNull(),
   videoUrl: text("video_url"),
-  duration: integer("duration").notNull(), // in minutes
-  orderIndex: integer("order_index").notNull(),
+  videoEmbedCode: text("video_embed_code"),
+  estimatedDuration: integer("estimated_duration").notNull(), // in minutes
+  order: integer("order").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Lesson attachments
+export const lessonAttachments = pgTable("lesson_attachments", {
+  id: serial("id").primaryKey(),
+  lessonId: integer("lesson_id").notNull().references(() => lessons.id),
+  fileName: text("file_name").notNull(),
+  fileUrl: text("file_url").notNull(),
+  fileType: text("file_type").notNull(),
+  fileSize: integer("file_size").notNull(), // in bytes
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Lesson quizzes
+export const lessonQuizzes = pgTable("lesson_quizzes", {
+  id: serial("id").primaryKey(),
+  lessonId: integer("lesson_id").notNull().references(() => lessons.id),
+  question: text("question").notNull(),
+  type: text("type").notNull(), // 'multiple_choice', 'true_false', 'short_answer'
+  options: text("options"), // JSON string for multiple choice options
+  correctAnswer: text("correct_answer").notNull(),
+  explanation: text("explanation"),
+  points: integer("points").default(1).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const insertLessonSchema = createInsertSchema(lessons).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertLessonAttachmentSchema = createInsertSchema(lessonAttachments).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertLessonQuizSchema = createInsertSchema(lessonQuizzes).omit({
   id: true,
   createdAt: true,
 });
