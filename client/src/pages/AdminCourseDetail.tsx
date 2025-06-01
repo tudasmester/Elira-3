@@ -243,6 +243,12 @@ export default function AdminCourseDetail() {
                         <Badge variant="secondary">
                           {module.lessons?.length || 0} lecke
                         </Badge>
+                        <Link href={`/admin/modules/${module.id}/lessons`}>
+                          <Button size="sm" variant="default">
+                            <Edit className="h-4 w-4 mr-1" />
+                            Leckék kezelése
+                          </Button>
+                        </Link>
                         <Button
                           size="sm"
                           variant="outline"
