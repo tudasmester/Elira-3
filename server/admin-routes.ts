@@ -9,32 +9,43 @@ export function registerAdminRoutes(app: Express) {
   // Admin setup endpoint - only requires authentication, not admin privileges
   app.post('/api/admin/setup-admin', requireAuth, async (req, res) => {
     try {
+      console.log("=== ADMIN SETUP START ===");
+      console.log("Request body:", JSON.stringify(req.body, null, 2));
+      console.log("Authenticated user:", JSON.stringify(req.user, null, 2));
+      console.log("Environment secret exists:", !!process.env.ADMIN_SETUP_SECRET);
+      
       const { userId, adminSecret } = req.body;
-      console.log("Admin setup request:", { userId, hasSecret: !!adminSecret });
+      console.log("Extracted - userId:", userId, "adminSecret provided:", !!adminSecret);
       
       // Check if the admin secret matches environment variable
       if (!process.env.ADMIN_SETUP_SECRET || adminSecret !== process.env.ADMIN_SETUP_SECRET) {
-        console.log("Invalid admin secret provided");
+        console.log("❌ Secret mismatch. Provided:", adminSecret?.substring(0, 3) + "...", "Expected:", process.env.ADMIN_SETUP_SECRET?.substring(0, 3) + "...");
         return res.status(403).json({ message: "Invalid admin setup secret" });
       }
 
       if (!userId) {
-        console.log("No userId provided");
+        console.log("❌ No userId provided");
         return res.status(400).json({ message: "User ID is required" });
       }
 
-      console.log("Promoting user to admin:", userId);
+      console.log("✅ Promoting user to admin:", userId);
       const user = await storage.promoteUserToAdmin(userId);
-      console.log("User promoted successfully:", { id: user.id, isAdmin: user.isAdmin });
+      console.log("✅ User promoted successfully:", { id: user.id, isAdmin: user.isAdmin });
       
-      res.json({ 
+      const response = { 
         message: "User promoted to admin successfully", 
         user: { id: user.id, email: user.email, isAdmin: user.isAdmin },
         success: true
-      });
+      };
+      console.log("✅ Sending response:", JSON.stringify(response, null, 2));
+      
+      return res.json(response);
     } catch (error) {
-      console.error("Error promoting user to admin:", error);
-      res.status(500).json({ message: "Failed to promote user to admin", error: error.message });
+      console.error("❌ Admin setup error:", error);
+      return res.status(500).json({ 
+        message: "Failed to promote user to admin", 
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
     }
   });
 
