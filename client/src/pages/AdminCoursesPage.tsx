@@ -424,13 +424,17 @@ export default function AdminCoursesPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => setLocation(`/admin/courses/${course.id}`)}>
                             <Eye className="h-4 w-4 mr-2" />
                             View Details
                           </DropdownMenuItem>
-                          <DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => setLocation(`/admin/courses/${course.id}/edit`)}>
                             <Edit className="h-4 w-4 mr-2" />
                             Edit Course
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => setLocation(`/admin/courses/${course.id}/content`)}>
+                            <BookOpen className="h-4 w-4 mr-2" />
+                            Manage Content & Lessons
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           {course.status === 'published' ? (
