@@ -183,7 +183,7 @@ export default function OnboardingRegistration() {
                 <Sparkles className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-neutral-900">Academion</h1>
+                <h1 className="text-2xl font-bold text-neutral-900">Elira</h1>
                 <p className="text-neutral-600 text-sm">Személyre szabott tanulási élmény</p>
               </div>
             </div>

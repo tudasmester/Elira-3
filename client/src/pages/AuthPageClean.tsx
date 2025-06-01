@@ -371,7 +371,7 @@ export default function AuthPageClean() {
             </div>
 
             <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-6 text-white">
-              <h3 className="text-lg font-semibold mb-2">Miért válaszd az Academion-t?</h3>
+              <h3 className="text-lg font-semibold mb-2">Miért válaszd az Elira-t?</h3>
               <ul className="space-y-2 text-sm">
                 <li className="flex items-center space-x-2">
                   <div className="w-2 h-2 bg-white rounded-full"></div>

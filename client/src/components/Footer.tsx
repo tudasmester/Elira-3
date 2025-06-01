@@ -14,29 +14,29 @@ const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
           <div className="lg:col-span-2">
-            <h2 className="text-2xl font-bold font-heading mb-4">Academion</h2>
+            <h2 className="text-2xl font-bold font-heading mb-4">Elira</h2>
             <p className="text-neutral-400 mb-6">Tanuljon korlátok nélkül világszínvonalú egyetemek és vállalatok kurzusaival.</p>
             <div className="flex space-x-4">
-              <a href="https://facebook.com/academion" target="_blank" rel="noopener noreferrer" className="text-white hover:text-tertiary transition duration-200">
+              <a href="https://facebook.com/elira" target="_blank" rel="noopener noreferrer" className="text-white hover:text-tertiary transition duration-200">
                 <Facebook className="h-5 w-5" />
               </a>
-              <a href="https://twitter.com/academion" target="_blank" rel="noopener noreferrer" className="text-white hover:text-tertiary transition duration-200">
+              <a href="https://twitter.com/elira" target="_blank" rel="noopener noreferrer" className="text-white hover:text-tertiary transition duration-200">
                 <Twitter className="h-5 w-5" />
               </a>
-              <a href="https://linkedin.com/company/academion" target="_blank" rel="noopener noreferrer" className="text-white hover:text-tertiary transition duration-200">
+              <a href="https://linkedin.com/company/elira" target="_blank" rel="noopener noreferrer" className="text-white hover:text-tertiary transition duration-200">
                 <Linkedin className="h-5 w-5" />
               </a>
-              <a href="https://instagram.com/academion" target="_blank" rel="noopener noreferrer" className="text-white hover:text-tertiary transition duration-200">
+              <a href="https://instagram.com/elira" target="_blank" rel="noopener noreferrer" className="text-white hover:text-tertiary transition duration-200">
                 <Instagram className="h-5 w-5" />
               </a>
-              <a href="https://youtube.com/academion" target="_blank" rel="noopener noreferrer" className="text-white hover:text-tertiary transition duration-200">
+              <a href="https://youtube.com/elira" target="_blank" rel="noopener noreferrer" className="text-white hover:text-tertiary transition duration-200">
                 <Youtube className="h-5 w-5" />
               </a>
             </div>
           </div>
           
           <div>
-            <h3 className="text-lg font-bold mb-4">Academion</h3>
+            <h3 className="text-lg font-bold mb-4">Elira</h3>
             <ul className="space-y-2">
               <li><Link href="/about" className="text-neutral-400 hover:text-white transition duration-200">Rólunk</Link></li>
               <li><Link href="/how-it-works" className="text-neutral-400 hover:text-white transition duration-200">Mi működik</Link></li>
