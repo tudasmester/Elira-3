@@ -592,8 +592,7 @@ export default function Settings() {
                   <div>
                     <h4 className="font-semibold">Jelenlegi előfizetés</h4>
                     <p className="text-sm text-gray-600">
-                      {user.subscriptionType === 'free' ? 'Ingyenes csomag' : 
-                       user.subscriptionType === 'plus' ? 'Plus csomag' : 'Premium csomag'}
+                      Ingyenes csomag
                     </p>
                   </div>
                   <Link href="/subscription">
@@ -653,7 +652,7 @@ export default function Settings() {
                       Kijelentkezés az összes eszközről
                     </p>
                   </div>
-                  <Button variant="outline" onClick={logout}>
+                  <Button variant="outline" onClick={handleLogout}>
                     Kijelentkezés
                   </Button>
                 </div>
