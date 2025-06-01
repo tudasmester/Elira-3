@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { Link, useLocation } from "wouter";
+import { Link, useLocation, useRoute } from "wouter";
 import { Button } from "@/components/ui/button";
 import { 
   BookOpen, GraduationCap, 
@@ -19,21 +19,38 @@ import logo from "@assets/eliranavbarszeles.png";
 import { Badge } from "@/components/ui/badge";
 import { useDeviceDetection, useTouchGestures } from "@/components/MobileResponsive";
 import { useUserActionTracking } from "@/hooks/usePerformanceMonitoring";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [location] = useLocation();
+  const [location, navigate] = useLocation();
   const { isMobile, isTablet } = useDeviceDetection();
   const { user, isAuthenticated, isLoading, logout } = useAuth();
   const { isAdmin } = useAdminAuth();
   const { trackAction } = useUserActionTracking();
+  const { toast } = useToast();
   
-  // Memoize logout function to prevent issues
-  const handleLogout = useCallback(() => {
-    if (logout && typeof logout === 'function') {
-      logout();
+  // Direct logout implementation (copied from working Settings page)
+  const handleLogout = useCallback(async () => {
+    try {
+      await apiRequest("POST", "/api/auth/logout");
+      localStorage.removeItem('auth_token');
+      queryClient.setQueryData(["/api/auth/user"], null);
+      queryClient.invalidateQueries();
+      toast({
+        title: "Sikeres kijelentkezés",
+        description: "Viszlát!",
+      });
+      navigate('/');
+    } catch (error) {
+      toast({
+        title: "Hiba történt", 
+        description: "Kérjük, próbálja újra",
+        variant: "destructive",
+      });
     }
-  }, [logout]);
+  }, [navigate, toast]);
   
   // Enhanced mobile menu toggle with analytics
   const toggleMenu = useCallback((e?: React.MouseEvent) => {
