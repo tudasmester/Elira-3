@@ -251,7 +251,7 @@ export default function AdminCoursesPage() {
               Manage your courses, track enrollments, and monitor performance.
             </p>
           </div>
-          <Button className="gap-2" onClick={() => setLocation("/admin/courses/new")}>
+          <Button className="gap-2" onClick={() => setLocation("/admin/courses/wizard")}>
             <Plus className="h-4 w-4" />
             Add New Course
           </Button>

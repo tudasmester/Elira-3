@@ -97,6 +97,31 @@ export function registerAdminRoutes(app: Express) {
     }
   });
 
+  // Save course draft
+  app.post("/api/admin/courses/draft", async (req, res) => {
+    try {
+      // Create a partial course with draft status
+      const draftData = {
+        ...req.body,
+        status: 'draft',
+        // Provide defaults for required fields if not present
+        universityId: req.body.universityId || 1,
+        instructorName: req.body.instructorName || 'TBD',
+        language: req.body.language || 'Hungarian',
+        duration: req.body.duration || req.body.estimatedDuration || 1,
+        price: req.body.isPaid ? (req.body.price || 0) : 0,
+        originalPrice: req.body.originalPrice || req.body.price || 0,
+      };
+      
+      const validatedData = insertCourseSchema.parse(draftData);
+      const course = await storage.createCourse(validatedData);
+      res.status(201).json(course);
+    } catch (error) {
+      console.error("Error saving course draft:", error);
+      res.status(500).json({ message: "Failed to save course draft" });
+    }
+  });
+
   // Create new course
   app.post("/api/admin/courses", async (req, res) => {
     try {
