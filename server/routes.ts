@@ -5,6 +5,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { registerAdminRoutes } from "./admin-routes";
 import { registerLearningPathRoutes } from "./learning-path-routes";
+import { registerLessonRoutes } from "./lesson-routes";
 import { generateCareerPathInfo, getCareerRecommendation, generateSkillsAnalysis } from "./openai";
 import { contentManager } from "./content-manager";
 import type { Request, Response } from "express";
@@ -282,6 +283,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Admin routes 
   registerAdminRoutes(app);
+  
+  // Lesson routes
+  registerLessonRoutes(app);
 
   const httpServer = createServer(app);
   return httpServer;
