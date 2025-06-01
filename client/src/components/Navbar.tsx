@@ -499,7 +499,10 @@ const Navbar: React.FC = () => {
                     </Link>
                     
                     <Button 
-                      onClick={logout}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        logout();
+                      }}
                       className="w-full justify-between h-12 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 hover:border-red-300 transition-all group"
                     >
                       <div className="flex items-center">
