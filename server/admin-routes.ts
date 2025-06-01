@@ -6,7 +6,29 @@ import { insertCourseSchema, insertUniversitySchema } from "@shared/schema";
 import { contentSync } from "./content-sync";
 
 export function registerAdminRoutes(app: Express) {
-  // Admin middleware for all admin routes
+  // Admin setup endpoint - only requires authentication, not admin privileges
+  app.post('/api/admin/setup-admin', isAuthenticated, async (req, res) => {
+    try {
+      const { userId, adminSecret } = req.body;
+      
+      // Check if the admin secret matches environment variable
+      if (!process.env.ADMIN_SETUP_SECRET || adminSecret !== process.env.ADMIN_SETUP_SECRET) {
+        return res.status(403).json({ message: "Invalid admin setup secret" });
+      }
+
+      if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+      }
+
+      const user = await storage.promoteUserToAdmin(userId);
+      res.json({ message: "User promoted to admin successfully", user: { id: user.id, email: user.email, isAdmin: user.isAdmin } });
+    } catch (error) {
+      console.error("Error promoting user to admin:", error);
+      res.status(500).json({ message: "Failed to promote user to admin" });
+    }
+  });
+
+  // Admin middleware for all other admin routes
   app.use('/api/admin/*', isAuthenticated, isAdmin);
 
   // Get all courses with pagination for admin
@@ -262,27 +284,7 @@ export function registerAdminRoutes(app: Express) {
     }
   });
 
-  // Super admin endpoint to promote users to admin (protected by environment variable)
-  app.post('/api/admin/setup-admin', async (req, res) => {
-    try {
-      const { userId, adminSecret } = req.body;
-      
-      // Check if the admin secret matches environment variable
-      if (!process.env.ADMIN_SETUP_SECRET || adminSecret !== process.env.ADMIN_SETUP_SECRET) {
-        return res.status(403).json({ message: "Invalid admin setup secret" });
-      }
 
-      if (!userId) {
-        return res.status(400).json({ message: "User ID is required" });
-      }
-
-      const user = await storage.promoteUserToAdmin(userId);
-      res.json({ message: "User promoted to admin successfully", user: { id: user.id, email: user.email, isAdmin: user.isAdmin } });
-    } catch (error) {
-      console.error("Error promoting user to admin:", error);
-      res.status(500).json({ message: "Failed to promote user to admin" });
-    }
-  });
 
   // ========== CONTENT IMPORT & SYNCHRONIZATION ENDPOINTS ==========
   
