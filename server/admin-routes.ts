@@ -49,8 +49,18 @@ export function registerAdminRoutes(app: Express) {
     }
   });
 
-  // Admin middleware for all other admin routes
-  app.use('/api/admin/*', requireAuth, isAdmin);
+  // Admin middleware for all other admin routes (excluding setup)
+  app.use('/api/admin/*', (req, res, next) => {
+    // Skip admin check for setup endpoint
+    if (req.path === '/api/admin/setup-admin') {
+      return next();
+    }
+    // Apply admin middleware for all other admin routes
+    requireAuth(req, res, (err) => {
+      if (err) return next(err);
+      isAdmin(req, res, next);
+    });
+  });
 
   // Get all courses with pagination for admin
   app.get("/api/admin/courses", async (req, res) => {
