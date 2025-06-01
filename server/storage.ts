@@ -92,6 +92,8 @@ export interface IStorage {
   
   createLesson(lesson: InsertLesson): Promise<Lesson>;
   getLessons(moduleId: number): Promise<Lesson[]>;
+  getLessonsByModule(moduleId: number): Promise<Lesson[]>;
+  getLesson(lessonId: number): Promise<Lesson | undefined>;
   updateLesson(lessonId: number, lesson: Partial<InsertLesson>): Promise<Lesson>;
   deleteLesson(lessonId: number): Promise<void>;
   
@@ -651,12 +653,45 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Lesson operations
+  async createLesson(lessonData: InsertLesson): Promise<Lesson> {
+    const [lesson] = await db
+      .insert(lessons)
+      .values(lessonData)
+      .returning();
+    return lesson;
+  }
+
   async getLessons(moduleId: number): Promise<Lesson[]> {
     return await db
       .select()
       .from(lessons)
       .where(eq(lessons.moduleId, moduleId))
       .orderBy(lessons.order);
+  }
+
+  async getLessonsByModule(moduleId: number): Promise<Lesson[]> {
+    return await db
+      .select()
+      .from(lessons)
+      .where(eq(lessons.moduleId, moduleId))
+      .orderBy(lessons.order);
+  }
+
+  async getLesson(lessonId: number): Promise<Lesson | undefined> {
+    const [lesson] = await db
+      .select()
+      .from(lessons)
+      .where(eq(lessons.id, lessonId));
+    return lesson;
+  }
+
+  async updateLesson(lessonId: number, lessonData: Partial<InsertLesson>): Promise<Lesson> {
+    const [lesson] = await db
+      .update(lessons)
+      .set(lessonData)
+      .where(eq(lessons.id, lessonId))
+      .returning();
+    return lesson;
   }
 
   async deleteLesson(lessonId: number): Promise<void> {
