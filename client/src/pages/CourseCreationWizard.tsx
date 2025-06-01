@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -8,7 +8,7 @@ import { Progress } from '@/components/ui/progress';
 import { AdminGuard } from '@/components/AdminGuard';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
-import { ArrowLeft, Upload, Image, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Upload, Image, CheckCircle, X } from 'lucide-react';
 import { Link } from 'wouter';
 
 interface CourseFormData {
@@ -21,6 +21,8 @@ export default function CourseCreationWizard() {
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1);
   const [isCreating, setIsCreating] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState<CourseFormData>({
     title: '',
     description: '',
@@ -32,6 +34,74 @@ export default function CourseCreationWizard() {
 
   const handleInputChange = (field: keyof CourseFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      toast({
+        title: "Hibás fájl típus",
+        description: "Csak JPG, PNG, GIF és WebP fájlok engedélyezettek.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Validate file size (10MB max)
+    if (file.size > 10 * 1024 * 1024) {
+      toast({
+        title: "Túl nagy fájl",
+        description: "A maximális fájlméret 10MB.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const response = await fetch('/api/admin/upload/course-image', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: formData
+      });
+
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+
+      const result = await response.json();
+      
+      setFormData(prev => ({ ...prev, imageUrl: result.imageUrl }));
+      
+      toast({
+        title: "Sikeres feltöltés",
+        description: "A kép sikeresen feltöltve."
+      });
+    } catch (error) {
+      toast({
+        title: "Feltöltési hiba",
+        description: "A kép feltöltése nem sikerült. Kérjük, próbálja újra.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setFormData(prev => ({ ...prev, imageUrl: '' }));
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   const handleNextStep = () => {
@@ -58,6 +128,7 @@ export default function CourseCreationWizard() {
         imageUrl: formData.imageUrl || '/api/placeholder/400/300',
         category: 'Általános',
         difficulty: 'beginner',
+        level: 'beginner',
         language: 'Hungarian',
         duration: 1,
         price: 0,
@@ -172,10 +243,31 @@ export default function CourseCreationWizard() {
               <p className="text-sm text-gray-600 mb-2">
                 Húzd ide a képet vagy add meg az URL-t
               </p>
-              <Button variant="outline" size="sm">
-                <Upload className="h-4 w-4 mr-2" />
-                Fájl kiválasztása
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading}
+              >
+                {isUploading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600 mr-2"></div>
+                    Feltöltés...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="h-4 w-4 mr-2" />
+                    Fájl kiválasztása
+                  </>
+                )}
               </Button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileUpload}
+                className="hidden"
+              />
             </div>
           </div>
         </div>
