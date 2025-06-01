@@ -20,6 +20,11 @@ import CareerPathsAI from "@/pages/CareerPathsAI";
 import PremiumSubscription from "@/pages/PremiumSubscription";
 import SubscriptionPlans from "@/pages/SubscriptionPlans";
 import AdminDashboard from "@/pages/AdminDashboard";
+import AdminDashboardNew from "@/pages/AdminDashboardNew";
+import AdminCoursesPage from "@/pages/AdminCoursesPage";
+import AdminUsersPage from "@/pages/AdminUsersPage";
+import AdminUniversitiesPage from "@/pages/AdminUniversitiesPage";
+import AdminAnalyticsPage from "@/pages/AdminAnalyticsPage";
 import AdminCourseForm from "@/pages/AdminCourseForm";
 import AdminCourseDetail from "@/pages/AdminCourseDetail";
 import AdminContentSync from "@/pages/AdminContentSync";
@@ -63,7 +68,11 @@ function Router() {
       <Route path="/premium" component={PremiumSubscription} />
       <Route path="/subscription-plans" component={SubscriptionPlans} />
       <Route path="/admin-setup" component={AdminSetup} />
-      <Route path="/admin" component={AdminDashboard} />
+      <Route path="/admin" component={AdminDashboardNew} />
+      <Route path="/admin/courses" component={AdminCoursesPage} />
+      <Route path="/admin/users" component={AdminUsersPage} />
+      <Route path="/admin/universities" component={AdminUniversitiesPage} />
+      <Route path="/admin/analytics" component={AdminAnalyticsPage} />
       <Route path="/admin/sync" component={AdminContentSync} />
       <Route path="/admin/courses/new" component={AdminCourseForm} />
       <Route path="/admin/courses/:id" component={AdminCourseDetail} />
