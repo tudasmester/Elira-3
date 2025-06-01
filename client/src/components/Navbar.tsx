@@ -15,7 +15,7 @@ import {
   DropdownMenuGroup,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import logo from "@assets/eliraicon.png";
+import logo from "@assets/eliranavbar.png";
 import { Badge } from "@/components/ui/badge";
 import { useDeviceDetection, useTouchGestures } from "@/components/MobileResponsive";
 import { useUserActionTracking } from "@/hooks/usePerformanceMonitoring";
@@ -39,21 +39,23 @@ const Navbar: React.FC = () => {
   const { trackAction } = useUserActionTracking();
   
   // Enhanced mobile menu toggle with analytics
-  const toggleMenu = useCallback(() => {
-    const newState = !isOpen;
-    setIsOpen(newState);
-    trackAction('navbar_menu_toggle', { 
-      action: newState ? 'open' : 'close',
-      device: isMobile ? 'mobile' : 'desktop'
+  const toggleMenu = useCallback((e?: React.MouseEvent) => {
+    e?.preventDefault();
+    e?.stopPropagation();
+    setIsOpen(prev => {
+      const newState = !prev;
+      trackAction('navbar_menu_toggle', { 
+        action: newState ? 'open' : 'close',
+        device: 'mobile'
+      });
+      return newState;
     });
-  }, [isOpen, trackAction, isMobile]);
+  }, [trackAction]);
 
-  // Close mobile menu when navigating on mobile
+  // Close mobile menu when location changes
   useEffect(() => {
-    if (isMobile && isOpen) {
-      setIsOpen(false);
-    }
-  }, [location, isMobile, isOpen]);
+    setIsOpen(false);
+  }, [location]);
 
   // Handle ESC key to close mobile menu
   useEffect(() => {
@@ -97,9 +99,8 @@ const Navbar: React.FC = () => {
             <img 
               src={logo} 
               alt="Elira" 
-              className="h-8 w-8 sm:h-10 sm:w-10"
+              className="h-8 w-auto object-contain"
             />
-            <span className="text-xl font-bold text-gray-900">Elira</span>
           </Link>
           
           {/* Mobile menu button */}
