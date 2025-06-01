@@ -24,17 +24,7 @@ const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [location] = useLocation();
   const { isMobile, isTablet } = useDeviceDetection();
-  const { user, isAuthenticated, isLoading } = useAuth();
-  
-  // Logout function
-  const logout = useCallback(async () => {
-    try {
-      await fetch('/api/auth/logout', { method: 'POST' });
-      window.location.href = '/';
-    } catch (error) {
-      console.error('Logout failed:', error);
-    }
-  }, []);
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
   const { isAdmin } = useAdminAuth();
   const { trackAction } = useUserActionTracking();
   
