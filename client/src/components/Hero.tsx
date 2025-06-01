@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button-variant";
 import { motion, useAnimation } from "framer-motion";
 import { useLocation } from "wouter";
-import heroImage from "@assets/elira-hero.png";
+import heroImage from "@assets/elirahero.png";
 import { Check, ArrowRight, Play, Sparkles, GraduationCap, Clock, Users } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import VideoModal from "./VideoModal";
