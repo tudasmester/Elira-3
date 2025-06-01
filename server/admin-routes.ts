@@ -341,7 +341,15 @@ export function registerAdminRoutes(app: Express) {
       const existingLessons = await storage.getLessonsByModule(moduleId);
       const order = existingLessons.length;
       
-      const lessonData = { ...req.body, moduleId, order };
+      // Ensure required fields have defaults
+      const lessonData = { 
+        ...req.body, 
+        moduleId, 
+        order,
+        estimatedDuration: req.body.estimatedDuration || 30, // Default 30 minutes
+        content: req.body.content || "Lecke tartalma itt lesz megjelenítve.",
+        description: req.body.description || ""
+      };
       
       const lesson = await storage.createLesson(lessonData);
       res.json(lesson);
