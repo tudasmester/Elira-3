@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { 
   BookOpen, GraduationCap, 
   BarChart, Menu, X, UserCircle,
-  LogOut, TrendingUp, BrainCircuit, Target
+  LogOut, TrendingUp, BrainCircuit, Search
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
@@ -17,22 +17,71 @@ import {
 } from "@/components/ui/dropdown-menu";
 import logo from "@assets/eliraicon.png";
 import { Badge } from "@/components/ui/badge";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useDeviceDetection, useTouchGestures } from "@/components/MobileResponsive";
+import { useUserActionTracking } from "@/hooks/usePerformanceMonitoring";
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [location] = useLocation();
-  const isMobile = useIsMobile();
-  const { user, isAuthenticated, isLoading, logout } = useAuth();
-  const { isAdmin } = useAdminAuth();
+  const { isMobile, isTablet } = useDeviceDetection();
+  const { user, isAuthenticated, isLoading } = useAuth();
   
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
+  // Logout function
+  const logout = useCallback(async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  }, []);
+  const { isAdmin } = useAdminAuth();
+  const { trackAction } = useUserActionTracking();
+  
+  // Enhanced mobile menu toggle with analytics
+  const toggleMenu = useCallback(() => {
+    const newState = !isOpen;
+    setIsOpen(newState);
+    trackAction('navbar_menu_toggle', { 
+      action: newState ? 'open' : 'close',
+      device: isMobile ? 'mobile' : 'desktop'
+    });
+  }, [isOpen, trackAction, isMobile]);
+
+  // Close mobile menu when navigating on mobile
+  useEffect(() => {
+    if (isMobile && isOpen) {
+      setIsOpen(false);
+    }
+  }, [location, isMobile, isOpen]);
+
+  // Handle ESC key to close mobile menu
+  useEffect(() => {
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isOpen) {
+        setIsOpen(false);
+        trackAction('navbar_escape_close', { device: 'mobile' });
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscapeKey);
+      return () => document.removeEventListener('keydown', handleEscapeKey);
+    }
+  }, [isOpen, trackAction]);
   
   const isActive = (path: string) => {
     return location === path;
   };
+
+  // Handle navigation click tracking
+  const handleNavClick = useCallback((path: string, label: string) => {
+    trackAction('navbar_navigation', { 
+      path, 
+      label,
+      device: isMobile ? 'mobile' : 'desktop'
+    });
+  }, [trackAction, isMobile]);
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-40">
