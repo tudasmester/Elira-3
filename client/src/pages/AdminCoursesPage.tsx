@@ -218,11 +218,11 @@ export default function AdminCoursesPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'published':
-        return <Badge className="bg-green-100 text-green-800 border-green-200"><CheckCircle className="h-3 w-3 mr-1" />Published</Badge>;
+        return <Badge className="bg-green-100 text-green-800 border-green-200"><CheckCircle className="h-3 w-3 mr-1" />Közzétett</Badge>;
       case 'draft':
-        return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200"><Clock className="h-3 w-3 mr-1" />Draft</Badge>;
+        return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200"><Clock className="h-3 w-3 mr-1" />Piszkozat</Badge>;
       case 'archived':
-        return <Badge className="bg-red-100 text-red-800 border-red-200"><XCircle className="h-3 w-3 mr-1" />Archived</Badge>;
+        return <Badge className="bg-red-100 text-red-800 border-red-200"><XCircle className="h-3 w-3 mr-1" />Archivált</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -306,8 +306,8 @@ export default function AdminCoursesPage() {
         {/* Filters and Search */}
         <Card>
           <CardHeader>
-            <CardTitle>Course Management</CardTitle>
-            <CardDescription>Search, filter, and manage your courses</CardDescription>
+            <CardTitle>Kurzuskezelés</CardTitle>
+            <CardDescription>Kurzusok keresése, szűrése és kezelése</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -315,7 +315,7 @@ export default function AdminCoursesPage() {
                 <div className="relative flex-1 max-w-sm">
                   <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
-                    placeholder="Search courses..."
+                    placeholder="Kurzusok keresése..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
@@ -323,21 +323,21 @@ export default function AdminCoursesPage() {
                 </div>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger className="w-32">
-                    <SelectValue placeholder="Status" />
+                    <SelectValue placeholder="Állapot" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Status</SelectItem>
-                    <SelectItem value="published">Published</SelectItem>
-                    <SelectItem value="draft">Draft</SelectItem>
-                    <SelectItem value="archived">Archived</SelectItem>
+                    <SelectItem value="all">Minden állapot</SelectItem>
+                    <SelectItem value="published">Közzétett</SelectItem>
+                    <SelectItem value="draft">Piszkozat</SelectItem>
+                    <SelectItem value="archived">Archivált</SelectItem>
                   </SelectContent>
                 </Select>
                 <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                   <SelectTrigger className="w-40">
-                    <SelectValue placeholder="Category" />
+                    <SelectValue placeholder="Kategória" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem>
+                    <SelectItem value="all">Minden kategória</SelectItem>
                     {categories.map(category => (
                       <SelectItem key={category} value={category}>{category}</SelectItem>
                     ))}
@@ -353,7 +353,7 @@ export default function AdminCoursesPage() {
                     disabled={bulkDeleteMutation.isPending}
                   >
                     <Trash2 className="h-4 w-4 mr-2" />
-                    Delete Selected ({selectedCourses.length})
+                    Kiválasztottak törlése ({selectedCourses.length})
                   </Button>
                 </div>
               )}
