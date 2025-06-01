@@ -520,7 +520,7 @@ export class DatabaseStorage implements IStorage {
             .select()
             .from(lessons)
             .where(eq(lessons.moduleId, module.id))
-            .orderBy(lessons.orderIndex);
+            .orderBy(lessons.order);
 
           const lessonsWithQuizzes = await Promise.all(
             lessons.map(async (lesson) => {
