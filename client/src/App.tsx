@@ -27,6 +27,7 @@ import AdminContentBuilder from "@/pages/AdminContentBuilder";
 import AdminSetup from "@/pages/AdminSetup";
 import AuthPageLogin from "@/pages/AuthPageLogin";
 import PasswordReset from "@/pages/PasswordReset";
+import SearchPage from "@/pages/SearchPage";
 import NotFound from "@/pages/not-found";
 import Layout from "@/components/Layout";
 import ScrollToTop from "@/components/ui/ScrollToTop";
@@ -51,6 +52,7 @@ function Router() {
       <Route path="/course/:id" component={CourseDetail} />
       <Route path="/trending" component={Trending} />
       <Route path="/courses" component={Courses} />
+      <Route path="/search" component={SearchPage} />
       <Route path="/degrees" component={Degrees} />
       <Route path="/degree/:id" component={DegreeDetail} />
       <Route path="/category/:slug" component={CategoryPage} />
