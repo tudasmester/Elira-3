@@ -26,6 +26,8 @@ import AdminUsersPage from "@/pages/AdminUsersPage";
 import AdminUniversitiesPage from "@/pages/AdminUniversitiesPage";
 import AdminAnalyticsPage from "@/pages/AdminAnalyticsPage";
 import AdminCourseForm from "@/pages/AdminCourseForm";
+import AdminCourseCreatePage from "@/pages/AdminCourseCreatePage";
+import AdminCourseEditPage from "@/pages/AdminCourseEditPage";
 import AdminCourseDetail from "@/pages/AdminCourseDetail";
 import AdminContentSync from "@/pages/AdminContentSync";
 import AdminContentBuilder from "@/pages/AdminContentBuilder";
@@ -74,9 +76,9 @@ function Router() {
       <Route path="/admin/universities" component={AdminUniversitiesPage} />
       <Route path="/admin/analytics" component={AdminAnalyticsPage} />
       <Route path="/admin/sync" component={AdminContentSync} />
-      <Route path="/admin/courses/new" component={AdminCourseForm} />
+      <Route path="/admin/courses/new" component={AdminCourseCreatePage} />
       <Route path="/admin/courses/:id" component={AdminCourseDetail} />
-      <Route path="/admin/courses/:id/edit" component={AdminCourseForm} />
+      <Route path="/admin/courses/:id/edit" component={AdminCourseEditPage} />
       <Route path="/admin/courses/:id/content" component={AdminContentBuilder} />
 
       <Route component={NotFound} />
