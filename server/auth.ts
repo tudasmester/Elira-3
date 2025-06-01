@@ -19,6 +19,19 @@ interface AuthRequest extends Request {
 // JWT Secret
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
+// Token blacklist for logout
+const blacklistedTokens = new Set<string>();
+
+// Add token to blacklist
+export function blacklistToken(token: string): void {
+  blacklistedTokens.add(token);
+}
+
+// Check if token is blacklisted
+export function isTokenBlacklisted(token: string): boolean {
+  return blacklistedTokens.has(token);
+}
+
 // Password hashing
 export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, 12);
@@ -36,6 +49,12 @@ export function generateToken(userId: string): string {
 
 export function verifyToken(token: string): { userId: string } | null {
   try {
+    // Check if token is blacklisted first
+    if (isTokenBlacklisted(token)) {
+      console.log("Token is blacklisted");
+      return null;
+    }
+    
     const decoded = jwt.verify(token, JWT_SECRET) as { userId: string };
     console.log("Token verified successfully for user:", decoded.userId);
     return decoded;

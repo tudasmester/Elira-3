@@ -1,5 +1,5 @@
 import { Express, Request, Response } from "express";
-import { hashPassword, comparePasswords, generateToken, requireAuth } from "./auth";
+import { hashPassword, comparePasswords, generateToken, requireAuth, blacklistToken } from "./auth";
 import { storage } from "./storage";
 
 export function setupAuthRoutes(app: Express) {
@@ -286,7 +286,21 @@ export function setupAuthRoutes(app: Express) {
 
   // Logout
   app.post("/api/auth/logout", (req: Request, res: Response) => {
-    res.json({ message: "Sikeres kijelentkezés" });
+    try {
+      // Get the token from the authorization header
+      const authHeader = req.headers.authorization;
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        const token = authHeader.substring(7);
+        // Blacklist the token to prevent further use
+        blacklistToken(token);
+        console.log("Token blacklisted successfully");
+      }
+      
+      res.json({ message: "Sikeres kijelentkezés" });
+    } catch (error) {
+      console.error("Logout error:", error);
+      res.json({ message: "Sikeres kijelentkezés" }); // Always return success for security
+    }
   });
 
   // Social Login Placeholder Routes (for future implementation)
