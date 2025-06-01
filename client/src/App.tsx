@@ -26,6 +26,7 @@ import AdminUsersPage from "@/pages/AdminUsersPage";
 import AdminUniversitiesPage from "@/pages/AdminUniversitiesPage";
 import AdminAnalyticsPage from "@/pages/AdminAnalyticsPage";
 import AdminQuizPage from "@/pages/AdminQuizPage";
+import AdminCourseManager from "@/pages/AdminCourseManager";
 import AdminCourseForm from "@/pages/AdminCourseForm";
 import AdminCourseCreatePage from "@/pages/AdminCourseCreatePage";
 import AdminCourseCreationPage from "@/pages/AdminCourseCreationPage";
@@ -75,8 +76,8 @@ function Router() {
       <Route path="/premium" component={PremiumSubscription} />
       <Route path="/subscription-plans" component={SubscriptionPlans} />
       <Route path="/admin-setup" component={AdminSetup} />
-      <Route path="/admin" component={AdminDashboardNew} />
-      <Route path="/admin/courses" component={AdminCoursesPage} />
+      <Route path="/admin" component={AdminCourseManager} />
+      <Route path="/admin/courses" component={AdminCourseManager} />
 
       <Route path="/admin/users" component={AdminUsersPage} />
       <Route path="/admin/universities" component={AdminUniversitiesPage} />

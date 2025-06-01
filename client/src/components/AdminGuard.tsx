@@ -1,47 +1,74 @@
 import React from 'react';
-import { useAdminAuth } from '@/hooks/useAdminAuth';
-import { useAuth } from '@/hooks/useAuth';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Shield, AlertTriangle } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { Loader2, Shield } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Link } from 'wouter';
 
 interface AdminGuardProps {
   children: React.ReactNode;
 }
 
 export function AdminGuard({ children }: AdminGuardProps) {
-  const { isAuthenticated, isLoading: authLoading } = useAuth();
-  const { isAdmin, isLoading: adminLoading } = useAdminAuth();
+  const { data: user, isLoading, error } = useQuery({
+    queryKey: ['/api/auth/user'],
+    retry: false,
+  });
 
-  if (authLoading || adminLoading) {
+  if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Hozzáférés ellenőrzése...</p>
+        </div>
       </div>
     );
   }
 
-  if (!isAuthenticated) {
+  if (error || !user) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4">
-        <Alert className="max-w-md">
-          <Shield className="h-4 w-4" />
-          <AlertDescription>
-            Az admin panel eléréséhez be kell jelentkeznie.
-          </AlertDescription>
-        </Alert>
+      <div className="min-h-screen flex items-center justify-center p-6">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <Shield className="h-16 w-16 text-red-500 mx-auto mb-4" />
+            <CardTitle>Hozzáférés megtagadva</CardTitle>
+          </CardHeader>
+          <CardContent className="text-center space-y-4">
+            <p className="text-gray-600">
+              Az admin felület eléréséhez be kell jelentkeznie.
+            </p>
+            <Button asChild className="w-full">
+              <Link href="/auth">
+                Bejelentkezés
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
-  if (!isAdmin) {
+  // Check if user is admin
+  if (!user.isAdmin) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4">
-        <Alert variant="destructive" className="max-w-md">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>
-            Nincs jogosultsága az admin panel eléréséhez. Csak adminisztrátorok férhetnek hozzá ehhez a területhez.
-          </AlertDescription>
-        </Alert>
+      <div className="min-h-screen flex items-center justify-center p-6">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <Shield className="h-16 w-16 text-yellow-500 mx-auto mb-4" />
+            <CardTitle>Nincs jogosultság</CardTitle>
+          </CardHeader>
+          <CardContent className="text-center space-y-4">
+            <p className="text-gray-600">
+              Az admin felület csak adminisztrátorok számára érhető el.
+            </p>
+            <Button asChild variant="outline" className="w-full">
+              <Link href="/">
+                Vissza a főoldalra
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
