@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useRealTimeData } from "@/hooks/useRealTimeData";
 import Home from "@/pages/Home";
-import OnboardingRegistrationClean from "@/pages/OnboardingRegistrationClean";
+import OnboardingRegister from "@/pages/OnboardingRegister";
 import Dashboard from "@/pages/Dashboard";
 import Settings from "@/pages/Settings";
 import CourseDetail from "@/pages/CourseDetail";
@@ -43,7 +43,7 @@ function Router() {
   const content = (
     <Switch>
       <Route path="/" component={Home} />
-      <Route path="/onboarding" component={OnboardingRegistrationClean} />
+      <Route path="/onboarding" component={OnboardingRegister} />
       <Route path="/auth" component={AuthPageLogin} />
       <Route path="/password-reset" component={PasswordReset} />
       <Route path="/dashboard" component={Dashboard} />
