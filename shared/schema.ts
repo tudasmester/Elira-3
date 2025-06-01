@@ -395,3 +395,131 @@ export type InsertLearningPath = z.infer<typeof insertLearningPathSchema>;
 export type LearningPath = typeof learningPaths.$inferSelect;
 export type InsertLearningPathStep = z.infer<typeof insertLearningPathStepSchema>;
 export type LearningPathStep = typeof learningPathSteps.$inferSelect;
+
+// ============================================
+// COMPLETE RELATIONSHIP DEFINITIONS
+// ============================================
+
+// User Relations - Central entity connecting to most other tables
+export const usersRelations = relations(users, ({ many }) => ({
+  enrollments: many(enrollments),
+  quizAttempts: many(quizAttempts),
+  lessonCompletions: many(lessonCompletions),
+  learningPaths: many(learningPaths),
+}));
+
+// University Relations - One-to-Many with courses and degrees
+export const universitiesRelations = relations(universities, ({ many }) => ({
+  courses: many(courses),
+  degrees: many(degrees),
+}));
+
+// Course Relations - Complex entity with multiple relationships
+export const coursesRelations = relations(courses, ({ one, many }) => ({
+  university: one(universities, {
+    fields: [courses.universityId],
+    references: [universities.id],
+  }),
+  enrollments: many(enrollments),
+  modules: many(courseModules),
+  resources: many(courseResources),
+  learningPathSteps: many(learningPathSteps),
+}));
+
+// Degree Relations - Belongs to university
+export const degreesRelations = relations(degrees, ({ one }) => ({
+  university: one(universities, {
+    fields: [degrees.universityId],
+    references: [universities.id],
+  }),
+}));
+
+// Enrollment Relations - Many-to-Many bridge between users and courses
+export const enrollmentsRelations = relations(enrollments, ({ one }) => ({
+  user: one(users, {
+    fields: [enrollments.userId],
+    references: [users.id],
+  }),
+  course: one(courses, {
+    fields: [enrollments.courseId],
+    references: [courses.id],
+  }),
+}));
+
+// Course Module Relations - Part of course hierarchy
+export const courseModulesRelations = relations(courseModules, ({ one, many }) => ({
+  course: one(courses, {
+    fields: [courseModules.courseId],
+    references: [courses.id],
+  }),
+  lessons: many(lessons),
+}));
+
+// Lesson Relations - Part of module, has quizzes and completions
+export const lessonsRelations = relations(lessons, ({ one, many }) => ({
+  module: one(courseModules, {
+    fields: [lessons.moduleId],
+    references: [courseModules.id],
+  }),
+  quizzes: many(quizzes),
+  completions: many(lessonCompletions),
+}));
+
+// Lesson Completion Relations - Tracks individual lesson progress
+export const lessonCompletionsRelations = relations(lessonCompletions, ({ one }) => ({
+  user: one(users, {
+    fields: [lessonCompletions.userId],
+    references: [users.id],
+  }),
+  lesson: one(lessons, {
+    fields: [lessonCompletions.lessonId],
+    references: [lessons.id],
+  }),
+}));
+
+// Course Resource Relations - Supplementary materials for courses
+export const courseResourcesRelations = relations(courseResources, ({ one }) => ({
+  course: one(courses, {
+    fields: [courseResources.courseId],
+    references: [courses.id],
+  }),
+}));
+
+// Quiz Relations - Assessment component of lessons
+export const quizzesRelations = relations(quizzes, ({ one, many }) => ({
+  lesson: one(lessons, {
+    fields: [quizzes.lessonId],
+    references: [lessons.id],
+  }),
+  questions: many(quizQuestions),
+  attempts: many(quizAttempts),
+}));
+
+// Quiz Question Relations - Individual questions within quizzes
+export const quizQuestionsRelations = relations(quizQuestions, ({ one, many }) => ({
+  quiz: one(quizzes, {
+    fields: [quizQuestions.quizId],
+    references: [quizzes.id],
+  }),
+  answers: many(quizAnswers),
+}));
+
+// Quiz Answer Relations - Multiple choice options for questions
+export const quizAnswersRelations = relations(quizAnswers, ({ one }) => ({
+  question: one(quizQuestions, {
+    fields: [quizAnswers.questionId],
+    references: [quizQuestions.id],
+  }),
+}));
+
+// Quiz Attempt Relations - Student assessment submissions
+export const quizAttemptsRelations = relations(quizAttempts, ({ one }) => ({
+  user: one(users, {
+    fields: [quizAttempts.userId],
+    references: [users.id],
+  }),
+  quiz: one(quizzes, {
+    fields: [quizAttempts.quizId],
+    references: [quizzes.id],
+  }),
+}));
