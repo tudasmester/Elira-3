@@ -246,14 +246,14 @@ export default function AdminCoursesPage() {
         {/* Header */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Course Management</h1>
+            <h1 className="text-3xl font-bold tracking-tight">Kurzuskezelés</h1>
             <p className="text-muted-foreground">
-              Manage your courses, track enrollments, and monitor performance.
+              Kezeld a kurzusaidat, kövesd nyomon a beiratkozásokat és figyelemmel kísérd a teljesítményt.
             </p>
           </div>
           <Button className="gap-2" onClick={() => setLocation("/admin/courses/wizard")}>
             <Plus className="h-4 w-4" />
-            Add New Course
+            Új kurzus hozzáadása
           </Button>
         </div>
 
@@ -261,7 +261,7 @@ export default function AdminCoursesPage() {
         <div className="grid gap-4 md:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Courses</CardTitle>
+              <CardTitle className="text-sm font-medium">Összes kurzus</CardTitle>
               <BookOpen className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -270,7 +270,7 @@ export default function AdminCoursesPage() {
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Published</CardTitle>
+              <CardTitle className="text-sm font-medium">Közzétett</CardTitle>
               <CheckCircle className="h-4 w-4 text-green-600" />
             </CardHeader>
             <CardContent>
@@ -281,7 +281,7 @@ export default function AdminCoursesPage() {
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Draft</CardTitle>
+              <CardTitle className="text-sm font-medium">Piszkozat</CardTitle>
               <Clock className="h-4 w-4 text-yellow-600" />
             </CardHeader>
             <CardContent>
@@ -292,7 +292,7 @@ export default function AdminCoursesPage() {
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Enrollments</CardTitle>
+              <CardTitle className="text-sm font-medium">Összes beiratkozás</CardTitle>
               <Users className="h-4 w-4 text-blue-600" />
             </CardHeader>
             <CardContent>
@@ -373,14 +373,14 @@ export default function AdminCoursesPage() {
                       onCheckedChange={handleSelectAll}
                     />
                   </TableHead>
-                  <TableHead>Course</TableHead>
-                  <TableHead>Instructor</TableHead>
-                  <TableHead>University</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Enrollments</TableHead>
-                  <TableHead>Price</TableHead>
-                  <TableHead>Updated</TableHead>
+                  <TableHead>Kurzus</TableHead>
+                  <TableHead>Oktató</TableHead>
+                  <TableHead>Egyetem</TableHead>
+                  <TableHead>Kategória</TableHead>
+                  <TableHead>Állapot</TableHead>
+                  <TableHead>Beiratkozások</TableHead>
+                  <TableHead>Ár</TableHead>
+                  <TableHead>Frissítve</TableHead>
                   <TableHead className="w-12"></TableHead>
                 </TableRow>
               </TableHeader>
