@@ -15,7 +15,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { 
   HelpCircle, Plus, Edit, Trash2, Copy, Eye, Settings, 
   Clock, Users, Shield, BarChart3, Brain, Target,
-  Image, Calculator, DragHandleDots2, MapPin, FileText,
+  Image, Calculator, Move, MapPin, FileText,
   CheckCircle2, XCircle, AlertTriangle, Lightbulb
 } from 'lucide-react';
 import { 
@@ -62,8 +62,8 @@ export function QuizManager({ courseId, onSave, onCancel, initialQuiz }: QuizMan
     { value: 'essay', label: 'Esszé', icon: FileText, description: 'Hosszú szöveges válasz rubrikával' },
     { value: 'numerical', label: 'Numerikus', icon: Calculator, description: 'Számértékek toleranciával' },
     { value: 'calculated', label: 'Számított', icon: Calculator, description: 'Változókkal számított kérdések' },
-    { value: 'matching', label: 'Párosítás', icon: DragHandleDots2, description: 'Elemek párosítása' },
-    { value: 'ordering', label: 'Sorbarendezés', icon: DragHandleDots2, description: 'Elemek sorrendbe állítása' },
+    { value: 'matching', label: 'Párosítás', icon: Move, description: 'Elemek párosítása' },
+    { value: 'ordering', label: 'Sorbarendezés', icon: Move, description: 'Elemek sorrendbe állítása' },
     { value: 'cloze', label: 'Hiányos szöveg', icon: Target, description: 'Szövegben hiányzó szavak' },
     { value: 'drag_drop_image', label: 'Képre húzás', icon: Image, description: 'Elemek képre húzása' },
     { value: 'hotspot', label: 'Képi zóna', icon: MapPin, description: 'Kép területeinek kijelölése' }

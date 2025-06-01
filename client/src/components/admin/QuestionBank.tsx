@@ -13,7 +13,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { 
   Search, Plus, Edit, Trash2, Copy, Download, Upload, 
   Filter, Tag, BookOpen, BarChart3, Star, Clock,
-  FileText, Calculator, DragHandleDots2, Image, MapPin,
+  FileText, Calculator, Move, Image, MapPin,
   CheckCircle2, XCircle, AlertTriangle, Lightbulb, Archive,
   Users, Share2, Eye, Settings, TrendingUp
 } from 'lucide-react';
@@ -63,7 +63,7 @@ export function QuestionBank({ courseId, onQuestionSelect, mode = 'management' }
     { value: 'essay', label: 'Esszé', icon: FileText },
     { value: 'numerical', label: 'Numerikus', icon: Calculator },
     { value: 'calculated', label: 'Számított', icon: Calculator },
-    { value: 'matching', label: 'Párosítás', icon: DragHandleDots2 },
+    { value: 'matching', label: 'Párosítás', icon: Move },
     { value: 'cloze', label: 'Hiányos szöveg', icon: AlertTriangle },
     { value: 'drag_drop_image', label: 'Képre húzás', icon: Image },
     { value: 'hotspot', label: 'Képi zóna', icon: MapPin }
