@@ -275,7 +275,7 @@ export default function CourseCreationWizard() {
         {formData.imageUrl && (
           <div className="mt-4">
             <Label className="text-sm font-medium text-gray-700">Előnézet:</Label>
-            <div className="mt-2 max-w-md">
+            <div className="mt-2 max-w-md relative">
               <img 
                 src={formData.imageUrl} 
                 alt="Kurzus borítókép előnézet"
@@ -284,6 +284,14 @@ export default function CourseCreationWizard() {
                   (e.target as HTMLImageElement).style.display = 'none';
                 }}
               />
+              <Button
+                variant="destructive"
+                size="sm"
+                className="absolute top-2 right-2"
+                onClick={handleRemoveImage}
+              >
+                <X className="h-4 w-4" />
+              </Button>
             </div>
           </div>
         )}
