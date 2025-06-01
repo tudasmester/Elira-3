@@ -227,8 +227,8 @@ export default function AdminCourseManager() {
   });
 
   const handleEditCourse = (course: Course) => {
-    // TODO: Navigate to course editor
-    console.log('Edit course:', course.id);
+    // Navigate to course content builder with course ID
+    window.location.href = `/admin/content-builder?courseId=${course.id}`;
   };
 
   const handleDeleteCourse = async (course: Course) => {
@@ -360,11 +360,11 @@ export default function AdminCourseManager() {
             <Button variant="outline">
               Kategóriák kezelése
             </Button>
-            <Button asChild>
-              <Link href="/admin/courses/create">
-                <Plus className="h-4 w-4 mr-2" />
-                Kurzus létrehozása
-              </Link>
+            <Button 
+              onClick={() => window.location.href = '/admin/content-builder'}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Kurzus létrehozása
             </Button>
           </div>
         </div>
