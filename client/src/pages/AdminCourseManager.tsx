@@ -221,6 +221,8 @@ export default function AdminCourseManager() {
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [selectedAccessType, setSelectedAccessType] = useState('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [sortBy, setSortBy] = useState('updatedAt');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
   const { data: courses = [], isLoading } = useQuery({
     queryKey: ['/api/admin/courses'],
@@ -241,15 +243,45 @@ export default function AdminCourseManager() {
     console.log('Duplicate course:', course.id);
   };
 
-  const filteredCourses = courses.filter((course: Course) => {
-    const matchesSearch = course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         course.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || course.category === selectedCategory;
-    const matchesStatus = selectedStatus === 'all' || course.status === selectedStatus;
-    const matchesAccessType = selectedAccessType === 'all' || course.accessType === selectedAccessType;
-    
-    return matchesSearch && matchesCategory && matchesStatus && matchesAccessType;
-  });
+  const filteredAndSortedCourses = React.useMemo(() => {
+    // First filter the courses
+    const filtered = (courses as Course[]).filter((course: Course) => {
+      const matchesSearch = course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           course.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           course.category.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesCategory = selectedCategory === 'all' || course.category === selectedCategory;
+      const matchesStatus = selectedStatus === 'all' || course.status === selectedStatus;
+      const matchesAccessType = selectedAccessType === 'all' || course.accessType === selectedAccessType;
+      
+      return matchesSearch && matchesCategory && matchesStatus && matchesAccessType;
+    });
+
+    // Then sort the filtered courses
+    return filtered.sort((a: Course, b: Course) => {
+      let comparison = 0;
+      
+      switch (sortBy) {
+        case 'title':
+          comparison = a.title.localeCompare(b.title, 'hu');
+          break;
+        case 'enrollmentCount':
+          comparison = a.enrollmentCount - b.enrollmentCount;
+          break;
+        case 'price':
+          comparison = a.price - b.price;
+          break;
+        case 'createdAt':
+          comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+          break;
+        case 'updatedAt':
+        default:
+          comparison = new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime();
+          break;
+      }
+      
+      return sortOrder === 'asc' ? comparison : -comparison;
+    });
+  }, [courses, searchTerm, selectedCategory, selectedStatus, selectedAccessType, sortBy, sortOrder]);
 
   if (isLoading) {
     return (
@@ -353,69 +385,129 @@ export default function AdminCourseManager() {
           </Card>
         </div>
 
-        {/* Filters and Search */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              placeholder="Kurzusok keresése..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-          <div className="flex gap-2">
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger className="w-40">
-                <SelectValue placeholder="Kategória" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Minden kategória</SelectItem>
-                <SelectItem value="technology">Technológia</SelectItem>
-                <SelectItem value="business">Üzlet</SelectItem>
-                <SelectItem value="design">Dizájn</SelectItem>
-                <SelectItem value="marketing">Marketing</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-              <SelectTrigger className="w-32">
-                <SelectValue placeholder="Státusz" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Minden státusz</SelectItem>
-                <SelectItem value="published">Publikált</SelectItem>
-                <SelectItem value="draft">Tervezet</SelectItem>
-                <SelectItem value="archived">Archivált</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={selectedAccessType} onValueChange={setSelectedAccessType}>
-              <SelectTrigger className="w-32">
-                <SelectValue placeholder="Hozzáférés" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Minden típus</SelectItem>
-                <SelectItem value="free">Ingyenes</SelectItem>
-                <SelectItem value="paid">Fizetős</SelectItem>
-                <SelectItem value="private">Privát</SelectItem>
-              </SelectContent>
-            </Select>
-            <div className="flex border rounded-lg">
-              <Button
-                variant={viewMode === 'grid' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setViewMode('grid')}
-                className="rounded-r-none"
-              >
-                <Grid3x3 className="h-4 w-4" />
-              </Button>
-              <Button
-                variant={viewMode === 'list' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setViewMode('list')}
-                className="rounded-l-none"
-              >
-                <List className="h-4 w-4" />
-              </Button>
+        {/* Enhanced Search and Filters */}
+        <div className="bg-white border rounded-lg p-6 mb-6">
+          <div className="space-y-4">
+            {/* Main Search Bar */}
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+              <Input
+                placeholder="Keresés kurzus címe, leírása vagy kategóriája szerint..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-12 h-12 text-lg border-2 focus:border-blue-500"
+              />
+            </div>
+
+            {/* Filter Row */}
+            <div className="flex flex-wrap gap-3 items-center justify-between">
+              <div className="flex flex-wrap gap-3">
+                <div className="flex items-center gap-2">
+                  <Filter className="h-4 w-4 text-gray-500" />
+                  <span className="text-sm font-medium text-gray-700">Szűrők:</span>
+                </div>
+                
+                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                  <SelectTrigger className="w-48 h-9">
+                    <SelectValue placeholder="Válassz kategóriát" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">📚 Minden kategória</SelectItem>
+                    <SelectItem value="technology">💻 Technológia</SelectItem>
+                    <SelectItem value="business">💼 Üzlet & Vállalkozás</SelectItem>
+                    <SelectItem value="design">🎨 Dizájn & Kreatív</SelectItem>
+                    <SelectItem value="marketing">📢 Marketing & Eladás</SelectItem>
+                    <SelectItem value="language">🌍 Nyelvek</SelectItem>
+                    <SelectItem value="science">🔬 Tudomány</SelectItem>
+                    <SelectItem value="health">🏥 Egészségügy</SelectItem>
+                    <SelectItem value="finance">💰 Pénzügyek</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+                  <SelectTrigger className="w-36 h-9">
+                    <SelectValue placeholder="Státusz" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Minden státusz</SelectItem>
+                    <SelectItem value="published">✅ Publikált</SelectItem>
+                    <SelectItem value="draft">📝 Tervezet</SelectItem>
+                    <SelectItem value="archived">📦 Archivált</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Select value={selectedAccessType} onValueChange={setSelectedAccessType}>
+                  <SelectTrigger className="w-36 h-9">
+                    <SelectValue placeholder="Hozzáférés" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Minden típus</SelectItem>
+                    <SelectItem value="free">🆓 Ingyenes</SelectItem>
+                    <SelectItem value="paid">💳 Fizetős</SelectItem>
+                    <SelectItem value="private">🔒 Privát</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Select value={sortBy} onValueChange={setSortBy}>
+                  <SelectTrigger className="w-40 h-9">
+                    <SelectValue placeholder="Rendezés" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="updatedAt">📅 Módosítás dátuma</SelectItem>
+                    <SelectItem value="createdAt">🆕 Létrehozás dátuma</SelectItem>
+                    <SelectItem value="title">🔤 Név szerint</SelectItem>
+                    <SelectItem value="enrollmentCount">👥 Tanulók száma</SelectItem>
+                    <SelectItem value="price">💰 Ár szerint</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                  className="h-9"
+                >
+                  {sortOrder === 'asc' ? '⬆️ Növekvő' : '⬇️ Csökkenő'}
+                </Button>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setSearchTerm('');
+                    setSelectedCategory('all');
+                    setSelectedStatus('all');
+                    setSelectedAccessType('all');
+                    setSortBy('updatedAt');
+                    setSortOrder('desc');
+                  }}
+                  className="h-9"
+                >
+                  ✖️ Szűrők törlése
+                </Button>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600">Nézet:</span>
+                <div className="flex border rounded-lg overflow-hidden">
+                  <Button
+                    variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => setViewMode('grid')}
+                    className="rounded-none"
+                  >
+                    <Grid3x3 className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant={viewMode === 'list' ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => setViewMode('list')}
+                    className="rounded-none"
+                  >
+                    <List className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -423,22 +515,22 @@ export default function AdminCourseManager() {
         {/* Course Count */}
         <div className="flex items-center justify-between mb-4">
           <p className="text-sm text-gray-600">
-            {filteredCourses.length} kurzus megjelenítve
+            {filteredAndSortedCourses.length} kurzus megjelenítve
           </p>
         </div>
 
         {/* Courses Grid/List */}
-        {filteredCourses.length === 0 ? (
+        {filteredAndSortedCourses.length === 0 ? (
           <div className="text-center py-12">
             <BookOpen className="h-16 w-16 text-gray-300 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">Nincsenek kurzusok</h3>
             <p className="text-gray-600 mb-6">
-              {courses.length === 0
+              {(courses as Course[]).length === 0
                 ? 'Kezdje el az első kurzus létrehozásával.'
                 : 'Nincs a szűrési feltételeknek megfelelő kurzus.'
               }
             </p>
-            {courses.length === 0 && (
+            {(courses as Course[]).length === 0 && (
               <Button asChild>
                 <Link href="/admin/courses/create">
                   <Plus className="h-4 w-4 mr-2" />
@@ -449,7 +541,7 @@ export default function AdminCourseManager() {
           </div>
         ) : viewMode === 'grid' ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredCourses.map((course: Course) => (
+            {filteredAndSortedCourses.map((course: Course) => (
               <CourseCard
                 key={course.id}
                 course={course}
@@ -462,7 +554,7 @@ export default function AdminCourseManager() {
           </div>
         ) : (
           <div className="space-y-4">
-            {filteredCourses.map((course: Course) => (
+            {filteredAndSortedCourses.map((course: Course) => (
               <CourseCard
                 key={course.id}
                 course={course}
