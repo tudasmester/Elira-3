@@ -43,6 +43,11 @@ const navigationItems = [
     icon: BookOpen,
   },
   {
+    title: 'Kvízek',
+    href: '/admin/quizzes',
+    icon: FileText,
+  },
+  {
     title: 'Felhasználók',
     href: '/admin/users',
     icon: Users,

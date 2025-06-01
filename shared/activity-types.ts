@@ -75,16 +75,44 @@ export interface QuizSettings {
   showCorrectAnswers: 'never' | 'after_submission' | 'after_due_date';
   gradeMethod: 'highest' | 'average' | 'first' | 'last';
   questions: QuizQuestion[];
+  // Advanced features
+  questionPools?: QuestionPool[];
+  passwordProtected?: boolean;
+  password?: string;
+  ipRestrictions?: string[];
+  secureMode?: boolean;
+  proctoring?: ProctoringSettings;
+  feedback?: FeedbackSettings;
+  accessibility?: AccessibilitySettings;
+  analytics?: AnalyticsSettings;
 }
 
 export interface QuizQuestion {
   id: string;
-  type: 'multiple_choice' | 'true_false' | 'essay' | 'matching' | 'numerical' | 'short_answer';
+  type: 'multiple_choice' | 'true_false' | 'essay' | 'matching' | 'numerical' | 'short_answer' | 
+        'calculated' | 'drag_drop_image' | 'cloze' | 'ordering' | 'hotspot';
   text: string;
   points: number;
+  category?: string;
+  tags?: string[];
+  difficulty?: 'easy' | 'medium' | 'hard';
+  partialCredit?: boolean;
   options?: QuizOption[];
-  correctAnswer?: string | number | string[];
+  correctAnswer?: string | number | string[] | MatchingPair[] | CalculatedAnswer;
   explanation?: string;
+  image?: string;
+  feedback?: QuestionFeedback;
+  // Question-specific settings
+  numericalTolerance?: number;
+  toleranceType?: 'nominal' | 'relative';
+  variables?: CalculatedVariable[];
+  matchingItems?: MatchingItem[];
+  clozeOptions?: ClozeOption[];
+  dragDropZones?: DragDropZone[];
+  hotspots?: ImageHotspot[];
+  rubric?: EssayRubric;
+  timeLimit?: number; // per question time limit
+  hints?: QuestionHint[];
 }
 
 export interface QuizOption {
@@ -92,6 +120,163 @@ export interface QuizOption {
   text: string;
   isCorrect: boolean;
   feedback?: string;
+  points?: number; // For partial credit
+  weight?: number; // For weighted scoring
+}
+
+export interface QuestionPool {
+  id: string;
+  name: string;
+  description?: string;
+  questions: string[]; // Question IDs
+  selectCount: number; // How many to select from pool
+  selectionMethod: 'random' | 'sequential' | 'adaptive';
+}
+
+export interface ProctoringSettings {
+  enabled: boolean;
+  webcamRequired?: boolean;
+  screenShareRequired?: boolean;
+  lockdownBrowser?: boolean;
+  microphoneMonitoring?: boolean;
+  keyboardMonitoring?: boolean;
+  mouseMonitoring?: boolean;
+  tabSwitchingBlocked?: boolean;
+  rightClickDisabled?: boolean;
+  copyPasteDisabled?: boolean;
+}
+
+export interface FeedbackSettings {
+  immediate?: boolean;
+  afterSubmission?: boolean;
+  afterClosing?: boolean;
+  showCorrectAnswer?: boolean;
+  showExplanation?: boolean;
+  showGrade?: boolean;
+  showPoints?: boolean;
+  customFeedbackRanges?: FeedbackRange[];
+}
+
+export interface FeedbackRange {
+  minPercentage: number;
+  maxPercentage: number;
+  message: string;
+}
+
+export interface AccessibilitySettings {
+  screenReaderCompatible: boolean;
+  highContrast?: boolean;
+  largeText?: boolean;
+  keyboardNavigation?: boolean;
+  audioDescriptions?: boolean;
+  textToSpeech?: boolean;
+}
+
+export interface AnalyticsSettings {
+  trackViewTime: boolean;
+  trackClickPatterns: boolean;
+  trackAnswerChanges: boolean;
+  difficultyAdjustment: boolean;
+  performanceInsights: boolean;
+}
+
+export interface QuestionFeedback {
+  correct?: string;
+  incorrect?: string;
+  partiallyCorrect?: string;
+  general?: string;
+}
+
+export interface MatchingPair {
+  id: string;
+  left: string;
+  right: string;
+}
+
+export interface MatchingItem {
+  id: string;
+  text: string;
+  type: 'left' | 'right';
+  matchWith?: string; // ID of matching item
+  image?: string;
+}
+
+export interface CalculatedVariable {
+  name: string;
+  min: number;
+  max: number;
+  decimals?: number;
+  step?: number;
+}
+
+export interface CalculatedAnswer {
+  formula: string;
+  tolerance: number;
+  toleranceType: 'nominal' | 'relative';
+  units?: string[];
+}
+
+export interface ClozeOption {
+  position: number;
+  type: 'dropdown' | 'text' | 'numerical' | 'multichoice';
+  options?: string[];
+  correctAnswer: string | number;
+  points: number;
+  caseSensitive?: boolean;
+}
+
+export interface DragDropZone {
+  id: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  acceptedItems: string[];
+  label?: string;
+  maxItems?: number;
+}
+
+export interface ImageHotspot {
+  id: string;
+  x: number;
+  y: number;
+  radius: number;
+  shape: 'circle' | 'rectangle' | 'polygon';
+  isCorrect: boolean;
+  feedback?: string;
+  points?: number;
+}
+
+export interface EssayRubric {
+  id: string;
+  name: string;
+  description?: string;
+  criteria: RubricCriterion[];
+  totalPoints: number;
+  gradingMethod: 'holistic' | 'analytic';
+}
+
+export interface RubricCriterion {
+  id: string;
+  name: string;
+  description: string;
+  weight: number;
+  levels: RubricLevel[];
+}
+
+export interface RubricLevel {
+  id: string;
+  name: string;
+  description: string;
+  points: number;
+  feedback?: string;
+}
+
+export interface QuestionHint {
+  id: string;
+  text: string;
+  penalty: number; // Points deducted for using hint
+  showAfter?: number; // Seconds before hint becomes available
 }
 
 // Assignment Activity

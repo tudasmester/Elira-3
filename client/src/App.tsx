@@ -25,6 +25,7 @@ import AdminCoursesPage from "@/pages/AdminCoursesPage";
 import AdminUsersPage from "@/pages/AdminUsersPage";
 import AdminUniversitiesPage from "@/pages/AdminUniversitiesPage";
 import AdminAnalyticsPage from "@/pages/AdminAnalyticsPage";
+import AdminQuizPage from "@/pages/AdminQuizPage";
 import AdminCourseForm from "@/pages/AdminCourseForm";
 import AdminCourseCreatePage from "@/pages/AdminCourseCreatePage";
 import AdminCourseCreationPage from "@/pages/AdminCourseCreationPage";
