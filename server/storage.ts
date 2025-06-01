@@ -150,12 +150,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
+    const userId = insertUser.id || "user-" + Date.now() + "-" + Math.random().toString(36).substr(2, 9);
     const results = await db.insert(users).values({
-      id: "temp-" + Date.now(), // This will be replaced in real auth flow
-      email: insertUser.email,
-      firstName: insertUser.firstName,
-      lastName: insertUser.lastName,
-      profileImageUrl: insertUser.profileImageUrl
+      ...insertUser,
+      id: userId,
+      createdAt: new Date(),
+      updatedAt: new Date()
     }).returning();
     return results[0];
   }

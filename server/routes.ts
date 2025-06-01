@@ -10,9 +10,9 @@ import { contentManager } from "./content-manager";
 import type { Request, Response } from "express";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Enable secure authentication system with onboarding
-  const { setupAuthRoutes } = await import("./auth-routes-clean");
-  setupAuthRoutes(app);
+  // Enable working authentication system
+  const { setupWorkingAuth } = await import("./auth-working");
+  setupWorkingAuth(app);
 
   // Initialize admin content (one-time setup)
   app.post("/api/admin/initialize", async (req: Request, res: Response) => {
