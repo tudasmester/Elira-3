@@ -20,7 +20,7 @@ export default function AdminSetup() {
         throw new Error('You must be logged in to setup admin access');
       }
 
-      const response = await apiRequest('POST', '/api/admin/setup-admin', {
+      const response = await apiRequest('POST', '/api/setup-admin-direct', {
         userId: user.id,
         adminSecret: adminSecret
       });

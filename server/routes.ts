@@ -11,8 +11,45 @@ import type { Request, Response } from "express";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Enable working authentication system
-  const { setupWorkingAuth } = await import("./auth-working");
+  const { setupWorkingAuth, requireAuth } = await import("./auth-working");
   setupWorkingAuth(app);
+
+  // Direct admin setup endpoint (bypasses admin route middleware)
+  app.post('/api/setup-admin-direct', requireAuth, async (req, res) => {
+    try {
+      console.log("=== DIRECT ADMIN SETUP ===");
+      console.log("Request body:", JSON.stringify(req.body, null, 2));
+      console.log("User:", JSON.stringify(req.user, null, 2));
+      
+      const { userId, adminSecret } = req.body;
+      
+      if (!adminSecret || adminSecret !== process.env.ADMIN_SETUP_SECRET) {
+        console.log("❌ Invalid secret");
+        return res.status(403).json({ message: 'Invalid admin secret' });
+      }
+
+      if (!userId) {
+        console.log("❌ No userId");
+        return res.status(400).json({ message: 'User ID required' });
+      }
+
+      console.log("✅ Promoting user to admin:", userId);
+      const user = await storage.promoteUserToAdmin(userId);
+      console.log("✅ Success:", { id: user.id, isAdmin: user.isAdmin });
+      
+      return res.json({ 
+        success: true,
+        message: 'Admin access granted successfully',
+        user: { id: user.id, email: user.email, isAdmin: user.isAdmin }
+      });
+    } catch (error) {
+      console.error("❌ Error:", error);
+      return res.status(500).json({ 
+        message: 'Failed to promote user to admin',
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
 
   // Initialize admin content (one-time setup)
   app.post("/api/admin/initialize", async (req: Request, res: Response) => {

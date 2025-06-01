@@ -6,6 +6,13 @@ import { insertCourseSchema, insertUniversitySchema } from "@shared/schema";
 import { contentSync } from "./content-sync";
 
 export function registerAdminRoutes(app: Express) {
+  // Test endpoint to see if we can reach admin routes at all
+  app.post('/api/admin-setup-test', async (req, res) => {
+    console.log("=== TEST ENDPOINT REACHED ===");
+    console.log("Request body:", req.body);
+    res.json({ message: "Test endpoint reached successfully" });
+  });
+
   // Admin setup endpoint - only requires authentication, not admin privileges
   app.post('/api/admin/setup-admin', requireAuth, async (req, res) => {
     try {
