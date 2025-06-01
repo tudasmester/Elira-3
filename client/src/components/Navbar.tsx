@@ -87,82 +87,107 @@ const Navbar: React.FC = () => {
     <header className="bg-white shadow-sm sticky top-0 z-40">
       <div className="max-w-7xl mx-auto">
         {/* Main Navigation */}
-        <div className="flex items-center justify-between px-4 py-3 nav">
+        <div className="flex items-center justify-between h-16 px-4">
           {/* Logo */}
-          <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center">
-              <img src={logo} alt="Elira logo" className="h-10 w-10" />
+          <Link 
+            href="/" 
+            className="flex items-center space-x-2 touch-manipulation"
+            onClick={() => handleNavClick('/', 'logo')}
+          >
+            <img 
+              src={logo} 
+              alt="Elira" 
+              className="h-8 w-8 sm:h-10 sm:w-10"
+            />
+            <span className="text-xl font-bold text-gray-900">Elira</span>
+          </Link>
+          
+          {/* Mobile menu button */}
+          <button 
+            onClick={toggleMenu}
+            className="md:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 touch-manipulation"
+            aria-label="Toggle menu"
+          >
+            {isOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
+          </button>
+          
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center space-x-8">
+            <Link 
+              href="/courses" 
+              className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                isActive("/courses") 
+                  ? "text-blue-600 bg-blue-50" 
+                  : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+              }`}
+              onClick={() => handleNavClick('/courses', 'courses')}
+            >
+              <BookOpen className="h-4 w-4 mr-2" />
+              Kurzusok
             </Link>
             
-            {/* Mobile menu button */}
-            {isMobile && (
-              <button 
-                onClick={toggleMenu}
-                className="ml-4 p-2 rounded-md text-neutral-700 hover:bg-neutral-100"
-              >
-                {isOpen ? (
-                  <X className="h-6 w-6" />
-                ) : (
-                  <Menu className="h-6 w-6" />
-                )}
-              </button>
-            )}
-          </div>
+            <Link 
+              href="/degrees" 
+              className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                isActive("/degrees") 
+                  ? "text-blue-600 bg-blue-50" 
+                  : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+              }`}
+              onClick={() => handleNavClick('/degrees', 'degrees')}
+            >
+              <GraduationCap className="h-4 w-4 mr-2" />
+              Diplomák
+            </Link>
+            
+            <Link 
+              href="/trending" 
+              className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                isActive("/trending") 
+                  ? "text-blue-600 bg-blue-50" 
+                  : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+              }`}
+              onClick={() => handleNavClick('/trending', 'trending')}
+            >
+              <BarChart className="h-4 w-4 mr-2" />
+              Trending
+              <Badge className="ml-2 bg-orange-100 text-orange-800 text-xs px-2 py-0.5">Új</Badge>
+            </Link>
+            
+            <Link 
+              href="/careers" 
+              className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                isActive("/careers") 
+                  ? "text-blue-600 bg-blue-50" 
+                  : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+              }`}
+              onClick={() => handleNavClick('/careers', 'careers')}
+            >
+              <TrendingUp className="h-4 w-4 mr-2" />
+              Karrierutak
+            </Link>
+            
+            <Link 
+              href="/career-paths-ai" 
+              className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                isActive("/career-paths-ai") 
+                  ? "text-blue-600 bg-blue-50" 
+                  : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+              }`}
+              onClick={() => handleNavClick('/career-paths-ai', 'ai-careers')}
+            >
+              <BrainCircuit className="h-4 w-4 mr-2" />
+              AI Karriertervező
+              <Badge className="ml-2 bg-purple-100 text-purple-800 text-xs px-2 py-0.5">AI</Badge>
+            </Link>
+          </nav>
           
-          {/* Centered Navigation */}
-          {!isMobile && (
-            <div className="flex-1 flex justify-center">
-              <nav className="flex space-x-1">
-                <Link href="/courses" className={`flex items-center px-3 py-2 rounded-md text-sm font-medium ${
-                  isActive("/courses") 
-                    ? "text-primary bg-primary/5" 
-                    : "text-neutral-700 hover:text-primary hover:bg-neutral-50"
-                }`}>
-                  <BookOpen className="h-4 w-4 mr-1" />
-                  Kurzusok
-                </Link>
-                <Link href="/degrees" className={`flex items-center px-3 py-2 rounded-md text-sm font-medium ${
-                  isActive("/degrees") 
-                    ? "text-primary bg-primary/5" 
-                    : "text-neutral-700 hover:text-primary hover:bg-neutral-50"
-                }`}>
-                  <GraduationCap className="h-4 w-4 mr-1" />
-                  Diplomák
-                </Link>
-                <Link href="/trending" className={`flex items-center px-3 py-2 rounded-md text-sm font-medium ${
-                  isActive("/trending") 
-                    ? "text-primary bg-primary/5" 
-                    : "text-neutral-700 hover:text-primary hover:bg-neutral-50"
-                }`}>
-                  <BarChart className="h-4 w-4 mr-1" />
-                  Trending
-                  <Badge className="ml-2 bg-orange-100 text-orange-800 text-[10px] py-0 px-1.5">Új</Badge>
-                </Link>
-                <Link href="/careers" className={`flex items-center px-3 py-2 rounded-md text-sm font-medium ${
-                  isActive("/careers") 
-                    ? "text-primary bg-primary/5" 
-                    : "text-neutral-700 hover:text-primary hover:bg-neutral-50"
-                }`}>
-                  <TrendingUp className="h-4 w-4 mr-1" />
-                  Karrierutak
-                </Link>
-                <Link href="/career-paths-ai" className={`flex items-center px-3 py-2 rounded-md text-sm font-medium ${
-                  isActive("/career-paths-ai") 
-                    ? "text-primary bg-primary/5" 
-                    : "text-neutral-700 hover:text-primary hover:bg-neutral-50"
-                }`}>
-                  <BrainCircuit className="h-4 w-4 mr-1" />
-                  AI Karriertervező
-                  <Badge className="ml-2 bg-purple-100 text-purple-800 text-[10px] py-0 px-1.5">Új</Badge>
-                </Link>
-
-              </nav>
-            </div>
-          )}
-          
-          {/* Right Side Auth Buttons */}
-          <div className="flex-shrink-0 flex items-center space-x-1 md:space-x-4">
-            {!isMobile && !isLoading && (
+          {/* Desktop Auth Buttons */}
+          <div className="hidden md:flex items-center space-x-4">
+            {!isLoading && (
               <>
                 {isAuthenticated ? (
                   <div className="flex items-center">
@@ -225,30 +250,58 @@ const Navbar: React.FC = () => {
         </div>
         
         {/* Mobile Menu */}
-        {isMobile && isOpen && (
-          <div className="px-4 py-3 border-t border-neutral-100 bg-white">
+        {isOpen && (
+          <div className="md:hidden px-4 py-3 border-t border-gray-200 bg-white">
             <nav className="space-y-1 mb-4">
-              <Link href="/courses" className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-neutral-700 hover:bg-neutral-50">
-                <BookOpen className="h-5 w-5 mr-3 text-neutral-500" />
+              <Link 
+                href="/courses" 
+                className="flex items-center px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 touch-manipulation"
+                onClick={() => handleNavClick('/courses', 'courses-mobile')}
+              >
+                <BookOpen className="h-5 w-5 mr-3 text-gray-500" />
                 Kurzusok
               </Link>
-              <Link href="/degrees" className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-neutral-700 hover:bg-neutral-50">
-                <GraduationCap className="h-5 w-5 mr-3 text-neutral-500" />
+              <Link 
+                href="/degrees" 
+                className="flex items-center px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 touch-manipulation"
+                onClick={() => handleNavClick('/degrees', 'degrees-mobile')}
+              >
+                <GraduationCap className="h-5 w-5 mr-3 text-gray-500" />
                 Diplomák
               </Link>
-              <Link href="/trending" className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-neutral-700 hover:bg-neutral-50">
-                <BarChart className="h-5 w-5 mr-3 text-neutral-500" />
+              <Link 
+                href="/trending" 
+                className="flex items-center px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 touch-manipulation"
+                onClick={() => handleNavClick('/trending', 'trending-mobile')}
+              >
+                <BarChart className="h-5 w-5 mr-3 text-gray-500" />
                 Trending
-                <Badge className="ml-2 bg-orange-100 text-orange-800 text-[10px] py-0 px-1.5">Új</Badge>
+                <Badge className="ml-2 bg-orange-100 text-orange-800 text-xs px-2 py-0.5">Új</Badge>
               </Link>
-              <Link href="/careers" className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-neutral-700 hover:bg-neutral-50">
-                <TrendingUp className="h-5 w-5 mr-3 text-neutral-500" />
+              <Link 
+                href="/careers" 
+                className="flex items-center px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 touch-manipulation"
+                onClick={() => handleNavClick('/careers', 'careers-mobile')}
+              >
+                <TrendingUp className="h-5 w-5 mr-3 text-gray-500" />
                 Karrierutak
               </Link>
-              <Link href="/career-paths-ai" className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-neutral-700 hover:bg-neutral-50">
-                <BrainCircuit className="h-5 w-5 mr-3 text-neutral-500" />
+              <Link 
+                href="/career-paths-ai" 
+                className="flex items-center px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 touch-manipulation"
+                onClick={() => handleNavClick('/career-paths-ai', 'ai-careers-mobile')}
+              >
+                <BrainCircuit className="h-5 w-5 mr-3 text-gray-500" />
                 AI Karriertervező
-                <Badge className="ml-2 bg-purple-100 text-purple-800 text-[10px] py-0 px-1.5">Új</Badge>
+                <Badge className="ml-2 bg-purple-100 text-purple-800 text-xs px-2 py-0.5">AI</Badge>
+              </Link>
+              <Link 
+                href="/search" 
+                className="flex items-center px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 touch-manipulation"
+                onClick={() => handleNavClick('/search', 'search-mobile')}
+              >
+                <Search className="h-5 w-5 mr-3 text-gray-500" />
+                Keresés
               </Link>
             </nav>
             
