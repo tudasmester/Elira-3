@@ -8,16 +8,19 @@ import Testimonials from "@/components/Testimonials";
 import DegreePrograms from "@/components/DegreePrograms";
 import FreeCourses from "@/components/FreeCourses";
 import HowItWorks from "@/components/HowItWorks";
+import OnboardingTour from "@/components/OnboardingTour";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useLocation } from "wouter";
-import { ArrowRight, BarChart3, LightbulbIcon, Users, BookOpen, Award, Zap, Send, CheckCircle } from "lucide-react";
+import { ArrowRight, BarChart3, LightbulbIcon, Users, BookOpen, Award, Zap, Send, CheckCircle, HelpCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useOnboardingTour } from "@/hooks/useOnboardingTour";
 import { Link } from "wouter";
 
 const Home: React.FC = () => {
   const [, setLocation] = useLocation();
   const { isAuthenticated } = useAuth();
+  const { showTour, startTour, closeTour, completeTour } = useOnboardingTour();
   
   const handleJoinClick = () => {
     if (isAuthenticated) {
@@ -350,7 +353,39 @@ const Home: React.FC = () => {
         </div>
       </section>
       
-      {/* Footer was removed */}
+      {/* Floating Help Button for Tour */}
+      {!showTour && (
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ delay: 2, duration: 0.3 }}
+          className="fixed bottom-6 right-6 z-50"
+        >
+          <Button
+            onClick={startTour}
+            size="lg"
+            className="rounded-full w-14 h-14 bg-blue-600 hover:bg-blue-700 shadow-xl hover:shadow-2xl transition-all duration-300 group"
+          >
+            <HelpCircle className="h-6 w-6 group-hover:scale-110 transition-transform" />
+          </Button>
+          <motion.div
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 3, duration: 0.5 }}
+            className="absolute right-full mr-4 top-1/2 transform -translate-y-1/2 bg-gray-900 text-white px-3 py-2 rounded-lg text-sm whitespace-nowrap shadow-lg"
+          >
+            Platform bemutató 🎯
+            <div className="absolute top-1/2 -right-1 transform -translate-y-1/2 w-2 h-2 bg-gray-900 rotate-45"></div>
+          </motion.div>
+        </motion.div>
+      )}
+      
+      {/* Onboarding Tour */}
+      <OnboardingTour
+        isOpen={showTour}
+        onClose={closeTour}
+        onComplete={completeTour}
+      />
     </>
   );
 };

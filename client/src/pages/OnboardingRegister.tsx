@@ -99,8 +99,9 @@ export default function OnboardingRegister() {
       const response = await apiRequest("POST", "/api/auth/register", registrationData);
       const data = await response.json();
 
-      // Store token
+      // Store token and mark as new user for tour
       localStorage.setItem('auth_token', data.token);
+      localStorage.setItem('elira_new_user', 'true');
 
       toast({
         title: "Sikeres regisztráció!",
