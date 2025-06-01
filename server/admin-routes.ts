@@ -108,9 +108,12 @@ export function registerAdminRoutes(app: Express) {
         universityId: req.body.universityId || 1,
         instructorName: req.body.instructorName || 'TBD',
         language: req.body.language || 'Hungarian',
-        duration: req.body.duration || req.body.estimatedDuration || 1,
+        duration: String(req.body.duration || req.body.estimatedDuration || 1),
         price: req.body.isPaid ? (req.body.price || 0) : 0,
         originalPrice: req.body.originalPrice || req.body.price || 0,
+        imageUrl: req.body.imageUrl || '/placeholder-course.jpg',
+        prerequisites: Array.isArray(req.body.prerequisites) ? req.body.prerequisites.join(', ') : (req.body.prerequisites || ''),
+        tags: Array.isArray(req.body.tags) ? req.body.tags.join(', ') : (req.body.tags || ''),
       };
       
       const validatedData = insertCourseSchema.parse(draftData);
