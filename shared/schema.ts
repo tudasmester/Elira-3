@@ -56,6 +56,7 @@ export const users = pgTable("users", {
   
   // Admin fields
   isAdmin: integer("is_admin").default(0),
+  role: varchar("role").default("student"), // student, instructor, admin, super_admin
   
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),

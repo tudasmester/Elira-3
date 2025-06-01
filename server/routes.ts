@@ -14,6 +14,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const { setupWorkingAuth } = await import("./auth-working");
   setupWorkingAuth(app);
 
+  // Setup MFA routes
+  const { setupMFARoutes } = await import("./mfa");
+  setupMFARoutes(app);
+
+  // Setup session timeout routes
+  const { setupSessionTimeoutRoutes } = await import("./session-timeout");
+  setupSessionTimeoutRoutes(app);
+
   // Initialize admin content (one-time setup)
   app.post("/api/admin/initialize", async (req: Request, res: Response) => {
     try {
