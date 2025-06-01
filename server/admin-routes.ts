@@ -199,29 +199,7 @@ export function registerAdminRoutes(app: Express) {
     }
   });
 
-  // Check if current user is admin
-  app.get("/api/admin/check", requireAuth, async (req, res) => {
-    try {
-      const user = req.user as any;
-      console.log("Admin check - User object:", JSON.stringify(user, null, 2));
-      
-      if (!user || !user.id) {
-        return res.json({ isAdmin: false, user: null });
-      }
-      
-      const userId = user.id;
-      const userRecord = await storage.getUser(userId);
-      console.log("Admin check - User record:", JSON.stringify(userRecord, null, 2));
-      
-      res.json({ 
-        isAdmin: userRecord?.isAdmin === 1,
-        user: userRecord 
-      });
-    } catch (error) {
-      console.error("Error checking admin status:", error);
-      res.status(500).json({ message: "Failed to check admin status" });
-    }
-  });
+  // Admin check endpoint moved to main routes file
 
   // Get detailed course with modules, lessons, and analytics
   app.get('/api/admin/courses/:id/detailed', isAdmin, async (req: Request, res: Response) => {
@@ -281,7 +259,7 @@ export function registerAdminRoutes(app: Express) {
   });
 
   // Toggle course highlight status
-  apiRouter.post('/courses/:id/toggle-highlight', isAdmin, async (req: Request, res: Response) => {
+  app.post('/api/courses/:id/toggle-highlight', isAdmin, async (req: Request, res: Response) => {
     try {
       const courseId = parseInt(req.params.id);
       const course = await storage.toggleCourseHighlight(courseId);

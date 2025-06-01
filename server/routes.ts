@@ -252,8 +252,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Learning Path Builder routes
   registerLearningPathRoutes(app);
   
-  // Admin routes - temporarily disabled to fix server
-  // registerAdminRoutes(app);
+  // Simple admin check endpoint for debugging (must be before admin routes)
+  app.get('/api/admin/check', requireAuth, async (req, res) => {
+    try {
+      const user = req.user as any;
+      console.log("MAIN ROUTE - Admin check - User object:", JSON.stringify(user, null, 2));
+      
+      if (!user || !user.id) {
+        console.log("MAIN ROUTE - No user or user ID");
+        return res.json({ isAdmin: false, user: null });
+      }
+      
+      const userId = user.id;
+      const userRecord = await storage.getUser(userId);
+      console.log("MAIN ROUTE - User record from DB:", JSON.stringify(userRecord, null, 2));
+      
+      const isAdmin = userRecord?.isAdmin === 1;
+      console.log("MAIN ROUTE - Final admin status:", isAdmin);
+      
+      res.json({ 
+        isAdmin,
+        user: userRecord 
+      });
+    } catch (error) {
+      console.error("MAIN ROUTE - Error checking admin status:", error);
+      res.status(500).json({ message: "Failed to check admin status" });
+    }
+  });
+  
+  // Admin routes 
+  registerAdminRoutes(app);
 
   const httpServer = createServer(app);
   return httpServer;
