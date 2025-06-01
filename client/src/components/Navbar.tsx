@@ -28,6 +28,13 @@ const Navbar: React.FC = () => {
   const { isAdmin } = useAdminAuth();
   const { trackAction } = useUserActionTracking();
   
+  // Memoize logout function to prevent issues
+  const handleLogout = useCallback(() => {
+    if (logout && typeof logout === 'function') {
+      logout();
+    }
+  }, [logout]);
+  
   // Enhanced mobile menu toggle with analytics
   const toggleMenu = useCallback((e?: React.MouseEvent) => {
     e?.preventDefault();
@@ -262,7 +269,7 @@ const Navbar: React.FC = () => {
                           <DropdownMenuItem 
                             onClick={(e) => {
                               e.preventDefault();
-                              logout();
+                              handleLogout();
                             }}
                             className="flex items-center cursor-pointer px-3 py-3 rounded-xl hover:bg-red-50 transition-colors group focus:bg-red-50"
                           >
@@ -501,7 +508,7 @@ const Navbar: React.FC = () => {
                     <Button 
                       onClick={(e) => {
                         e.preventDefault();
-                        logout();
+                        handleLogout();
                       }}
                       className="w-full justify-between h-12 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 hover:border-red-300 transition-all group"
                     >
