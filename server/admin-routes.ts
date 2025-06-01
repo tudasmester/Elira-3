@@ -186,7 +186,7 @@ export function registerAdminRoutes(app: Express) {
   });
 
   // Create new module for a course
-  apiRouter.post('/courses/:id/modules', isAdmin, async (req: Request, res: Response) => {
+  app.post('/api/courses/:id/modules', isAdmin, async (req: Request, res: Response) => {
     try {
       const courseId = parseInt(req.params.id);
       const moduleData = { ...req.body, courseId };
@@ -200,7 +200,7 @@ export function registerAdminRoutes(app: Express) {
   });
 
   // Create new lesson for a module
-  apiRouter.post('/modules/:id/lessons', isAdmin, async (req: Request, res: Response) => {
+  app.post('/api/modules/:id/lessons', isAdmin, async (req: Request, res: Response) => {
     try {
       const moduleId = parseInt(req.params.id);
       const lessonData = { ...req.body, moduleId };
@@ -226,7 +226,7 @@ export function registerAdminRoutes(app: Express) {
   });
 
   // Update lesson content
-  apiRouter.put('/lessons/:id', isAdmin, async (req: Request, res: Response) => {
+  app.put('/api/lessons/:id', isAdmin, async (req: Request, res: Response) => {
     try {
       const lessonId = parseInt(req.params.id);
       const lesson = await storage.updateLesson(lessonId, req.body);
@@ -238,7 +238,7 @@ export function registerAdminRoutes(app: Express) {
   });
 
   // Create quiz for a lesson
-  apiRouter.post('/lessons/:id/quizzes', isAdmin, async (req: Request, res: Response) => {
+  app.post('/api/lessons/:id/quizzes', isAdmin, async (req: Request, res: Response) => {
     try {
       const lessonId = parseInt(req.params.id);
       const quizData = { ...req.body, lessonId };

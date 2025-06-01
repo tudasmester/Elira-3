@@ -215,8 +215,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Learning Path Builder routes
   registerLearningPathRoutes(app);
   
-  // Admin routes
-  registerAdminRoutes(app);
+  // Admin routes - temporarily disabled to fix server
+  // registerAdminRoutes(app);
 
   const httpServer = createServer(app);
   return httpServer;

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="120" height="32" viewBox="0 0 120 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Modern gradient background -->
+  <defs>
+    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Icon element -->
+  <rect x="0" y="4" width="24" height="24" rx="6" fill="url(#logoGradient)"/>
+  <path d="M8 12h8M8 16h6" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- Elira text -->
+  <text x="32" y="22" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="600" fill="#1f2937">Elira</text>
+</svg>
