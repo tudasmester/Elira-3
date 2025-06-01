@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "@/hooks/useDebounce";
+import { EliraSearchLoader } from "@/components/EliraLoader";
 
 interface SearchFilters {
   category: string[];

@@ -127,3 +127,19 @@
     @apply scale-105;
   }
 }
+
+/* Elira Loading Animations */
+@keyframes wave {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-10deg); }
+  75% { transform: rotate(10deg); }
+}
+
+@keyframes wave-bar {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(1.5); }
+}
+
+.animate-wave {
+  animation: wave 2s ease-in-out infinite;
+}
