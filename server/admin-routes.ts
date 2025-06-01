@@ -200,14 +200,21 @@ export function registerAdminRoutes(app: Express) {
   });
 
   // Check if current user is admin
-  app.get("/api/admin/check", async (req, res) => {
+  app.get("/api/admin/check", requireAuth, async (req, res) => {
     try {
       const user = req.user as any;
-      const userId = user.claims.sub;
+      console.log("Admin check - User object:", JSON.stringify(user, null, 2));
+      
+      if (!user || !user.id) {
+        return res.json({ isAdmin: false, user: null });
+      }
+      
+      const userId = user.id;
       const userRecord = await storage.getUser(userId);
+      console.log("Admin check - User record:", JSON.stringify(userRecord, null, 2));
       
       res.json({ 
-        isAdmin: !!userRecord?.isAdmin,
+        isAdmin: userRecord?.isAdmin === 1,
         user: userRecord 
       });
     } catch (error) {
