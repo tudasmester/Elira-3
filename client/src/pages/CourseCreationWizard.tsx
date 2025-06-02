@@ -78,9 +78,9 @@ export default function CourseCreationWizard() {
     
     try {
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append('image', file);
 
-      const response = await fetch('/api/upload/course-image', {
+      const response = await fetch('/api/admin/upload/course-image', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth_token')}`

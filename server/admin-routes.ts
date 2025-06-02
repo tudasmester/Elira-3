@@ -45,11 +45,17 @@ export function registerAdminRoutes(app: Express) {
   // File upload endpoint for course images
   app.post('/api/admin/upload/course-image', requireAuth, isAdmin, upload.single('image'), async (req, res) => {
     try {
+      console.log('=== COURSE IMAGE UPLOAD ===');
+      console.log('File received:', req.file ? 'Yes' : 'No');
+      console.log('File details:', req.file);
+      
       if (!req.file) {
         return res.status(400).json({ message: 'No file uploaded' });
       }
 
       const imageUrl = `/uploads/courses/${req.file.filename}`;
+      
+      console.log('Generated image URL:', imageUrl);
       
       res.json({
         success: true,
