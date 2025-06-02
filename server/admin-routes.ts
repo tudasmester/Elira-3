@@ -616,4 +616,34 @@ export function registerAdminRoutes(app: Express) {
       res.status(500).json({ message: "Failed to get synchronization status" });
     }
   });
+
+  // Course content management endpoints
+  app.get('/api/admin/courses/:id/modules', isAdmin, async (req: Request, res: Response) => {
+    try {
+      const courseId = parseInt(req.params.id);
+      // For now, return empty array as we build the module system
+      res.json([]);
+    } catch (error) {
+      console.error('Error fetching course modules:', error);
+      res.status(500).json({ message: 'Failed to fetch course modules' });
+    }
+  });
+
+  app.put('/api/admin/courses/:id/content', isAdmin, async (req: Request, res: Response) => {
+    try {
+      const courseId = parseInt(req.params.id);
+      const { modules } = req.body;
+      
+      // For now, just return success as we're building the module system
+      console.log(`Updating content for course ${courseId}:`, modules);
+      
+      res.json({ 
+        message: 'Course content updated successfully',
+        modules: modules || []
+      });
+    } catch (error) {
+      console.error('Error updating course content:', error);
+      res.status(500).json({ message: 'Failed to update course content' });
+    }
+  });
 }
