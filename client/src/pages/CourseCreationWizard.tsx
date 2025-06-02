@@ -15,6 +15,23 @@ interface CourseFormData {
   title: string;
   description: string;
   imageUrl: string;
+  category: string;
+  level: string;
+  language: string;
+  duration: number;
+  price: number;
+  prerequisites: string;
+  learningOutcomes: string[];
+  modules: Array<{
+    title: string;
+    description: string;
+    lessons: Array<{
+      title: string;
+      description: string;
+      content: string;
+      estimatedDuration: number;
+    }>;
+  }>;
 }
 
 export default function CourseCreationWizard() {
@@ -26,14 +43,114 @@ export default function CourseCreationWizard() {
   const [formData, setFormData] = useState<CourseFormData>({
     title: '',
     description: '',
-    imageUrl: ''
+    imageUrl: '',
+    category: '',
+    level: 'beginner',
+    language: 'Hungarian',
+    duration: 0,
+    price: 0,
+    prerequisites: '',
+    learningOutcomes: [],
+    modules: []
   });
 
-  const totalSteps = 2;
+  const totalSteps = 5;
   const progressPercent = (currentStep / totalSteps) * 100;
 
-  const handleInputChange = (field: keyof CourseFormData, value: string) => {
+  const handleInputChange = (field: keyof CourseFormData, value: string | number) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  // Helper functions for managing learning outcomes
+  const addLearningOutcome = () => {
+    setFormData(prev => ({
+      ...prev,
+      learningOutcomes: [...prev.learningOutcomes, '']
+    }));
+  };
+
+  const updateLearningOutcome = (index: number, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      learningOutcomes: prev.learningOutcomes.map((outcome, i) => 
+        i === index ? value : outcome
+      )
+    }));
+  };
+
+  const removeLearningOutcome = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      learningOutcomes: prev.learningOutcomes.filter((_, i) => i !== index)
+    }));
+  };
+
+  // Helper functions for managing modules
+  const addModule = () => {
+    setFormData(prev => ({
+      ...prev,
+      modules: [...prev.modules, { title: '', description: '', lessons: [] }]
+    }));
+  };
+
+  const updateModule = (index: number, field: 'title' | 'description', value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      modules: prev.modules.map((module, i) =>
+        i === index ? { ...module, [field]: value } : module
+      )
+    }));
+  };
+
+  const removeModule = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      modules: prev.modules.filter((_, i) => i !== index)
+    }));
+  };
+
+  const addLesson = (moduleIndex: number) => {
+    setFormData(prev => ({
+      ...prev,
+      modules: prev.modules.map((module, i) =>
+        i === moduleIndex 
+          ? { 
+              ...module, 
+              lessons: [...module.lessons, { title: '', description: '', content: '', estimatedDuration: 0 }]
+            }
+          : module
+      )
+    }));
+  };
+
+  const updateLesson = (moduleIndex: number, lessonIndex: number, field: keyof CourseFormData['modules'][0]['lessons'][0], value: string | number) => {
+    setFormData(prev => ({
+      ...prev,
+      modules: prev.modules.map((module, i) =>
+        i === moduleIndex
+          ? {
+              ...module,
+              lessons: module.lessons.map((lesson, j) =>
+                j === lessonIndex ? { ...lesson, [field]: value } : lesson
+              )
+            }
+          : module
+      )
+    }));
+  };
+
+  const removeLesson = (moduleIndex: number, lessonIndex: number) => {
+    setFormData(prev => ({
+      ...prev,
+      modules: prev.modules.map((module, i) =>
+        i === moduleIndex
+          ? {
+              ...module,
+              lessons: module.lessons.filter((_, j) => j !== lessonIndex)
+            }
+          : module
+      )
+    }));
   };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -301,6 +418,311 @@ export default function CourseCreationWizard() {
         <Button 
           variant="outline"
           onClick={() => setCurrentStep(1)}
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Vissza
+        </Button>
+        
+        <Button 
+          onClick={handleCreateCourse}
+          disabled={isCreating}
+          className="px-8"
+        >
+          {isCreating ? (
+            <>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+              Létrehozás...
+            </>
+          ) : (
+            <>
+              <CheckCircle className="h-4 w-4 mr-2" />
+              Kurzus létrehozása
+            </>
+          )}
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderStep3 = () => (
+    <div className="space-y-6">
+      <div className="text-center">
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          Kurzus részletek
+        </h2>
+        <p className="text-gray-600">
+          Add meg a kurzus alapvető információit
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="category" className="text-sm font-medium text-gray-700">
+            Kategória
+          </Label>
+          <Select value={formData.category} onValueChange={(value) => handleInputChange('category', value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Válassz kategóriát" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Technológia">Technológia</SelectItem>
+              <SelectItem value="Üzlet">Üzlet</SelectItem>
+              <SelectItem value="Design">Design</SelectItem>
+              <SelectItem value="Marketing">Marketing</SelectItem>
+              <SelectItem value="Általános">Általános</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
+          <Label htmlFor="level" className="text-sm font-medium text-gray-700">
+            Szint
+          </Label>
+          <Select value={formData.level} onValueChange={(value) => handleInputChange('level', value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Válassz szintet" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="beginner">Kezdő</SelectItem>
+              <SelectItem value="intermediate">Középhaladó</SelectItem>
+              <SelectItem value="advanced">Haladó</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
+          <Label htmlFor="language" className="text-sm font-medium text-gray-700">
+            Nyelv
+          </Label>
+          <Select value={formData.language} onValueChange={(value) => handleInputChange('language', value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Válassz nyelvet" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Hungarian">Magyar</SelectItem>
+              <SelectItem value="English">Angol</SelectItem>
+              <SelectItem value="German">Német</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
+          <Label htmlFor="duration" className="text-sm font-medium text-gray-700">
+            Időtartam (órában)
+          </Label>
+          <Input
+            id="duration"
+            type="number"
+            min="0"
+            step="0.5"
+            value={formData.duration}
+            onChange={(e) => handleInputChange('duration', e.target.value)}
+            placeholder="pl. 4.5"
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="price" className="text-sm font-medium text-gray-700">
+            Ár (Ft)
+          </Label>
+          <Input
+            id="price"
+            type="number"
+            min="0"
+            value={formData.price}
+            onChange={(e) => handleInputChange('price', e.target.value)}
+            placeholder="pl. 15000"
+          />
+        </div>
+      </div>
+
+      <div>
+        <Label htmlFor="prerequisites" className="text-sm font-medium text-gray-700">
+          Előfeltételek (opcionális)
+        </Label>
+        <Textarea
+          id="prerequisites"
+          rows={3}
+          value={formData.prerequisites}
+          onChange={(e) => handleInputChange('prerequisites', e.target.value)}
+          placeholder="Milyen előzetes tudás szükséges a kurzushoz?"
+        />
+      </div>
+
+      <div className="flex justify-between">
+        <Button 
+          variant="outline"
+          onClick={() => setCurrentStep(2)}
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Vissza
+        </Button>
+        
+        <Button 
+          onClick={() => setCurrentStep(4)}
+          className="px-8"
+        >
+          Tovább
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderStep4 = () => (
+    <div className="space-y-6">
+      <div className="text-center">
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          Tanulási eredmények
+        </h2>
+        <p className="text-gray-600">
+          Mit fog megtanulni a diák a kurzus végére?
+        </p>
+      </div>
+
+      <div className="space-y-4">
+        {formData.learningOutcomes.map((outcome, index) => (
+          <div key={index} className="flex gap-2">
+            <Input
+              placeholder={`${index + 1}. tanulási eredmény`}
+              value={outcome}
+              onChange={(e) => updateLearningOutcome(index, e.target.value)}
+              className="flex-1"
+            />
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => removeLearningOutcome(index)}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        ))}
+        
+        <Button
+          variant="outline"
+          onClick={addLearningOutcome}
+          className="w-full"
+        >
+          + Új tanulási eredmény hozzáadása
+        </Button>
+      </div>
+
+      <div className="flex justify-between">
+        <Button 
+          variant="outline"
+          onClick={() => setCurrentStep(3)}
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Vissza
+        </Button>
+        
+        <Button 
+          onClick={() => setCurrentStep(5)}
+          className="px-8"
+        >
+          Tovább
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderStep5 = () => (
+    <div className="space-y-6">
+      <div className="text-center">
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          Modulok és leckék
+        </h2>
+        <p className="text-gray-600">
+          Strukturáld a kurzus tartalmát modulokba és leckékbe
+        </p>
+      </div>
+
+      <div className="space-y-6">
+        {formData.modules.map((module, moduleIndex) => (
+          <div key={moduleIndex} className="border rounded-lg p-4 space-y-4">
+            <div className="flex justify-between items-start">
+              <h3 className="text-lg font-medium">Modul {moduleIndex + 1}</h3>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => removeModule(moduleIndex)}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+            
+            <div className="space-y-3">
+              <Input
+                placeholder="Modul címe"
+                value={module.title}
+                onChange={(e) => updateModule(moduleIndex, 'title', e.target.value)}
+              />
+              <Textarea
+                placeholder="Modul leírása"
+                value={module.description}
+                onChange={(e) => updateModule(moduleIndex, 'description', e.target.value)}
+                rows={2}
+              />
+            </div>
+
+            <div className="pl-4 space-y-3">
+              <h4 className="font-medium text-gray-700">Leckék</h4>
+              {module.lessons.map((lesson, lessonIndex) => (
+                <div key={lessonIndex} className="border-l-2 border-gray-200 pl-4 space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium">Lecke {lessonIndex + 1}</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeLesson(moduleIndex, lessonIndex)}
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
+                  <Input
+                    placeholder="Lecke címe"
+                    value={lesson.title}
+                    onChange={(e) => updateLesson(moduleIndex, lessonIndex, 'title', e.target.value)}
+                  />
+                  <Textarea
+                    placeholder="Lecke leírása"
+                    value={lesson.description}
+                    onChange={(e) => updateLesson(moduleIndex, lessonIndex, 'description', e.target.value)}
+                    rows={2}
+                  />
+                  <Input
+                    placeholder="Becsült időtartam (percben)"
+                    type="number"
+                    value={lesson.estimatedDuration}
+                    onChange={(e) => updateLesson(moduleIndex, lessonIndex, 'estimatedDuration', parseInt(e.target.value) || 0)}
+                  />
+                </div>
+              ))}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => addLesson(moduleIndex)}
+                className="ml-4"
+              >
+                + Lecke hozzáadása
+              </Button>
+            </div>
+          </div>
+        ))}
+        
+        <Button
+          variant="outline"
+          onClick={addModule}
+          className="w-full"
+        >
+          + Új modul hozzáadása
+        </Button>
+      </div>
+
+      <div className="flex justify-between">
+        <Button 
+          variant="outline"
+          onClick={() => setCurrentStep(4)}
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Vissza
