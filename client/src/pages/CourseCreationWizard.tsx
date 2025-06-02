@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { AdminGuard } from '@/components/AdminGuard';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
-import { ArrowLeft, Upload, Image, CheckCircle, X } from 'lucide-react';
+import { ArrowLeft, Upload, Image, CheckCircle, X, Plus, Trash2 } from 'lucide-react';
 import { Link } from 'wouter';
 
 interface CourseFormData {
