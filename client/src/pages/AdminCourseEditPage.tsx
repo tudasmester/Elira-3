@@ -1,518 +1,264 @@
-import React from 'react';
-import { useParams, useLocation } from 'wouter';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Switch } from '@/components/ui/switch';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, Save, Eye, Loader2 } from 'lucide-react';
-import { apiRequest, queryClient } from '@/lib/queryClient';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import { apiRequest } from '@/lib/queryClient';
+import { ArrowLeft, Save } from 'lucide-react';
 
-const editCourseSchema = z.object({
-  title: z.string().min(3, 'Title must be at least 3 characters'),
-  subtitle: z.string().optional(),
-  description: z.string().min(10, 'Description must be at least 10 characters'),
-  category: z.string().min(1, 'Please select a category'),
-  level: z.enum(['beginner', 'intermediate', 'advanced']),
-  duration: z.string().min(1, 'Duration is required'),
-  price: z.number().min(0, 'Price must be 0 or greater'),
-  originalPrice: z.number().min(0, 'Original price must be 0 or greater'),
-  maxEnrollments: z.number().min(1, 'Max enrollments must be at least 1'),
-  imageUrl: z.string().optional(),
-  prerequisites: z.string().optional(),
-  tags: z.string().optional(),
-  metaDescription: z.string().optional(),
-  isPublished: z.boolean(),
-  isHighlighted: z.boolean(),
-});
-
-type EditCourseFormData = z.infer<typeof editCourseSchema>;
-
-const categories = [
-  'Programming & Development',
-  'Business & Entrepreneurship', 
-  'Marketing & Sales',
-  'Design & Creative',
-  'Data Science & Analytics',
-  'Engineering & Technology',
-  'Health & Medicine',
-  'Language Learning',
-  'Personal Development',
-  'Other'
-];
+interface Course {
+  id: number;
+  title: string;
+  description: string;
+  imageUrl: string;
+  category: string;
+  level: string;
+  language: string;
+  duration: string;
+  price: number;
+  prerequisites: string;
+  instructorName: string;
+}
 
 export default function AdminCourseEditPage() {
-  const { id } = useParams<{ id: string }>();
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
   const { toast } = useToast();
+  const [course, setCourse] = useState<Course | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
 
-  const { data: course, isLoading } = useQuery({
-    queryKey: ['/api/admin/courses', id],
-    queryFn: async () => {
-      const response = await apiRequest('GET', `/api/admin/courses/${id}`);
-      return response.json();
-    },
-  });
+  // Extract course ID from URL
+  const courseId = location.split('/')[3];
 
-  const form = useForm<EditCourseFormData>({
-    resolver: zodResolver(editCourseSchema),
-    defaultValues: {
-      title: '',
-      subtitle: '',
-      description: '',
-      category: '',
-      level: 'beginner',
-      duration: '1',
-      price: 0,
-      originalPrice: 0,
-      maxEnrollments: 100,
-      imageUrl: '',
-      prerequisites: '',
-      tags: '',
-      metaDescription: '',
-      isPublished: false,
-      isHighlighted: false,
-    },
-  });
+  useEffect(() => {
+    loadCourse();
+  }, [courseId]);
 
-  // Update form when course data loads
-  React.useEffect(() => {
-    if (course) {
-      form.reset({
-        title: course.title || '',
-        subtitle: course.subtitle || '',
-        description: course.description || '',
-        category: course.category || '',
-        level: course.level || 'beginner',
-        duration: course.duration || '1',
-        price: course.price || 0,
-        originalPrice: course.originalPrice || 0,
-        maxEnrollments: course.maxEnrollments || 100,
-        imageUrl: course.imageUrl || '',
-        prerequisites: course.prerequisites || '',
-        tags: course.tags || '',
-        metaDescription: course.metaDescription || '',
-        isPublished: Boolean(course.isPublished),
-        isHighlighted: Boolean(course.isHighlighted),
+  const loadCourse = async () => {
+    try {
+      setIsLoading(true);
+      const response = await apiRequest('GET', '/api/admin/courses');
+      const courses = await response.json();
+      const foundCourse = courses.find((c: Course) => c.id === parseInt(courseId));
+      
+      if (foundCourse) {
+        setCourse(foundCourse);
+      } else {
+        throw new Error('Kurzus nem található');
+      }
+    } catch (error) {
+      toast({
+        title: "Hiba történt",
+        description: "A kurzus betöltése nem sikerült.",
+        variant: "destructive"
       });
+    } finally {
+      setIsLoading(false);
     }
-  }, [course, form]);
+  };
 
-  const updateCourseMutation = useMutation({
-    mutationFn: async (data: EditCourseFormData) => {
-      const response = await apiRequest('PUT', `/api/admin/courses/${id}`, data);
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/courses'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/courses', id] });
-      toast({
-        title: 'Course Updated',
-        description: 'Course has been updated successfully!',
-      });
-    },
-    onError: (error: Error) => {
-      toast({
-        title: 'Update Failed',
-        description: error.message,
-        variant: 'destructive',
-      });
-    },
-  });
+  const handleSave = async () => {
+    if (!course) return;
 
-  const onSubmit = (data: EditCourseFormData) => {
-    updateCourseMutation.mutate(data);
+    try {
+      setIsSaving(true);
+      await apiRequest('PUT', `/api/admin/courses/${courseId}`, course);
+      
+      toast({
+        title: "Sikeres mentés",
+        description: "A kurzus adatai sikeresen frissültek."
+      });
+      
+      // Navigate back to admin courses
+      setLocation('/admin/courses');
+    } catch (error) {
+      toast({
+        title: "Hiba történt",
+        description: "A kurzus mentése nem sikerült.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const updateCourse = (field: keyof Course, value: string | number) => {
+    if (!course) return;
+    setCourse({ ...course, [field]: value });
   };
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" />
+          </div>
+        </div>
       </div>
     );
   }
 
   if (!course) {
     return (
-      <div className="max-w-4xl mx-auto p-6">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Course Not Found</h1>
-          <Button onClick={() => setLocation('/admin/courses')}>
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Courses
-          </Button>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Kurzus nem található</h1>
+            <Button onClick={() => setLocation('/admin/courses')}>
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Vissza a kurzusokhoz
+            </Button>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" onClick={() => setLocation('/admin/courses')}>
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Courses
-          </Button>
-          <div>
-            <h1 className="text-2xl font-bold">Edit Course</h1>
-            <p className="text-muted-foreground">Course ID: {id}</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <Badge variant={course.isPublished ? "default" : "secondary"}>
-            {course.isPublished ? "Published" : "Draft"}
-          </Badge>
-          {course.isHighlighted && (
-            <Badge variant="outline">Featured</Badge>
-          )}
-        </div>
-      </div>
-
-      <Separator />
-
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          {/* Basic Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Basic Information</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Course Title *</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="subtitle"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Subtitle</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description *</FormLabel>
-                    <FormControl>
-                      <Textarea className="min-h-32" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <FormField
-                  control={form.control}
-                  name="category"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Category *</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select category" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {categories.map((category) => (
-                            <SelectItem key={category} value={category}>
-                              {category}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="level"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Level *</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="beginner">Beginner</SelectItem>
-                          <SelectItem value="intermediate">Intermediate</SelectItem>
-                          <SelectItem value="advanced">Advanced</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="duration"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Duration (hours) *</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Pricing & Access */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Pricing & Access</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <FormField
-                  control={form.control}
-                  name="price"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Price (HUF)</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="number" 
-                          {...field}
-                          onChange={e => field.onChange(parseFloat(e.target.value) || 0)}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="originalPrice"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Original Price (HUF)</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="number" 
-                          {...field}
-                          onChange={e => field.onChange(parseFloat(e.target.value) || 0)}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="maxEnrollments"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Max Enrollments</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="number" 
-                          {...field}
-                          onChange={e => field.onChange(parseInt(e.target.value) || 100)}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Media & SEO */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Media & SEO</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <FormField
-                control={form.control}
-                name="imageUrl"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Course Image URL</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="https://example.com/image.jpg" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="metaDescription"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Meta Description</FormLabel>
-                    <FormControl>
-                      <Textarea className="min-h-20" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="prerequisites"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Prerequisites</FormLabel>
-                      <FormControl>
-                        <Textarea className="min-h-20" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="tags"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Tags (comma separated)</FormLabel>
-                      <FormControl>
-                        <Textarea className="min-h-20" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Publishing Settings */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Publishing Settings</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <FormLabel>Published Status</FormLabel>
-                  <div className="text-sm text-muted-foreground">
-                    Make this course visible to students
-                  </div>
-                </div>
-                <FormField
-                  control={form.control}
-                  name="isPublished"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <Separator />
-
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <FormLabel>Featured Course</FormLabel>
-                  <div className="text-sm text-muted-foreground">
-                    Highlight this course on the homepage
-                  </div>
-                </div>
-                <FormField
-                  control={form.control}
-                  name="isHighlighted"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Actions */}
-          <div className="flex justify-between items-center">
-            <Button variant="outline" onClick={() => setLocation('/admin/courses')}>
-              Cancel
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+      <div className="max-w-4xl mx-auto">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center space-x-4">
+            <Button 
+              variant="outline" 
+              onClick={() => setLocation('/admin/courses')}
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Vissza
             </Button>
-            
-            <div className="flex gap-2">
-              <Button 
-                type="submit" 
-                disabled={updateCourseMutation.isPending}
-                className="bg-blue-600 hover:bg-blue-700"
-              >
-                {updateCourseMutation.isPending ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Saving...
-                  </>
-                ) : (
-                  <>
-                    <Save className="h-4 w-4 mr-2" />
-                    Save Changes
-                  </>
-                )}
-              </Button>
-            </div>
+            <h1 className="text-3xl font-bold text-gray-900">Kurzus szerkesztése</h1>
           </div>
-        </form>
-      </Form>
+          <Button onClick={handleSave} disabled={isSaving}>
+            <Save className="w-4 h-4 mr-2" />
+            {isSaving ? 'Mentés...' : 'Mentés'}
+          </Button>
+        </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Kurzus adatok</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Kurzus címe
+              </label>
+              <Input
+                value={course.title}
+                onChange={(e) => updateCourse('title', e.target.value)}
+                placeholder="Adja meg a kurzus címét"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Leírás
+              </label>
+              <Textarea
+                value={course.description}
+                onChange={(e) => updateCourse('description', e.target.value)}
+                placeholder="Adja meg a kurzus leírását"
+                rows={4}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Kategória
+                </label>
+                <Select 
+                  value={course.category} 
+                  onValueChange={(value) => updateCourse('category', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Informatika">Informatika</SelectItem>
+                    <SelectItem value="Gazdaság">Gazdaság</SelectItem>
+                    <SelectItem value="Jog">Jog</SelectItem>
+                    <SelectItem value="Egészségügy">Egészségügy</SelectItem>
+                    <SelectItem value="Művészet">Művészet</SelectItem>
+                    <SelectItem value="Általános">Általános</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Szint
+                </label>
+                <Select 
+                  value={course.level} 
+                  onValueChange={(value) => updateCourse('level', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="beginner">Kezdő</SelectItem>
+                    <SelectItem value="intermediate">Közepes</SelectItem>
+                    <SelectItem value="advanced">Haladó</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Időtartam (órában)
+                </label>
+                <Input
+                  value={course.duration}
+                  onChange={(e) => updateCourse('duration', e.target.value)}
+                  placeholder="pl. 20"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Ár (Ft)
+                </label>
+                <Input
+                  type="number"
+                  value={course.price}
+                  onChange={(e) => updateCourse('price', parseInt(e.target.value) || 0)}
+                  placeholder="pl. 15000"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Előfeltételek
+              </label>
+              <Textarea
+                value={course.prerequisites}
+                onChange={(e) => updateCourse('prerequisites', e.target.value)}
+                placeholder="Adja meg a kurzus előfeltételeit"
+                rows={3}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Oktató neve
+              </label>
+              <Input
+                value={course.instructorName}
+                onChange={(e) => updateCourse('instructorName', e.target.value)}
+                placeholder="Adja meg az oktató nevét"
+              />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

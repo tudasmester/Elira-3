@@ -41,6 +41,7 @@ export default function CourseCreationWizard() {
   const [isCreating, setIsCreating] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [createdCourseId, setCreatedCourseId] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState<CourseFormData>({
     title: '',
@@ -56,7 +57,7 @@ export default function CourseCreationWizard() {
     modules: []
   });
 
-  const totalSteps = 5;
+  const totalSteps = 6; // Added content building step
   const progressPercent = (currentStep / totalSteps) * 100;
 
   const handleInputChange = (field: keyof CourseFormData, value: string | number) => {
@@ -315,13 +316,14 @@ export default function CourseCreationWizard() {
       const response = await apiRequest('POST', '/api/admin/courses', courseData);
       const newCourse = await response.json();
 
+      // Store the created course ID and advance to content building step
+      setCreatedCourseId(newCourse.id);
+      setCurrentStep(6);
+
       toast({
         title: "Sikeres létrehozás",
-        description: `A "${formData.title}" kurzus sikeresen létrejött.`
+        description: `A "${formData.title}" kurzus létrejött. Most hozzáadhatja a tananyagot.`
       });
-
-      // Navigate back to admin courses list (content builder will be available later)
-      window.location.href = `/admin/courses`;
     } catch (error) {
       toast({
         title: "Hiba történt",
@@ -846,6 +848,7 @@ export default function CourseCreationWizard() {
               {currentStep === 3 && renderStep3()}
               {currentStep === 4 && renderStep4()}
               {currentStep === 5 && renderStep5()}
+              {currentStep === 6 && renderStep6()}
             </CardContent>
           </Card>
 
