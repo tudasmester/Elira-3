@@ -40,6 +40,7 @@ export default function CourseCreationWizard() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isCreating, setIsCreating] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState<CourseFormData>({
     title: '',
@@ -154,9 +155,56 @@ export default function CourseCreationWizard() {
     }));
   };
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  // Drag and drop handlers
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    
+    const files = Array.from(e.dataTransfer.files);
+    if (files.length > 0) {
+      handleFileUpload(files[0]);
+    }
+  };
+
+  const handleFileInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
+    if (file) {
+      handleFileUpload(file);
+    }
+  };
+
+  const handleFileUpload = async (file: File) => {
     if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "Hibás fájltípus",
+        description: "Csak képfájlokat lehet feltölteni (JPG, PNG, GIF).",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "Túl nagy fájl",
+        description: "A fájl mérete nem lehet nagyobb 5MB-nál.",
+        variant: "destructive"
+      });
+      return;
+    }
 
     // Validate file type
     const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
@@ -272,8 +320,8 @@ export default function CourseCreationWizard() {
         description: `A "${formData.title}" kurzus sikeresen létrejött.`
       });
 
-      // Navigate to course content builder with the new course ID
-      window.location.href = `/admin/content-builder?courseId=${newCourse.id}`;
+      // Navigate back to admin courses list
+      window.location.href = `/admin/courses`;
     } catch (error) {
       toast({
         title: "Hiba történt",
@@ -362,10 +410,22 @@ export default function CourseCreationWizard() {
               onChange={(e) => handleInputChange('imageUrl', e.target.value)}
             />
             
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center bg-gray-50">
-              <Image className="mx-auto h-12 w-12 text-gray-400 mb-3" />
+            <div 
+              className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+                isDragOver 
+                  ? 'border-blue-400 bg-blue-50' 
+                  : 'border-gray-300 bg-gray-50'
+              }`}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+            >
+              <Image className={`mx-auto h-12 w-12 mb-3 ${isDragOver ? 'text-blue-500' : 'text-gray-400'}`} />
               <p className="text-sm text-gray-600 mb-2">
-                Húzd ide a képet vagy add meg az URL-t
+                {isDragOver ? 'Engedd el a képet ide' : 'Húzd ide a képet vagy kattints a feltöltéshez'}
+              </p>
+              <p className="text-xs text-gray-500 mb-3">
+                JPG, PNG, GIF vagy WebP • Maximum 5MB
               </p>
               <Button 
                 variant="outline" 
@@ -389,7 +449,7 @@ export default function CourseCreationWizard() {
                 ref={fileInputRef}
                 type="file"
                 accept="image/*"
-                onChange={handleFileUpload}
+                onChange={handleFileInputChange}
                 className="hidden"
               />
             </div>
