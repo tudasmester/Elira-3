@@ -818,6 +818,144 @@ export default function CourseCreationWizard() {
     </div>
   );
 
+  const renderStep6 = () => (
+    <div className="space-y-6">
+      <div className="text-center">
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Tananyag létrehozása</h2>
+        <p className="text-gray-600">
+          Most hozzáadhatja a modulokat és leckéket a kurzusához.
+        </p>
+      </div>
+
+      <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+        <div className="flex items-center">
+          <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
+          <span className="text-green-800 font-medium">
+            A kurzus sikeresen létrejött! ID: {createdCourseId}
+          </span>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold">Modulok és leckék</h3>
+        
+        {formData.modules.length === 0 ? (
+          <div className="text-center py-8 bg-gray-50 rounded-lg">
+            <p className="text-gray-500 mb-4">Még nincsenek modulok hozzáadva.</p>
+            <Button onClick={addModule} variant="outline">
+              <Plus className="h-4 w-4 mr-2" />
+              Első modul hozzáadása
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {formData.modules.map((module, moduleIndex) => (
+              <div key={moduleIndex} className="border rounded-lg p-4">
+                <div className="flex items-center justify-between mb-4">
+                  <h4 className="font-medium">Modul {moduleIndex + 1}</h4>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => removeModule(moduleIndex)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+                
+                <div className="space-y-3 mb-4">
+                  <Input
+                    placeholder="Modul címe"
+                    value={module.title}
+                    onChange={(e) => updateModule(moduleIndex, 'title', e.target.value)}
+                  />
+                  <Textarea
+                    placeholder="Modul leírása"
+                    value={module.description}
+                    onChange={(e) => updateModule(moduleIndex, 'description', e.target.value)}
+                    rows={2}
+                  />
+                </div>
+
+                <div className="ml-4 space-y-3">
+                  <h5 className="font-medium text-sm">Leckék:</h5>
+                  {module.lessons.map((lesson, lessonIndex) => (
+                    <div key={lessonIndex} className="border-l-2 border-gray-200 pl-4 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium">Lecke {lessonIndex + 1}</span>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => removeLesson(moduleIndex, lessonIndex)}
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </div>
+                      <Input
+                        placeholder="Lecke címe"
+                        value={lesson.title}
+                        onChange={(e) => updateLesson(moduleIndex, lessonIndex, 'title', e.target.value)}
+                      />
+                      <Textarea
+                        placeholder="Lecke leírása"
+                        value={lesson.description}
+                        onChange={(e) => updateLesson(moduleIndex, lessonIndex, 'description', e.target.value)}
+                        rows={2}
+                      />
+                      <Input
+                        placeholder="Becsült időtartam (percben)"
+                        type="number"
+                        value={lesson.estimatedDuration}
+                        onChange={(e) => updateLesson(moduleIndex, lessonIndex, 'estimatedDuration', parseInt(e.target.value) || 0)}
+                      />
+                    </div>
+                  ))}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => addLesson(moduleIndex)}
+                  >
+                    + Lecke hozzáadása
+                  </Button>
+                </div>
+              </div>
+            ))}
+            
+            <Button
+              variant="outline"
+              onClick={addModule}
+              className="w-full"
+            >
+              + Új modul hozzáadása
+            </Button>
+          </div>
+        )}
+      </div>
+
+      <div className="flex justify-between">
+        <Button 
+          variant="outline"
+          onClick={() => window.location.href = '/admin/courses'}
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Befejezés
+        </Button>
+        
+        <Button 
+          onClick={() => {
+            toast({
+              title: "Tananyag mentve",
+              description: "A modulok és leckék sikeresen mentve."
+            });
+            window.location.href = '/admin/courses';
+          }}
+        >
+          <CheckCircle className="h-4 w-4 mr-2" />
+          Tananyag mentése
+        </Button>
+      </div>
+    </div>
+  );
+
   return (
     <AdminGuard>
       <div className="min-h-screen bg-gray-50 py-8">
