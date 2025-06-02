@@ -67,17 +67,25 @@ export default function CourseContentBuilder() {
     try {
       setIsLoading(true);
       
-      // Load course details
-      const courseResponse = await apiRequest('GET', `/api/admin/courses/${courseId}`);
-      const courseData = await courseResponse.json();
-      setCourse(courseData);
+      // Load course details from the courses list endpoint
+      const coursesResponse = await apiRequest('GET', '/api/admin/courses');
+      const coursesData = await coursesResponse.json();
+      
+      // Find the specific course
+      const courseData = coursesData.find((c: any) => c.id === parseInt(courseId!));
+      if (courseData) {
+        setCourse(courseData);
+      } else {
+        throw new Error('Course not found');
+      }
 
-      // Load modules and lessons
+      // Load modules and lessons (currently returns empty array)
       const modulesResponse = await apiRequest('GET', `/api/admin/courses/${courseId}/modules`);
       const modulesData = await modulesResponse.json();
       setModules(modulesData || []);
       
     } catch (error) {
+      console.error('Error loading course data:', error);
       toast({
         title: "Hiba történt",
         description: "A kurzus adatainak betöltése nem sikerült.",

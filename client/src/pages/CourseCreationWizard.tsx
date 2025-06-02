@@ -320,8 +320,8 @@ export default function CourseCreationWizard() {
         description: `A "${formData.title}" kurzus sikeresen létrejött.`
       });
 
-      // Navigate to content builder to continue building the course
-      window.location.href = `/admin/content-builder?courseId=${newCourse.id}`;
+      // Navigate back to admin courses list (content builder will be available later)
+      window.location.href = `/admin/courses`;
     } catch (error) {
       toast({
         title: "Hiba történt",
