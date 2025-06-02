@@ -39,6 +39,7 @@ import AdminLessonManagementPage from "@/pages/AdminLessonManagementPage";
 import AdminSetup from "@/pages/AdminSetup";
 import CourseCreationWizard from "@/pages/CourseCreationWizard";
 import CourseContentBuilder from "@/pages/CourseContentBuilder";
+import CourseContentEditor from "@/pages/CourseContentEditor";
 import ActivitySystemDemo from "@/pages/ActivitySystemDemo";
 import AuthPageLogin from "@/pages/AuthPageLogin";
 import PasswordReset from "@/pages/PasswordReset";
@@ -88,7 +89,7 @@ function Router() {
       <Route path="/admin/courses/new" component={AdminCourseCreatePage} />
       <Route path="/admin/courses/wizard" component={CourseCreationWizard} />
       <Route path="/admin/courses/:id" component={AdminCourseView} />
-      <Route path="/admin/courses/:id/edit" component={AdminCourseEditPage} />
+      <Route path="/admin/courses/:id/edit" component={CourseContentEditor} />
       <Route path="/admin/courses/:id/content" component={AdminContentBuilder} />
       <Route path="/admin/content-builder" component={CourseContentBuilder} />
       <Route path="/admin/modules/:moduleId/lessons" component={AdminLessonManagementPage} />

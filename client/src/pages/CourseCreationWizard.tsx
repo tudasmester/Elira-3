@@ -942,15 +942,11 @@ export default function CourseCreationWizard() {
         
         <Button 
           onClick={() => {
-            toast({
-              title: "Tananyag mentve",
-              description: "A modulok és leckék sikeresen mentve."
-            });
-            window.location.href = '/admin/courses';
+            window.location.href = `/admin/courses/${createdCourseId}/edit`;
           }}
         >
           <CheckCircle className="h-4 w-4 mr-2" />
-          Tananyag mentése
+          Szerkesztés folytatása
         </Button>
       </div>
     </div>
