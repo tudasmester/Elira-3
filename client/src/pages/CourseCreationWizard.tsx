@@ -57,7 +57,7 @@ export default function CourseCreationWizard() {
     modules: []
   });
 
-  const totalSteps = 6; // Added content building step
+  const totalSteps = 2; // Only basic info and image upload
   const progressPercent = (currentStep / totalSteps) * 100;
 
   const handleInputChange = (field: keyof CourseFormData, value: string | number) => {
@@ -249,9 +249,12 @@ export default function CourseCreationWizard() {
       
       setFormData(prev => ({ ...prev, imageUrl: result.imageUrl }));
       
+      // Create course immediately after image upload
+      await handleCreateCourse(result.imageUrl);
+      
       toast({
         title: "Sikeres feltöltés",
-        description: "A kép sikeresen feltöltve."
+        description: "A kép sikeresen feltöltve. Átirányítás a szerkesztőhöz..."
       });
     } catch (error) {
       toast({
@@ -282,23 +285,17 @@ export default function CourseCreationWizard() {
         return;
       }
       setCurrentStep(2);
-    } else if (currentStep === 2) {
-      setCurrentStep(3);
-    } else if (currentStep === 3) {
-      setCurrentStep(4);
-    } else if (currentStep === 4) {
-      setCurrentStep(5);
     }
   };
 
-  const handleCreateCourse = async () => {
+  const handleCreateCourse = async (imageUrl?: string) => {
     setIsCreating(true);
     try {
       const courseData = {
         title: formData.title,
         description: formData.description || `Új kurzus: ${formData.title}`,
         shortDescription: formData.description || '',
-        imageUrl: formData.imageUrl || '/api/placeholder/400/300',
+        imageUrl: imageUrl || formData.imageUrl,
         category: 'Általános',
         difficulty: 'beginner',
         level: 'beginner',
@@ -316,13 +313,17 @@ export default function CourseCreationWizard() {
       const response = await apiRequest('POST', '/api/admin/courses', courseData);
       const newCourse = await response.json();
 
-      // Store the created course ID and advance to content building step
+      // Store the created course ID and redirect to edit page
       setCreatedCourseId(newCourse.id);
-      setCurrentStep(6);
+      
+      // Redirect to content editor immediately
+      setTimeout(() => {
+        window.location.href = `/admin/courses/${newCourse.id}/edit`;
+      }, 1500);
 
       toast({
         title: "Sikeres létrehozás",
-        description: `A "${formData.title}" kurzus létrejött. Most hozzáadhatja a tananyagot.`
+        description: `A "${formData.title}" kurzus létrejött. Átirányítás a szerkesztőhöz...`
       });
     } catch (error) {
       toast({
@@ -394,9 +395,18 @@ export default function CourseCreationWizard() {
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
           Borítókép feltöltése
         </h2>
-        <p className="text-gray-600">
-          Tölts fel egy borítóképet a kurzusodhoz (opcionális)
+        <p className="text-gray-600 mb-4">
+          Tölts fel egy borítóképet a kurzusodhoz
         </p>
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm">
+          <p className="text-blue-800 font-medium mb-2">📏 Ajánlott képméret:</p>
+          <ul className="text-blue-700 space-y-1">
+            <li>• <strong>Felbontás:</strong> 1280×720 pixel (16:9 arány)</li>
+            <li>• <strong>Formátum:</strong> JPG, PNG, WebP</li>
+            <li>• <strong>Fájlméret:</strong> Maximum 5MB</li>
+            <li>• <strong>Minőség:</strong> Éles, jól látható kép</li>
+          </ul>
+        </div>
       </div>
 
       <div className="space-y-4">
