@@ -69,7 +69,7 @@ export default function CourseCreationWizard() {
       const response = await fetch('/api/admin/upload/course-image', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
         },
         body: formData
       });
