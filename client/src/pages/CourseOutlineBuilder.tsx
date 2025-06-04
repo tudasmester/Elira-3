@@ -871,14 +871,77 @@ export default function CourseOutlineBuilder() {
                       Videó beállítások
                     </h4>
                     
+                    {/* Video File Upload */}
+                    <div>
+                      <Label htmlFor="video-file">Videó fájl feltöltése</Label>
+                      <div className="mt-1">
+                        <input
+                          id="video-file"
+                          type="file"
+                          accept="video/mp4,video/webm,video/ogg,video/avi,video/mov,video/wmv"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              setActivityVideoFile(file);
+                              // Clear URL and embed code when file is selected
+                              setActivityVideoUrl('');
+                              setActivityVideoEmbedCode('');
+                            }
+                          }}
+                          className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
+                          disabled={isUploadingVideo}
+                        />
+                        {activityVideoFile && (
+                          <div className="mt-2 flex items-center justify-between p-2 bg-white rounded border">
+                            <span className="text-sm text-gray-700">{activityVideoFile.name}</span>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                setActivityVideoFile(null);
+                                const fileInput = document.getElementById('video-file') as HTMLInputElement;
+                                if (fileInput) fileInput.value = '';
+                              }}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        )}
+                        {isUploadingVideo && (
+                          <div className="mt-2">
+                            <div className="w-full bg-gray-200 rounded-full h-2">
+                              <div 
+                                className="bg-purple-600 h-2 rounded-full transition-all duration-300"
+                                style={{ width: `${uploadProgress}%` }}
+                              ></div>
+                            </div>
+                            <p className="text-sm text-gray-600 mt-1">Feltöltés folyamatban... {uploadProgress}%</p>
+                          </div>
+                        )}
+                        <p className="text-xs text-gray-600 mt-1">Támogatott formátumok: MP4, WebM, OGG, AVI, MOV, WMV (max. 500MB)</p>
+                      </div>
+                    </div>
+
+                    <div className="text-center text-gray-500">vagy</div>
+                    
                     <div>
                       <Label htmlFor="video-url">Videó URL</Label>
                       <Input
                         id="video-url"
                         value={activityVideoUrl}
-                        onChange={(e) => setActivityVideoUrl(e.target.value)}
+                        onChange={(e) => {
+                          setActivityVideoUrl(e.target.value);
+                          // Clear file when URL is entered
+                          if (e.target.value.trim()) {
+                            setActivityVideoFile(null);
+                            const fileInput = document.getElementById('video-file') as HTMLInputElement;
+                            if (fileInput) fileInput.value = '';
+                          }
+                        }}
                         placeholder="https://youtube.com/watch?v=... vagy https://vimeo.com/..."
                         className="mt-1"
+                        disabled={!!activityVideoFile}
                       />
                       <p className="text-xs text-gray-600 mt-1">YouTube, Vimeo vagy közvetlen videó link</p>
                     </div>
@@ -890,10 +953,19 @@ export default function CourseOutlineBuilder() {
                       <Textarea
                         id="video-embed"
                         value={activityVideoEmbedCode}
-                        onChange={(e) => setActivityVideoEmbedCode(e.target.value)}
+                        onChange={(e) => {
+                          setActivityVideoEmbedCode(e.target.value);
+                          // Clear file when embed code is entered
+                          if (e.target.value.trim()) {
+                            setActivityVideoFile(null);
+                            const fileInput = document.getElementById('video-file') as HTMLInputElement;
+                            if (fileInput) fileInput.value = '';
+                          }
+                        }}
                         placeholder='<iframe src="..." width="560" height="315"></iframe>'
                         rows={3}
                         className="mt-1 font-mono text-sm"
+                        disabled={!!activityVideoFile}
                       />
                       <p className="text-xs text-gray-600 mt-1">Teljes iframe embed kód</p>
                     </div>
