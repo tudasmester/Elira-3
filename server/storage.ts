@@ -963,6 +963,222 @@ export class DatabaseStorage implements IStorage {
       });
     }
   }
+
+  // Quiz Management Methods
+  async createQuiz(quizData: InsertQuiz): Promise<Quiz> {
+    const [quiz] = await db
+      .insert(quizzes)
+      .values(quizData)
+      .returning();
+    return quiz;
+  }
+
+  async getQuiz(quizId: number): Promise<Quiz | undefined> {
+    const [quiz] = await db
+      .select()
+      .from(quizzes)
+      .where(eq(quizzes.id, quizId));
+    return quiz;
+  }
+
+  async getQuizWithQuestions(quizId: number): Promise<any> {
+    const quiz = await this.getQuiz(quizId);
+    if (!quiz) return null;
+
+    const questions = await db
+      .select()
+      .from(quizQuestions)
+      .where(eq(quizQuestions.quizId, quizId))
+      .orderBy(quizQuestions.order);
+
+    const questionsWithOptions = await Promise.all(
+      questions.map(async (question) => {
+        const options = await db
+          .select()
+          .from(quizQuestionOptions)
+          .where(eq(quizQuestionOptions.questionId, question.id))
+          .orderBy(quizQuestionOptions.order);
+        return { ...question, options };
+      })
+    );
+
+    return { ...quiz, questions: questionsWithOptions };
+  }
+
+  async updateQuiz(quizId: number, quizData: Partial<InsertQuiz>): Promise<Quiz> {
+    const [quiz] = await db
+      .update(quizzes)
+      .set(quizData)
+      .where(eq(quizzes.id, quizId))
+      .returning();
+    return quiz;
+  }
+
+  async deleteQuiz(quizId: number): Promise<void> {
+    await db.delete(quizzes).where(eq(quizzes.id, quizId));
+  }
+
+  async getQuizzesByLesson(lessonId: number): Promise<Quiz[]> {
+    return await db
+      .select()
+      .from(quizzes)
+      .where(eq(quizzes.lessonId, lessonId));
+  }
+
+  // Quiz Questions
+  async createQuizQuestion(questionData: InsertQuizQuestion): Promise<QuizQuestion> {
+    const [question] = await db
+      .insert(quizQuestions)
+      .values(questionData)
+      .returning();
+    return question;
+  }
+
+  async updateQuizQuestion(questionId: number, questionData: Partial<InsertQuizQuestion>): Promise<QuizQuestion> {
+    const [question] = await db
+      .update(quizQuestions)
+      .set(questionData)
+      .where(eq(quizQuestions.id, questionId))
+      .returning();
+    return question;
+  }
+
+  async deleteQuizQuestion(questionId: number): Promise<void> {
+    await db.delete(quizQuestions).where(eq(quizQuestions.id, questionId));
+  }
+
+  // Quiz Question Options
+  async createQuizQuestionOption(optionData: InsertQuizQuestionOption): Promise<QuizQuestionOption> {
+    const [option] = await db
+      .insert(quizQuestionOptions)
+      .values(optionData)
+      .returning();
+    return option;
+  }
+
+  async updateQuizQuestionOption(optionId: number, optionData: Partial<InsertQuizQuestionOption>): Promise<QuizQuestionOption> {
+    const [option] = await db
+      .update(quizQuestionOptions)
+      .set(optionData)
+      .where(eq(quizQuestionOptions.id, optionId))
+      .returning();
+    return option;
+  }
+
+  async deleteQuizQuestionOption(optionId: number): Promise<void> {
+    await db.delete(quizQuestionOptions).where(eq(quizQuestionOptions.id, optionId));
+  }
+
+  // Quiz Attempts and Answers
+  async createQuizAttempt(attemptData: InsertQuizAttempt): Promise<QuizAttempt> {
+    const [attempt] = await db
+      .insert(quizAttempts)
+      .values(attemptData)
+      .returning();
+    return attempt;
+  }
+
+  async getQuizAttempt(attemptId: number): Promise<QuizAttempt | undefined> {
+    const [attempt] = await db
+      .select()
+      .from(quizAttempts)
+      .where(eq(quizAttempts.id, attemptId));
+    return attempt;
+  }
+
+  async updateQuizAttempt(attemptId: number, attemptData: Partial<InsertQuizAttempt>): Promise<QuizAttempt> {
+    const [attempt] = await db
+      .update(quizAttempts)
+      .set(attemptData)
+      .where(eq(quizAttempts.id, attemptId))
+      .returning();
+    return attempt;
+  }
+
+  async getUserQuizAttempts(userId: string, quizId: number): Promise<QuizAttempt[]> {
+    return await db
+      .select()
+      .from(quizAttempts)
+      .where(and(
+        eq(quizAttempts.userId, userId),
+        eq(quizAttempts.quizId, quizId)
+      ))
+      .orderBy(desc(quizAttempts.createdAt));
+  }
+
+  async createQuizAnswer(answerData: InsertQuizAnswer): Promise<QuizAnswer> {
+    const [answer] = await db
+      .insert(quizAnswers)
+      .values(answerData)
+      .returning();
+    return answer;
+  }
+
+  async getQuizAttemptAnswers(attemptId: number): Promise<QuizAnswer[]> {
+    return await db
+      .select()
+      .from(quizAnswers)
+      .where(eq(quizAnswers.attemptId, attemptId));
+  }
+
+  // Quiz Analytics
+  async getQuizAnalytics(quizId: number): Promise<any> {
+    const totalAttempts = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(quizAttempts)
+      .where(eq(quizAttempts.quizId, quizId));
+
+    const completedAttempts = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(quizAttempts)
+      .where(and(
+        eq(quizAttempts.quizId, quizId),
+        eq(quizAttempts.status, 'completed')
+      ));
+
+    const averageScore = await db
+      .select({ avg: sql<number>`avg(percentage_score)` })
+      .from(quizAttempts)
+      .where(and(
+        eq(quizAttempts.quizId, quizId),
+        eq(quizAttempts.status, 'completed')
+      ));
+
+    return {
+      totalAttempts: totalAttempts[0]?.count || 0,
+      completedAttempts: completedAttempts[0]?.count || 0,
+      averageScore: averageScore[0]?.avg || 0,
+      completionRate: totalAttempts[0]?.count > 0 
+        ? ((completedAttempts[0]?.count || 0) / (totalAttempts[0]?.count || 1)) * 100 
+        : 0
+    };
+  }
+
+  async getUserQuizPerformance(userId: string): Promise<any> {
+    const userAttempts = await db
+      .select()
+      .from(quizAttempts)
+      .where(and(
+        eq(quizAttempts.userId, userId),
+        eq(quizAttempts.status, 'completed')
+      ))
+      .orderBy(desc(quizAttempts.createdAt));
+
+    const totalQuizzes = userAttempts.length;
+    const averageScore = totalQuizzes > 0 
+      ? userAttempts.reduce((sum, attempt) => sum + (attempt.percentageScore || 0), 0) / totalQuizzes
+      : 0;
+
+    const passedQuizzes = userAttempts.filter(attempt => (attempt.percentageScore || 0) >= 70).length;
+
+    return {
+      totalQuizzes,
+      averageScore,
+      passedQuizzes,
+      passRate: totalQuizzes > 0 ? (passedQuizzes / totalQuizzes) * 100 : 0,
+      recentAttempts: userAttempts.slice(0, 10)
+    };
+  }
 }
 
 // Create database storage instance
