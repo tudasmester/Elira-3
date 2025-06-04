@@ -1025,6 +1025,9 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteCourseModule(moduleId: number): Promise<void> {
+    // First delete all lessons in the module (cascade will handle quizzes)
+    await db.delete(lessons).where(eq(lessons.moduleId, moduleId));
+    // Then delete the module
     await db.delete(courseModules).where(eq(courseModules.id, moduleId));
   }
 
