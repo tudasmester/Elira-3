@@ -1196,28 +1196,6 @@ export default function CourseOutlineBuilder() {
                   </div>
                 )}
 
-                {selectedActivityType === 'text' && (
-                  <div className="space-y-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                    <h4 className="font-medium text-blue-900 flex items-center gap-2">
-                      <FileText className="h-4 w-4" />
-                      Szöveges tartalom
-                    </h4>
-                    
-                    <div>
-                      <Label htmlFor="text-content">Lecke tartalma</Label>
-                      <Textarea
-                        id="text-content"
-                        value={activityContent}
-                        onChange={(e) => setActivityContent(e.target.value)}
-                        placeholder="Írja be a lecke tartalmát... (Markdown formátum támogatott)"
-                        rows={8}
-                        className="mt-1"
-                      />
-                      <p className="text-xs text-gray-600 mt-1">Markdown formázás használható (**félkövér**, *dőlt*, stb.)</p>
-                    </div>
-                  </div>
-                )}
-
                 {selectedActivityType === 'assignment' && (
                   <div className="space-y-4 p-4 bg-green-50 rounded-lg border border-green-200">
                     <h4 className="font-medium text-green-900 flex items-center gap-2">
@@ -1260,8 +1238,7 @@ export default function CourseOutlineBuilder() {
 
                     <div className="bg-yellow-100 p-3 rounded-lg">
                       <p className="text-sm text-yellow-800">
-                        <BookOpen className="h-4 w-4 inline mr-1" />
-                        A kvíz kérdések hozzáadása az aktivitás létrehozása után történik.
+                        💡 A kvíz kérdéseit a lecke létrehozása után adhatja hozzá a részletes szerkesztőben.
                       </p>
                     </div>
                   </div>
