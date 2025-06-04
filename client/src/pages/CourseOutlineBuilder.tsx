@@ -36,6 +36,38 @@ import {
   X
 } from 'lucide-react';
 
+// Status configuration for four-tier system
+const MODULE_STATUS_CONFIG = {
+  piszkozat: {
+    label: 'Piszkozat',
+    description: 'Csak adminok látják',
+    color: 'bg-gray-100 text-gray-700 border-gray-300',
+    icon: '📝',
+    accessLevel: 'admin'
+  },
+  hamarosan: {
+    label: 'Hamarosan',
+    description: 'Látható, de nem elérhető',
+    color: 'bg-yellow-100 text-yellow-700 border-yellow-300',
+    icon: '⏳',
+    accessLevel: 'visible'
+  },
+  ingyenes: {
+    label: 'Ingyenes',
+    description: 'Szabad hozzáférés',
+    color: 'bg-green-100 text-green-700 border-green-300',
+    icon: '🆓',
+    accessLevel: 'free'
+  },
+  fizetos: {
+    label: 'Fizetős',
+    description: 'Előfizetés szükséges',
+    color: 'bg-blue-100 text-blue-700 border-blue-300',
+    icon: '💎',
+    accessLevel: 'premium'
+  }
+};
+
 interface Module {
   id?: number;
   title: string;
@@ -58,6 +90,59 @@ interface Course {
   title: string;
   description: string;
 }
+
+// Status Badge Component
+const StatusBadge = ({ status }: { status: 'piszkozat' | 'hamarosan' | 'ingyenes' | 'fizetos' }) => {
+  const config = MODULE_STATUS_CONFIG[status];
+  return (
+    <Badge 
+      variant="outline" 
+      className={`${config.color} border font-medium text-xs`}
+    >
+      <span className="mr-1">{config.icon}</span>
+      {config.label}
+    </Badge>
+  );
+};
+
+// Status Selector Component
+const StatusSelector = ({ 
+  value, 
+  onChange, 
+  className = "" 
+}: { 
+  value: 'piszkozat' | 'hamarosan' | 'ingyenes' | 'fizetos';
+  onChange: (value: 'piszkozat' | 'hamarosan' | 'ingyenes' | 'fizetos') => void;
+  className?: string;
+}) => {
+  return (
+    <Select value={value} onValueChange={onChange}>
+      <SelectTrigger className={className}>
+        <SelectValue>
+          <div className="flex items-center gap-2">
+            <span>{MODULE_STATUS_CONFIG[value].icon}</span>
+            <span>{MODULE_STATUS_CONFIG[value].label}</span>
+          </div>
+        </SelectValue>
+      </SelectTrigger>
+      <SelectContent>
+        {Object.entries(MODULE_STATUS_CONFIG).map(([key, config]) => (
+          <SelectItem key={key} value={key}>
+            <div className="flex items-center justify-between w-full">
+              <div className="flex items-center gap-2">
+                <span>{config.icon}</span>
+                <span>{config.label}</span>
+              </div>
+              <span className="text-xs text-gray-500 ml-4">
+                {config.description}
+              </span>
+            </div>
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+};
 
 export default function CourseOutlineBuilder() {
   const { id } = useParams<{ id: string }>();
