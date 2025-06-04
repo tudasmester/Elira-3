@@ -37,7 +37,7 @@ interface Module {
   id?: number;
   title: string;
   description?: string;
-  status: 'draft' | 'published';
+  status: 'draft' | 'coming_soon' | 'free' | 'premium';
   orderIndex: number;
   lessons?: Lesson[];
 }
@@ -76,7 +76,7 @@ export default function CourseOutlineBuilder() {
   const [isEditModuleOpen, setIsEditModuleOpen] = useState(false);
   const [editModuleTitle, setEditModuleTitle] = useState('');
   const [editModuleDescription, setEditModuleDescription] = useState('');
-  const [editModuleStatus, setEditModuleStatus] = useState<'draft' | 'published'>('draft');
+  const [editModuleStatus, setEditModuleStatus] = useState<'draft' | 'coming_soon' | 'free' | 'premium'>('draft');
   const [isUpdatingModule, setIsUpdatingModule] = useState(false);
 
   // Activity creation state
@@ -383,8 +383,24 @@ export default function CourseOutlineBuilder() {
                         </div>
                         <div>
                           <h3 className="text-lg font-semibold">{String(moduleIndex + 1).padStart(2, '0')}</h3>
-                          <Badge variant="secondary" className="text-xs">
-                            {module.status === 'draft' ? 'Draft' : 'Published'}
+                          <Badge 
+                            variant={
+                              module.status === 'draft' ? 'secondary' :
+                              module.status === 'coming_soon' ? 'outline' :
+                              module.status === 'free' ? 'default' :
+                              'destructive'
+                            }
+                            className={`text-xs ${
+                              module.status === 'draft' ? 'bg-gray-100 text-gray-600' :
+                              module.status === 'coming_soon' ? 'bg-orange-100 text-orange-700 border-orange-200' :
+                              module.status === 'free' ? 'bg-green-100 text-green-700' :
+                              'bg-blue-100 text-blue-700'
+                            }`}
+                          >
+                            {module.status === 'draft' ? 'Piszkozat' :
+                             module.status === 'coming_soon' ? 'Hamarosan' :
+                             module.status === 'free' ? 'Ingyenes' :
+                             'Fizetős'}
                           </Badge>
                         </div>
                       </div>
@@ -618,13 +634,15 @@ export default function CourseOutlineBuilder() {
 
                 <div>
                   <Label htmlFor="edit-module-status">Modul állapota</Label>
-                  <Select value={editModuleStatus} onValueChange={(value: 'draft' | 'published') => setEditModuleStatus(value)}>
+                  <Select value={editModuleStatus} onValueChange={(value: 'draft' | 'coming_soon' | 'free' | 'premium') => setEditModuleStatus(value)}>
                     <SelectTrigger className="mt-1">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="draft">Piszkozat</SelectItem>
-                      <SelectItem value="published">Publikált</SelectItem>
+                      <SelectItem value="coming_soon">Hamarosan</SelectItem>
+                      <SelectItem value="free">Ingyenes</SelectItem>
+                      <SelectItem value="premium">Fizetős</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
