@@ -88,6 +88,7 @@ export const courses = pgTable("courses", {
   language: text("language").default("Hungarian").notNull(),
   prerequisites: text("prerequisites"), // Required background knowledge
   learningOutcomes: text("learning_outcomes"), // What students will learn
+  instructions: text("instructions"), // Course instructions and guidelines
   instructorName: text("instructor_name"),
   instructorBio: text("instructor_bio"),
   instructorImageUrl: text("instructor_image_url"),
