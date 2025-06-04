@@ -69,6 +69,7 @@ export default function CourseOutlineBuilder() {
   const [isAddModuleOpen, setIsAddModuleOpen] = useState(false);
   const [newModuleTitle, setNewModuleTitle] = useState('');
   const [newModuleDescription, setNewModuleDescription] = useState('');
+  const [moduleStatus, setModuleStatus] = useState<'draft' | 'coming_soon' | 'free' | 'premium'>('draft');
   const [isCreatingModule, setIsCreatingModule] = useState(false);
 
   // Module editing state
@@ -133,7 +134,7 @@ export default function CourseOutlineBuilder() {
       const moduleData = {
         title: newModuleTitle.trim(),
         description: newModuleDescription.trim() || null,
-        status: 'draft' as const
+        status: moduleStatus
       };
 
       const response = await apiRequest('POST', `/api/courses/${id}/modules`, moduleData);
@@ -142,6 +143,7 @@ export default function CourseOutlineBuilder() {
       setModules(prev => [...prev, newModule]);
       setNewModuleTitle('');
       setNewModuleDescription('');
+      setModuleStatus('draft');
       setIsAddModuleOpen(false);
       
       toast({
@@ -570,6 +572,41 @@ export default function CourseOutlineBuilder() {
                     rows={3}
                     className="mt-1"
                   />
+                </div>
+                
+                <div>
+                  <Label htmlFor="module-status">Modul státusza *</Label>
+                  <Select value={moduleStatus} onValueChange={(value: 'draft' | 'coming_soon' | 'free' | 'premium') => setModuleStatus(value)}>
+                    <SelectTrigger className="mt-1">
+                      <SelectValue placeholder="Válasszon státuszt" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="draft">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-gray-400 rounded-full" />
+                          Piszkozat
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="coming_soon">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-yellow-500 rounded-full" />
+                          Hamarosan
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="free">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-green-500 rounded-full" />
+                          Ingyenes
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="premium">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-purple-500 rounded-full" />
+                          Fizetős
+                        </div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
