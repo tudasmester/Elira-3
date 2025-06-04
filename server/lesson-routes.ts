@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { db } from './db';
 import { lessons, lessonAttachments, lessonQuizzes } from '@shared/schema';
 import { eq, and } from 'drizzle-orm';
-import { isAdmin } from './adminAuth';
+import { requireAuth } from './auth-working';
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -91,7 +91,7 @@ const createQuizSchema = z.object({
 
 export function registerLessonRoutes(app: Express) {
   // Get lessons for a module
-  app.get('/api/modules/:moduleId/lessons', isAdmin, async (req: Request, res: Response) => {
+  app.get('/api/modules/:moduleId/lessons', requireAuth, async (req: Request, res: Response) => {
     try {
       const moduleId = parseInt(req.params.moduleId);
       
@@ -194,7 +194,7 @@ export function registerLessonRoutes(app: Express) {
   });
 
   // Create a new lesson
-  app.post('/api/modules/:moduleId/lessons', isAdmin, async (req: Request, res: Response) => {
+  app.post('/api/modules/:moduleId/lessons', requireAuth, async (req: Request, res: Response) => {
     try {
       const moduleId = parseInt(req.params.moduleId);
       const validatedData = createLessonSchema.parse(req.body);
@@ -248,7 +248,7 @@ export function registerLessonRoutes(app: Express) {
   });
 
   // Update a lesson
-  app.put('/api/lessons/:id', isAdmin, async (req: Request, res: Response) => {
+  app.put('/api/lessons/:id', requireAuth, async (req: Request, res: Response) => {
     try {
       const lessonId = parseInt(req.params.id);
       const validatedData = updateLessonSchema.parse(req.body);
@@ -319,7 +319,7 @@ export function registerLessonRoutes(app: Express) {
   });
 
   // Delete a lesson
-  app.delete('/api/lessons/:id', isAdmin, async (req: Request, res: Response) => {
+  app.delete('/api/lessons/:id', requireAuth, async (req: Request, res: Response) => {
     try {
       const lessonId = parseInt(req.params.id);
 
