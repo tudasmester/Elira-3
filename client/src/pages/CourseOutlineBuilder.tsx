@@ -32,7 +32,8 @@ import {
   Import,
   Link,
   ClipboardList,
-  BookOpen
+  BookOpen,
+  X
 } from 'lucide-react';
 
 interface Module {
