@@ -576,9 +576,16 @@ export const quizAnswersRelations = relations(quizAnswers, ({ one }) => ({
     fields: [quizAnswers.questionId],
     references: [quizQuestions.id],
   }),
-  selectedOption: one(quizQuestionOptions, {
-    fields: [quizAnswers.selectedOptionId],
-    references: [quizQuestionOptions.id],
+}));
+
+export const quizResultsRelations = relations(quizResults, ({ one }) => ({
+  attempt: one(quizAttempts, {
+    fields: [quizResults.attemptId],
+    references: [quizAttempts.id],
+  }),
+  quiz: one(quizzes, {
+    fields: [quizResults.quizId],
+    references: [quizzes.id],
   }),
 }));
 

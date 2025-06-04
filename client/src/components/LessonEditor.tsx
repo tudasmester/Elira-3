@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
-import QuizBuilder from '@/components/quiz/QuizBuilder';
+import QuizBuilder from '@/components/QuizBuilder';
 import { 
   FileText, 
   Video, 
