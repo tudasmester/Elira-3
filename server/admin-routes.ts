@@ -395,6 +395,38 @@ export function registerAdminRoutes(app: Express) {
     }
   });
 
+  // Update module
+  app.put('/api/modules/:id', isAdmin, async (req: Request, res: Response) => {
+    try {
+      const moduleId = parseInt(req.params.id);
+      const updateData = req.body;
+      
+      const updatedModule = await storage.updateCourseModule(moduleId, updateData);
+      
+      if (!updatedModule) {
+        return res.status(404).json({ message: "Module not found" });
+      }
+      
+      res.json(updatedModule);
+    } catch (error) {
+      console.error("Error updating module:", error);
+      res.status(500).json({ message: "Failed to update module" });
+    }
+  });
+
+  // Delete module
+  app.delete('/api/modules/:id', isAdmin, async (req: Request, res: Response) => {
+    try {
+      const moduleId = parseInt(req.params.id);
+      
+      await storage.deleteCourseModule(moduleId);
+      res.json({ message: "Module deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting module:", error);
+      res.status(500).json({ message: "Failed to delete module" });
+    }
+  });
+
   // Create new lesson for a module
   app.post('/api/modules/:id/lessons', requireAuth, isAdmin, async (req: Request, res: Response) => {
     try {

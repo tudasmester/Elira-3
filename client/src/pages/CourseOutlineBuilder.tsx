@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
@@ -69,6 +70,22 @@ export default function CourseOutlineBuilder() {
   const [newModuleTitle, setNewModuleTitle] = useState('');
   const [newModuleDescription, setNewModuleDescription] = useState('');
   const [isCreatingModule, setIsCreatingModule] = useState(false);
+
+  // Module editing state
+  const [editingModule, setEditingModule] = useState<Module | null>(null);
+  const [isEditModuleOpen, setIsEditModuleOpen] = useState(false);
+  const [editModuleTitle, setEditModuleTitle] = useState('');
+  const [editModuleDescription, setEditModuleDescription] = useState('');
+  const [editModuleStatus, setEditModuleStatus] = useState<'draft' | 'published'>('draft');
+  const [isUpdatingModule, setIsUpdatingModule] = useState(false);
+
+  // Activity creation state
+  const [isAddActivityOpen, setIsAddActivityOpen] = useState(false);
+  const [selectedModule, setSelectedModule] = useState<Module | null>(null);
+  const [selectedActivityType, setSelectedActivityType] = useState<string>('');
+  const [activityTitle, setActivityTitle] = useState('');
+  const [activityDescription, setActivityDescription] = useState('');
+  const [isCreatingActivity, setIsCreatingActivity] = useState(false);
 
   useEffect(() => {
     loadCourseData();
@@ -141,6 +158,147 @@ export default function CourseOutlineBuilder() {
       });
     } finally {
       setIsCreatingModule(false);
+    }
+  };
+
+  const handleEditModule = (module: Module) => {
+    setEditingModule(module);
+    setEditModuleTitle(module.title);
+    setEditModuleDescription(module.description || '');
+    setEditModuleStatus(module.status);
+    setIsEditModuleOpen(true);
+  };
+
+  const handleUpdateModule = async () => {
+    if (!editModuleTitle.trim() || !editingModule) {
+      toast({
+        title: "Hiányzó adat",
+        description: "Kérjük, adja meg a modul címét.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      setIsUpdatingModule(true);
+      
+      const updateData = {
+        title: editModuleTitle.trim(),
+        description: editModuleDescription.trim() || null,
+        status: editModuleStatus
+      };
+
+      const response = await apiRequest('PUT', `/api/modules/${editingModule.id}`, updateData);
+      const updatedModule = await response.json();
+      
+      setModules(prev => prev.map(module => 
+        module.id === editingModule.id ? updatedModule : module
+      ));
+      
+      setIsEditModuleOpen(false);
+      setEditingModule(null);
+      
+      toast({
+        title: "Modul frissítve",
+        description: `A "${editModuleTitle}" modul sikeresen frissült.`
+      });
+      
+    } catch (error) {
+      console.error('Error updating module:', error);
+      toast({
+        title: "Hiba történt",
+        description: "A modul frissítése nem sikerült.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsUpdatingModule(false);
+    }
+  };
+
+  const handleDeleteModule = async (module: Module) => {
+    if (!confirm(`Biztosan törölni szeretné a "${module.title}" modult?`)) {
+      return;
+    }
+
+    try {
+      await apiRequest('DELETE', `/api/modules/${module.id}`);
+      setModules(prev => prev.filter(m => m.id !== module.id));
+      
+      toast({
+        title: "Modul törölve",
+        description: `A "${module.title}" modul sikeresen törölve.`
+      });
+      
+    } catch (error) {
+      console.error('Error deleting module:', error);
+      toast({
+        title: "Hiba történt",
+        description: "A modul törlése nem sikerült.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleAddActivity = (module: Module, activityType: string) => {
+    setSelectedModule(module);
+    setSelectedActivityType(activityType);
+    setActivityTitle('');
+    setActivityDescription('');
+    setIsAddActivityOpen(true);
+  };
+
+  const handleCreateActivity = async () => {
+    if (!activityTitle.trim() || !selectedModule) {
+      toast({
+        title: "Hiányzó adat",
+        description: "Kérjük, adja meg az aktivitás címét.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      setIsCreatingActivity(true);
+      
+      const activityData = {
+        title: activityTitle.trim(),
+        description: activityDescription.trim() || null,
+        type: selectedActivityType,
+        moduleId: selectedModule.id
+      };
+
+      const response = await apiRequest('POST', `/api/modules/${selectedModule.id}/lessons`, activityData);
+      const newActivity = await response.json();
+      
+      // Update modules to include new activity
+      setModules(prev => prev.map(module => {
+        if (module.id === selectedModule.id) {
+          return {
+            ...module,
+            lessons: [...(module.lessons || []), newActivity]
+          };
+        }
+        return module;
+      }));
+      
+      setIsAddActivityOpen(false);
+      setActivityTitle('');
+      setActivityDescription('');
+      
+      toast({
+        title: "Aktivitás létrehozva",
+        description: `Az "${activityTitle}" aktivitás sikeresen létrejött.`
+      });
+      
+    } catch (error) {
+      console.error('Error creating activity:', error);
+      toast({
+        title: "Hiba történt",
+        description: "Az aktivitás létrehozása nem sikerült.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsCreatingActivity(false);
     }
   };
 
@@ -240,9 +398,26 @@ export default function CourseOutlineBuilder() {
                     </div>
                   </div>
                   
-                  <Button variant="ghost" size="sm">
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => handleEditModule(module)}>
+                        <Edit3 className="h-4 w-4 mr-2" />
+                        Modul szerkesztése
+                      </DropdownMenuItem>
+                      <DropdownMenuItem 
+                        onClick={() => handleDeleteModule(module)}
+                        className="text-red-600"
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Modul törlése
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </CardHeader>
 
@@ -257,6 +432,7 @@ export default function CourseOutlineBuilder() {
                           variant="outline"
                           size="sm"
                           className="h-8"
+                          onClick={() => handleAddActivity(module, option.type)}
                         >
                           <option.icon className="h-3 w-3 mr-1" />
                           Add {option.label.toLowerCase()}
@@ -275,6 +451,34 @@ export default function CourseOutlineBuilder() {
                         Create activity with AI
                       </Button>
                     </div>
+
+                    {/* Existing activities */}
+                    {module.lessons && module.lessons.length > 0 && (
+                      <div className="space-y-3 mb-4">
+                        {module.lessons.map((lesson, lessonIndex) => (
+                          <div key={lesson.id || lessonIndex} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white ${
+                              addActivityOptions.find(opt => opt.type === lesson.type)?.color || 'bg-gray-500'
+                            }`}>
+                              {React.createElement(
+                                addActivityOptions.find(opt => opt.type === lesson.type)?.icon || FileText,
+                                { className: "h-4 w-4" }
+                              )}
+                            </div>
+                            <div className="flex-1">
+                              <h5 className="font-medium text-gray-900">{lesson.title}</h5>
+                              <p className="text-sm text-gray-600">
+                                {addActivityOptions.find(opt => opt.type === lesson.type)?.label || 'Ismeretlen típus'}
+                                {lesson.duration && ` • ${lesson.duration} perc`}
+                              </p>
+                            </div>
+                            <Button variant="ghost" size="sm">
+                              <Edit3 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
 
                     {/* Add section area */}
                     <div className="border-2 border-dashed border-gray-200 rounded-lg p-6 text-center">
@@ -323,6 +527,9 @@ export default function CourseOutlineBuilder() {
             <DialogContent className="sm:max-w-md">
               <DialogHeader>
                 <DialogTitle>Új modul létrehozása</DialogTitle>
+                <DialogDescription>
+                  Hozzon létre egy új modult a kurzushoz. A modulok segítenek a tartalom strukturálásában.
+                </DialogDescription>
               </DialogHeader>
               
               <div className="space-y-4">
@@ -369,6 +576,157 @@ export default function CourseOutlineBuilder() {
                     </>
                   ) : (
                     'Modul létrehozása'
+                  )}
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          {/* Module Edit Dialog */}
+          <Dialog open={isEditModuleOpen} onOpenChange={setIsEditModuleOpen}>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Modul szerkesztése</DialogTitle>
+                <DialogDescription>
+                  Módosítsa a modul tulajdonságait. A változtatások azonnal érvényesülnek.
+                </DialogDescription>
+              </DialogHeader>
+              
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="edit-module-title">Modul címe *</Label>
+                  <Input
+                    id="edit-module-title"
+                    value={editModuleTitle}
+                    onChange={(e) => setEditModuleTitle(e.target.value)}
+                    placeholder="pl. Bevezetés a témába"
+                    className="mt-1"
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="edit-module-description">Modul leírása</Label>
+                  <Textarea
+                    id="edit-module-description"
+                    value={editModuleDescription}
+                    onChange={(e) => setEditModuleDescription(e.target.value)}
+                    placeholder="Rövid leírás a modulról..."
+                    rows={3}
+                    className="mt-1"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="edit-module-status">Modul állapota</Label>
+                  <Select value={editModuleStatus} onValueChange={(value: 'draft' | 'published') => setEditModuleStatus(value)}>
+                    <SelectTrigger className="mt-1">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="draft">Piszkozat</SelectItem>
+                      <SelectItem value="published">Publikált</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="flex justify-end space-x-2 mt-6">
+                <Button
+                  variant="outline"
+                  onClick={() => setIsEditModuleOpen(false)}
+                  disabled={isUpdatingModule}
+                >
+                  Mégse
+                </Button>
+                <Button 
+                  onClick={handleUpdateModule}
+                  disabled={isUpdatingModule || !editModuleTitle.trim()}
+                >
+                  {isUpdatingModule ? (
+                    <>
+                      <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2" />
+                      Frissítés...
+                    </>
+                  ) : (
+                    'Modul frissítése'
+                  )}
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          {/* Activity Creation Dialog */}
+          <Dialog open={isAddActivityOpen} onOpenChange={setIsAddActivityOpen}>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>
+                  Új {addActivityOptions.find(opt => opt.type === selectedActivityType)?.label} aktivitás
+                </DialogTitle>
+                <DialogDescription>
+                  Hozzon létre egy új aktivitást a "{selectedModule?.title}" modulhoz.
+                </DialogDescription>
+              </DialogHeader>
+              
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="activity-title">Aktivitás címe *</Label>
+                  <Input
+                    id="activity-title"
+                    value={activityTitle}
+                    onChange={(e) => setActivityTitle(e.target.value)}
+                    placeholder={`pl. ${selectedActivityType === 'video' ? 'Bevezetővideó' : selectedActivityType === 'quiz' ? 'Ellenőrző kvíz' : 'Új aktivitás'}`}
+                    className="mt-1"
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="activity-description">Aktivitás leírása</Label>
+                  <Textarea
+                    id="activity-description"
+                    value={activityDescription}
+                    onChange={(e) => setActivityDescription(e.target.value)}
+                    placeholder="Rövid leírás az aktivitásról..."
+                    rows={3}
+                    className="mt-1"
+                  />
+                </div>
+
+                {selectedActivityType === 'video' && (
+                  <div className="bg-blue-50 p-3 rounded-lg">
+                    <p className="text-sm text-blue-800">
+                      A videó feltöltése és beállításai a következő lépésben történnek.
+                    </p>
+                  </div>
+                )}
+
+                {selectedActivityType === 'quiz' && (
+                  <div className="bg-purple-50 p-3 rounded-lg">
+                    <p className="text-sm text-purple-800">
+                      A kvíz kérdések hozzáadása a következő lépésben történik.
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex justify-end space-x-2 mt-6">
+                <Button
+                  variant="outline"
+                  onClick={() => setIsAddActivityOpen(false)}
+                  disabled={isCreatingActivity}
+                >
+                  Mégse
+                </Button>
+                <Button 
+                  onClick={handleCreateActivity}
+                  disabled={isCreatingActivity || !activityTitle.trim()}
+                >
+                  {isCreatingActivity ? (
+                    <>
+                      <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2" />
+                      Létrehozás...
+                    </>
+                  ) : (
+                    'Aktivitás létrehozása'
                   )}
                 </Button>
               </div>
