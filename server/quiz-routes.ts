@@ -1,6 +1,7 @@
 import type { Express, Request, Response } from "express";
 import { db } from "./db";
 import { requireAuth } from "./auth-working";
+import { storage } from "./storage";
 import { 
   quizzes, 
   quizQuestions, 
@@ -14,6 +15,7 @@ import {
   insertQuizAttemptSchema,
   insertQuizAnswerSchema,
   insertQuizResultSchema,
+  insertCourseSchema,
   type Quiz,
   type QuizQuestion,
   type QuizQuestionOption,
@@ -23,6 +25,7 @@ import {
   QUESTION_TYPES
 } from "@shared/schema";
 import { eq, and, desc, asc } from "drizzle-orm";
+import { QuestionServiceFactory } from "./services/QuestionTypeService";
 
 interface AuthRequest extends Request {
   user?: {
@@ -290,12 +293,12 @@ export function registerQuizRoutes(app: Express) {
     }
   });
 
-  // POST /api/exams/:examId/questions - Add new question to exam
+  // POST /api/exams/:examId/questions - Add new question to exam (using specialized services)
   app.post('/api/exams/:examId/questions', requireAuth, async (req: Request, res: Response) => {
     try {
       const examId = parseInt(req.params.examId);
       
-      // Validation
+      // Basic validation
       if (!req.body.questionText || req.body.questionText.trim() === '') {
         return res.status(400).json({ message: 'Question text is required' });
       }
@@ -304,15 +307,23 @@ export function registerQuizRoutes(app: Express) {
         return res.status(400).json({ message: 'Question type is required' });
       }
 
-      const questionData = insertQuizQuestionSchema.parse({
+      // Get specialized service for question type
+      const questionService = QuestionServiceFactory.getService(req.body.questionType);
+      
+      const questionData = {
         ...req.body,
         quizId: examId
-      });
+      };
 
-      const [question] = await db.insert(quizQuestions).values(questionData).returning();
-      res.status(201).json(question);
+      // Use specialized service to save question with type-specific validation
+      const savedQuestion = await questionService.saveQuestion(questionData);
+      
+      res.status(201).json(savedQuestion);
     } catch (error) {
       console.error('Error creating exam question:', error);
+      if (error.message.includes('Validation failed')) {
+        return res.status(400).json({ message: error.message });
+      }
       res.status(500).json({ message: 'Failed to create exam question' });
     }
   });
