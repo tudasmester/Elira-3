@@ -45,6 +45,7 @@ import ActivitySystemDemo from "@/pages/ActivitySystemDemo";
 import AuthPageLogin from "@/pages/AuthPageLogin";
 import PasswordReset from "@/pages/PasswordReset";
 import SearchPage from "@/pages/SearchPage";
+import ExamBuilderPage from "@/pages/ExamBuilderPage";
 import NotFound from "@/pages/not-found";
 import Layout from "@/components/Layout";
 import ScrollToTop from "@/components/ui/ScrollToTop";
@@ -96,6 +97,9 @@ function Router() {
       <Route path="/admin/content-builder" component={CourseContentBuilder} />
       <Route path="/admin/modules/:moduleId/lessons" component={AdminLessonManagementPage} />
       <Route path="/admin/activity-system" component={ActivitySystemDemo} />
+      <Route path="/admin/exam-builder" component={ExamBuilderPage} />
+      <Route path="/admin/exam-builder/:courseId" component={ExamBuilderPage} />
+      <Route path="/admin/exam-builder/:courseId/:examId" component={ExamBuilderPage} />
 
       <Route component={NotFound} />
     </Switch>
