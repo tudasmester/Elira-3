@@ -11,7 +11,7 @@ import {
   courseResources, lessonCompletions
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, and } from "drizzle-orm";
+import { eq, and, inArray } from "drizzle-orm";
 
 export interface IStorage {
   // User operations
@@ -502,42 +502,61 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
-  // Advanced course management
+  // Advanced course management - Optimized version
   async getCourseWithDetails(courseId: number): Promise<any> {
     const course = await this.getCourse(courseId);
     if (!course) return null;
 
-    // Get modules and lessons for the course
+    // Get modules efficiently
     const modules = await db
       .select()
       .from(courseModules)
       .where(eq(courseModules.courseId, courseId))
       .orderBy(courseModules.orderIndex);
 
+    if (modules.length === 0) {
+      return { ...course, modules: [] };
+    }
+
+    // Get all lessons for all modules in one query using inArray
+    const moduleIds = modules.map(m => m.id);
+    const allLessons = await db
+      .select()
+      .from(lessons)
+      .where(inArray(lessons.moduleId, moduleIds))
+      .orderBy(lessons.order);
+
+    // Get all quizzes for all lessons in one query using inArray
+    const lessonIds = allLessons.map(l => l.id);
+    const allQuizzes = lessonIds.length > 0 ? await db
+      .select()
+      .from(quizzes)
+      .where(inArray(quizzes.lessonId, lessonIds)) : [];
+
+    // Group lessons by module and quizzes by lesson
+    const moduleMap = new Map();
+    modules.forEach(module => {
+      moduleMap.set(module.id, { ...module, lessons: [] });
+    });
+
+    const lessonMap = new Map();
+    allLessons.forEach(lesson => {
+      const lessonWithQuizzes = { ...lesson, quizzes: [] };
+      lessonMap.set(lesson.id, lessonWithQuizzes);
+      if (moduleMap.has(lesson.moduleId)) {
+        moduleMap.get(lesson.moduleId).lessons.push(lessonWithQuizzes);
+      }
+    });
+
+    allQuizzes.forEach(quiz => {
+      if (lessonMap.has(quiz.lessonId)) {
+        lessonMap.get(quiz.lessonId).quizzes.push(quiz);
+      }
+    });
+
     const courseWithModules = {
       ...course,
-      modules: await Promise.all(
-        modules.map(async (module) => {
-          const moduleLessons = await db
-            .select()
-            .from(lessons)
-            .where(eq(lessons.moduleId, module.id))
-            .orderBy(lessons.order);
-
-          const lessonsWithQuizzes = await Promise.all(
-            moduleLessons.map(async (lesson) => {
-              const lessonQuizzes = await db
-                .select()
-                .from(quizzes)
-                .where(eq(quizzes.lessonId, lesson.id));
-              
-              return { ...lesson, quizzes: lessonQuizzes };
-            })
-          );
-
-          return { ...module, lessons: lessonsWithQuizzes };
-        })
-      )
+      modules: Array.from(moduleMap.values())
     };
 
     return courseWithModules;
