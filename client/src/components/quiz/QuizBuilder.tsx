@@ -33,7 +33,7 @@ interface QuizBuilderProps {
   onSave?: () => void;
 }
 
-export default function QuizBuilder({ lessonId, quiz: existingQuiz, onSave }: QuizBuilderProps) {
+function QuizBuilder({ lessonId, quiz: existingQuiz, onSave }: QuizBuilderProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
@@ -535,3 +535,5 @@ export default function QuizBuilder({ lessonId, quiz: existingQuiz, onSave }: Qu
     </div>
   );
 }
+
+export default QuizBuilder;

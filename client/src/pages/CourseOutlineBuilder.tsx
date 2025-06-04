@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { AdminGuard } from '@/components/AdminGuard';
+import { LessonEditor } from '@/components/LessonEditor';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 import { 
@@ -183,17 +184,8 @@ export default function CourseOutlineBuilder() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isCreatingActivity, setIsCreatingActivity] = useState(false);
 
-  // Lesson editing state
-  const [isEditLessonOpen, setIsEditLessonOpen] = useState(false);
-  const [editingLesson, setEditingLesson] = useState<Lesson | null>(null);
-  const [editLessonTitle, setEditLessonTitle] = useState('');
-  const [editLessonDescription, setEditLessonDescription] = useState('');
-  const [editLessonContent, setEditLessonContent] = useState('');
-  const [editLessonVideoUrl, setEditLessonVideoUrl] = useState('');
-  const [editLessonVideoEmbedCode, setEditLessonVideoEmbedCode] = useState('');
-  const [editLessonVideoFile, setEditLessonVideoFile] = useState<File | null>(null);
-  const [editLessonDuration, setEditLessonDuration] = useState(30);
-  const [isUpdatingLesson, setIsUpdatingLesson] = useState(false);
+  // Lesson editing state with LessonEditor
+  const [editingLesson, setEditingLesson] = useState<any | null>(null);
 
   useEffect(() => {
     loadCourseData();
