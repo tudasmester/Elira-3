@@ -70,8 +70,8 @@ export default function CourseContentEditor() {
 
   const SectionModal = () => (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+        <DialogHeader className="flex-shrink-0">
           <DialogTitle className="flex items-center justify-between">
             Modul szerkesztése
             <Button
@@ -84,7 +84,7 @@ export default function CourseContentEditor() {
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <div className="flex-1 overflow-y-auto space-y-6 pr-2">
           <div className="space-y-2">
             <Label htmlFor="title">Modul címe</Label>
             <p className="text-sm text-gray-600">
@@ -164,19 +164,19 @@ export default function CourseContentEditor() {
               </div>
             </RadioGroup>
           </div>
+        </div>
 
-          <div className="flex justify-end space-x-3 pt-4">
-            <Button
-              variant="outline"
-              onClick={() => setIsModalOpen(false)}
-            >
-              Mégse
-            </Button>
-            <Button onClick={handleSectionSubmit}>
-              <Save className="h-4 w-4 mr-2" />
-              Mentés
-            </Button>
-          </div>
+        <div className="flex justify-end space-x-3 pt-4 border-t flex-shrink-0">
+          <Button
+            variant="outline"
+            onClick={() => setIsModalOpen(false)}
+          >
+            Mégse
+          </Button>
+          <Button onClick={handleSectionSubmit}>
+            <Save className="h-4 w-4 mr-2" />
+            Mentés
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
