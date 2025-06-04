@@ -117,6 +117,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Lesson details endpoint
+  app.get("/api/lessons/:id", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const lessonId = parseInt(req.params.id);
+      const lesson = await storage.getLesson(lessonId);
+      
+      if (!lesson) {
+        return res.status(404).json({ message: "Lesson not found" });
+      }
+      
+      res.json(lesson);
+    } catch (error) {
+      console.error("Error fetching lesson:", error);
+      res.status(500).json({ message: "Failed to fetch lesson" });
+    }
+  });
+
   // University routes
   app.get("/api/universities", async (req: Request, res: Response) => {
     try {

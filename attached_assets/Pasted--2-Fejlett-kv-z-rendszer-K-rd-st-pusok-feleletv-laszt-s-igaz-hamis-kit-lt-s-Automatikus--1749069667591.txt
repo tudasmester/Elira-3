@@ -1,0 +1,86 @@
+**2. Fejlett kvíz rendszer**
+
+- Kérdéstípusok: feleletválasztós, igaz/hamis, kitöltős
+- Automatikus értékelés
+- Eredmény követés
+    
+    I'm analyzing the advanced quiz system requirements and designing a comprehensive implementation strategy.
+    
+    Analysis of Advanced Quiz System Requirements
+    
+    **Core Components Needed:**
+    
+    1. **Question Types**: Multiple choice, true/false, fill-in-the-blank
+    2. **Automatic Evaluation**: Real-time scoring and feedback
+    3. **Result Tracking**: Performance analytics and progress monitoring
+    
+    Detailed Implementation Plan
+    
+    1. Database Schema Design
+    
+    **New Tables Required:**
+    
+    - `quizzes` - Quiz metadata and configuration
+    - `quiz_questions` - Individual questions with type and content
+    - `quiz_question_options` - Answer choices for multiple choice questions
+    - `quiz_attempts` - User quiz submission tracking
+    - `quiz_answers` - Individual question responses
+    - `quiz_results` - Aggregated quiz performance data
+    
+    2. Backend API Endpoints
+    
+    **Quiz Management (Admin):**
+    
+    - `POST /api/admin/lessons/:lessonId/quizzes` - Create quiz
+    - `GET /api/admin/quizzes/:quizId` - Get quiz details
+    - `PUT /api/admin/quizzes/:quizId` - Update quiz
+    - `DELETE /api/admin/quizzes/:quizId` - Delete quiz
+    - `POST /api/admin/quizzes/:quizId/questions` - Add question
+    - `PUT /api/admin/questions/:questionId` - Update question
+    
+    **Student Quiz System:**
+    
+    - `GET /api/lessons/:lessonId/quiz` - Get quiz for lesson
+    - `POST /api/quizzes/:quizId/attempt` - Start quiz attempt
+    - `POST /api/quiz-attempts/:attemptId/submit` - Submit quiz
+    - `GET /api/quiz-attempts/:attemptId/results` - Get results
+    
+    **Analytics & Tracking:**
+    
+    - `GET /api/users/:userId/quiz-performance` - User performance data
+    - `GET /api/admin/quizzes/:quizId/analytics` - Quiz analytics
+    
+    3. Frontend Components
+    
+    **Admin Quiz Builder:**
+    
+    - Quiz creation wizard with question type selection
+    - Question editor with preview functionality
+    - Answer option management for multiple choice
+    - Correct answer marking system
+    
+    **Student Quiz Interface:**
+    
+    - Interactive question display with type-specific inputs
+    - Progress indicator and timer
+    - Real-time validation feedback
+    - Results dashboard with detailed breakdown
+    
+    4. Automatic Evaluation Logic
+    
+    **Scoring System:**
+    
+    - Multiple choice: Exact match validation
+    - True/false: Boolean comparison
+    - Fill-in-the-blank: Flexible text matching with case insensitivity
+    - Partial credit support for complex questions
+    
+    5. Result Tracking Features
+    
+    **Performance Metrics:**
+    
+    - Individual question accuracy
+    - Time spent per question
+    - Overall quiz completion rate
+    - Historical performance trends
+    - Comparative analytics against other students
