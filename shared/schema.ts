@@ -304,17 +304,7 @@ export type LessonCompletion = typeof lessonCompletions.$inferSelect;
 export type InsertCourseResource = z.infer<typeof insertCourseResourceSchema>;
 export type CourseResource = typeof courseResources.$inferSelect;
 
-export type InsertQuiz = z.infer<typeof insertQuizSchema>;
-export type Quiz = typeof quizzes.$inferSelect;
 
-export type InsertQuizQuestion = z.infer<typeof insertQuizQuestionSchema>;
-export type QuizQuestion = typeof quizQuestions.$inferSelect;
-
-export type InsertQuizAnswer = z.infer<typeof insertQuizAnswerSchema>;
-export type QuizAnswer = typeof quizAnswers.$inferSelect;
-
-export type InsertQuizAttempt = z.infer<typeof insertQuizAttemptSchema>;
-export type QuizAttempt = typeof quizAttempts.$inferSelect;
 
 // Learning Path tables
 export const learningPaths = pgTable("learning_paths", {
