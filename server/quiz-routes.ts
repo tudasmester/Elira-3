@@ -1,7 +1,28 @@
 import type { Express, Request, Response } from "express";
-import { storage } from "./storage";
+import { db } from "./db";
 import { requireAuth } from "./auth-working";
-import { isAdmin } from "./adminAuth";
+import { 
+  quizzes, 
+  quizQuestions, 
+  quizQuestionOptions, 
+  quizAttempts, 
+  quizAnswers, 
+  quizResults,
+  insertQuizSchema,
+  insertQuizQuestionSchema,
+  insertQuizQuestionOptionSchema,
+  insertQuizAttemptSchema,
+  insertQuizAnswerSchema,
+  insertQuizResultSchema,
+  type Quiz,
+  type QuizQuestion,
+  type QuizQuestionOption,
+  type QuizAttempt,
+  type QuizAnswer,
+  type QuizResult,
+  QUESTION_TYPES
+} from "@shared/schema";
+import { eq, and, desc, asc } from "drizzle-orm";
 
 interface AuthRequest extends Request {
   user?: {
@@ -13,290 +34,360 @@ interface AuthRequest extends Request {
 }
 
 export function registerQuizRoutes(app: Express) {
-  // **Quiz Management (Admin):**
-
-  // Create quiz for lesson
-  app.post('/api/admin/lessons/:lessonId/quizzes', requireAuth, isAdmin, async (req: AuthRequest, res: Response) => {
+  
+  // Create a new quiz/exam
+  app.post('/api/lessons/:lessonId/quizzes', requireAuth, async (req: AuthRequest, res: Response) => {
     try {
       const lessonId = parseInt(req.params.lessonId);
-      const quizData = { ...req.body, lessonId };
-      const quiz = await storage.createQuiz(quizData);
-      res.json(quiz);
+      const quizData = insertQuizSchema.parse({
+        ...req.body,
+        lessonId
+      });
+
+      const [quiz] = await db.insert(quizzes).values(quizData).returning();
+      res.status(201).json(quiz);
     } catch (error) {
-      console.error("Error creating quiz:", error);
-      res.status(500).json({ message: "Failed to create quiz" });
+      console.error('Error creating quiz:', error);
+      res.status(500).json({ message: 'Failed to create quiz' });
     }
   });
 
-  // Get quiz details with questions and options
-  app.get('/api/admin/quizzes/:quizId', requireAuth, isAdmin, async (req: AuthRequest, res: Response) => {
+  // Get all quizzes for a lesson
+  app.get('/api/lessons/:lessonId/quizzes', requireAuth, async (req: Request, res: Response) => {
     try {
-      const quizId = parseInt(req.params.quizId);
-      const quiz = await storage.getQuizWithDetails(quizId);
+      const lessonId = parseInt(req.params.lessonId);
+      
+      const lessonQuizzes = await db
+        .select()
+        .from(quizzes)
+        .where(eq(quizzes.lessonId, lessonId))
+        .orderBy(asc(quizzes.createdAt));
+
+      res.json(lessonQuizzes);
+    } catch (error) {
+      console.error('Error fetching quizzes:', error);
+      res.status(500).json({ message: 'Failed to fetch quizzes' });
+    }
+  });
+
+  // Get quiz with questions and options
+  app.get('/api/quizzes/:id', requireAuth, async (req: Request, res: Response) => {
+    try {
+      const quizId = parseInt(req.params.id);
+      
+      // Get quiz details
+      const [quiz] = await db
+        .select()
+        .from(quizzes)
+        .where(eq(quizzes.id, quizId));
+
       if (!quiz) {
-        return res.status(404).json({ message: "Quiz not found" });
+        return res.status(404).json({ message: 'Quiz not found' });
       }
-      res.json(quiz);
+
+      // Get questions with options
+      const questions = await db
+        .select()
+        .from(quizQuestions)
+        .where(eq(quizQuestions.quizId, quizId))
+        .orderBy(asc(quizQuestions.orderIndex));
+
+      const questionsWithOptions = await Promise.all(
+        questions.map(async (question) => {
+          const options = await db
+            .select()
+            .from(quizQuestionOptions)
+            .where(eq(quizQuestionOptions.questionId, question.id))
+            .orderBy(asc(quizQuestionOptions.orderIndex));
+
+          return {
+            ...question,
+            options
+          };
+        })
+      );
+
+      res.json({
+        ...quiz,
+        questions: questionsWithOptions
+      });
     } catch (error) {
-      console.error("Error fetching quiz:", error);
-      res.status(500).json({ message: "Failed to fetch quiz" });
+      console.error('Error fetching quiz:', error);
+      res.status(500).json({ message: 'Failed to fetch quiz' });
     }
   });
 
-  // Update quiz
-  app.put('/api/admin/quizzes/:quizId', requireAuth, isAdmin, async (req: AuthRequest, res: Response) => {
+  // Update quiz settings
+  app.put('/api/quizzes/:id', requireAuth, async (req: Request, res: Response) => {
     try {
-      const quizId = parseInt(req.params.quizId);
-      const quiz = await storage.updateQuiz(quizId, req.body);
-      res.json(quiz);
+      const quizId = parseInt(req.params.id);
+      const updateData = insertQuizSchema.partial().parse(req.body);
+
+      const [updatedQuiz] = await db
+        .update(quizzes)
+        .set({ ...updateData, updatedAt: new Date() })
+        .where(eq(quizzes.id, quizId))
+        .returning();
+
+      if (!updatedQuiz) {
+        return res.status(404).json({ message: 'Quiz not found' });
+      }
+
+      res.json(updatedQuiz);
     } catch (error) {
-      console.error("Error updating quiz:", error);
-      res.status(500).json({ message: "Failed to update quiz" });
+      console.error('Error updating quiz:', error);
+      res.status(500).json({ message: 'Failed to update quiz' });
     }
   });
 
   // Delete quiz
-  app.delete('/api/admin/quizzes/:quizId', requireAuth, isAdmin, async (req: AuthRequest, res: Response) => {
+  app.delete('/api/quizzes/:id', requireAuth, async (req: Request, res: Response) => {
     try {
-      const quizId = parseInt(req.params.quizId);
-      await storage.deleteQuiz(quizId);
-      res.json({ message: "Quiz deleted successfully" });
+      const quizId = parseInt(req.params.id);
+
+      // Delete quiz (cascade will handle related data)
+      await db.delete(quizzes).where(eq(quizzes.id, quizId));
+
+      res.json({ message: 'Quiz deleted successfully' });
     } catch (error) {
-      console.error("Error deleting quiz:", error);
-      res.status(500).json({ message: "Failed to delete quiz" });
+      console.error('Error deleting quiz:', error);
+      res.status(500).json({ message: 'Failed to delete quiz' });
     }
   });
 
   // Add question to quiz
-  app.post('/api/admin/quizzes/:quizId/questions', requireAuth, isAdmin, async (req: AuthRequest, res: Response) => {
+  app.post('/api/quizzes/:quizId/questions', requireAuth, async (req: Request, res: Response) => {
     try {
       const quizId = parseInt(req.params.quizId);
-      const questionData = { ...req.body, quizId };
-      const question = await storage.createQuizQuestion(questionData);
-      res.json(question);
+      const questionData = insertQuizQuestionSchema.parse({
+        ...req.body,
+        quizId
+      });
+
+      const [question] = await db.insert(quizQuestions).values(questionData).returning();
+      res.status(201).json(question);
     } catch (error) {
-      console.error("Error creating quiz question:", error);
-      res.status(500).json({ message: "Failed to create quiz question" });
+      console.error('Error creating question:', error);
+      res.status(500).json({ message: 'Failed to create question' });
     }
   });
 
   // Update question
-  app.put('/api/admin/questions/:questionId', requireAuth, isAdmin, async (req: AuthRequest, res: Response) => {
+  app.put('/api/questions/:id', requireAuth, async (req: Request, res: Response) => {
     try {
-      const questionId = parseInt(req.params.questionId);
-      const question = await storage.updateQuizQuestion(questionId, req.body);
-      res.json(question);
+      const questionId = parseInt(req.params.id);
+      const updateData = insertQuizQuestionSchema.partial().parse(req.body);
+
+      const [updatedQuestion] = await db
+        .update(quizQuestions)
+        .set(updateData)
+        .where(eq(quizQuestions.id, questionId))
+        .returning();
+
+      if (!updatedQuestion) {
+        return res.status(404).json({ message: 'Question not found' });
+      }
+
+      res.json(updatedQuestion);
     } catch (error) {
-      console.error("Error updating quiz question:", error);
-      res.status(500).json({ message: "Failed to update quiz question" });
+      console.error('Error updating question:', error);
+      res.status(500).json({ message: 'Failed to update question' });
     }
   });
 
   // Delete question
-  app.delete('/api/admin/questions/:questionId', requireAuth, isAdmin, async (req: AuthRequest, res: Response) => {
+  app.delete('/api/questions/:id', requireAuth, async (req: Request, res: Response) => {
     try {
-      const questionId = parseInt(req.params.questionId);
-      await storage.deleteQuizQuestion(questionId);
-      res.json({ message: "Question deleted successfully" });
+      const questionId = parseInt(req.params.id);
+
+      await db.delete(quizQuestions).where(eq(quizQuestions.id, questionId));
+      res.json({ message: 'Question deleted successfully' });
     } catch (error) {
-      console.error("Error deleting quiz question:", error);
-      res.status(500).json({ message: "Failed to delete quiz question" });
+      console.error('Error deleting question:', error);
+      res.status(500).json({ message: 'Failed to delete question' });
     }
   });
 
-  // Add option to question
-  app.post('/api/admin/questions/:questionId/options', requireAuth, isAdmin, async (req: AuthRequest, res: Response) => {
+  // Add answer option to question
+  app.post('/api/questions/:questionId/options', requireAuth, async (req: Request, res: Response) => {
     try {
       const questionId = parseInt(req.params.questionId);
-      const optionData = { ...req.body, questionId };
-      const option = await storage.createQuizQuestionOption(optionData);
-      res.json(option);
+      const optionData = insertQuizQuestionOptionSchema.parse({
+        ...req.body,
+        questionId
+      });
+
+      const [option] = await db.insert(quizQuestionOptions).values(optionData).returning();
+      res.status(201).json(option);
     } catch (error) {
-      console.error("Error creating quiz option:", error);
-      res.status(500).json({ message: "Failed to create quiz option" });
+      console.error('Error creating option:', error);
+      res.status(500).json({ message: 'Failed to create option' });
     }
   });
 
-  // **Student Quiz System:**
-
-  // Get quiz for lesson (student view)
-  app.get('/api/lessons/:lessonId/quiz', requireAuth, async (req: AuthRequest, res: Response) => {
+  // Update answer option
+  app.put('/api/options/:id', requireAuth, async (req: Request, res: Response) => {
     try {
-      const lessonId = parseInt(req.params.lessonId);
-      const quiz = await storage.getQuizByLesson(lessonId);
-      if (!quiz) {
-        return res.status(404).json({ message: "No quiz found for this lesson" });
+      const optionId = parseInt(req.params.id);
+      const updateData = insertQuizQuestionOptionSchema.partial().parse(req.body);
+
+      const [updatedOption] = await db
+        .update(quizQuestionOptions)
+        .set(updateData)
+        .where(eq(quizQuestionOptions.id, optionId))
+        .returning();
+
+      if (!updatedOption) {
+        return res.status(404).json({ message: 'Option not found' });
       }
-      res.json(quiz);
+
+      res.json(updatedOption);
     } catch (error) {
-      console.error("Error fetching lesson quiz:", error);
-      res.status(500).json({ message: "Failed to fetch quiz" });
+      console.error('Error updating option:', error);
+      res.status(500).json({ message: 'Failed to update option' });
+    }
+  });
+
+  // Delete answer option
+  app.delete('/api/options/:id', requireAuth, async (req: Request, res: Response) => {
+    try {
+      const optionId = parseInt(req.params.id);
+
+      await db.delete(quizQuestionOptions).where(eq(quizQuestionOptions.id, optionId));
+      res.json({ message: 'Option deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting option:', error);
+      res.status(500).json({ message: 'Failed to delete option' });
     }
   });
 
   // Start quiz attempt
-  app.post('/api/quizzes/:quizId/attempt', requireAuth, async (req: AuthRequest, res: Response) => {
+  app.post('/api/quizzes/:quizId/attempts', requireAuth, async (req: AuthRequest, res: Response) => {
     try {
       const quizId = parseInt(req.params.quizId);
       const userId = req.user!.id;
 
-      // Check if user has exceeded max attempts
-      const userAttempts = await storage.getUserQuizAttempts(userId, quizId);
-      const quiz = await storage.getQuiz(quizId);
-      
-      if (quiz?.maxAttempts && userAttempts.length >= quiz.maxAttempts) {
-        return res.status(400).json({ message: "Maximum attempts exceeded" });
-      }
+      // Check existing attempts
+      const existingAttempts = await db
+        .select()
+        .from(quizAttempts)
+        .where(and(
+          eq(quizAttempts.quizId, quizId),
+          eq(quizAttempts.userId, userId)
+        ));
 
-      const attemptData = {
+      const attemptNumber = existingAttempts.length + 1;
+
+      const [attempt] = await db.insert(quizAttempts).values({
         quizId,
         userId,
-        maxScore: await storage.getQuizMaxScore(quizId),
-        status: "in_progress" as const
-      };
+        attemptNumber,
+        status: 'in_progress'
+      }).returning();
 
-      const attempt = await storage.createQuizAttempt(attemptData);
-      res.json(attempt);
+      res.status(201).json(attempt);
     } catch (error) {
-      console.error("Error starting quiz attempt:", error);
-      res.status(500).json({ message: "Failed to start quiz attempt" });
+      console.error('Error starting quiz attempt:', error);
+      res.status(500).json({ message: 'Failed to start quiz attempt' });
     }
   });
 
-  // Submit quiz answer
-  app.post('/api/quiz-attempts/:attemptId/answer', requireAuth, async (req: AuthRequest, res: Response) => {
+  // Submit answer for question
+  app.post('/api/attempts/:attemptId/answers', requireAuth, async (req: Request, res: Response) => {
     try {
       const attemptId = parseInt(req.params.attemptId);
-      const { questionId, selectedOptionId, textAnswer } = req.body;
-
-      // Verify attempt belongs to user
-      const attempt = await storage.getQuizAttempt(attemptId);
-      if (!attempt || attempt.userId !== req.user!.id) {
-        return res.status(403).json({ message: "Unauthorized" });
-      }
-
-      const answer = await storage.submitQuizAnswer({
-        attemptId,
-        questionId,
-        selectedOptionId,
-        textAnswer
+      const answerData = insertQuizAnswerSchema.parse({
+        ...req.body,
+        attemptId
       });
 
-      res.json(answer);
+      const [answer] = await db.insert(quizAnswers).values(answerData).returning();
+      res.status(201).json(answer);
     } catch (error) {
-      console.error("Error submitting quiz answer:", error);
-      res.status(500).json({ message: "Failed to submit answer" });
+      console.error('Error submitting answer:', error);
+      res.status(500).json({ message: 'Failed to submit answer' });
     }
   });
 
-  // Submit quiz (complete attempt)
-  app.post('/api/quiz-attempts/:attemptId/submit', requireAuth, async (req: AuthRequest, res: Response) => {
+  // Complete quiz attempt
+  app.post('/api/attempts/:attemptId/complete', requireAuth, async (req: Request, res: Response) => {
     try {
-      const attemptId = parseInt(req.params.attemptId);
+      const attemptId = parseInt(req.params.id);
 
-      // Verify attempt belongs to user
-      const attempt = await storage.getQuizAttempt(attemptId);
-      if (!attempt || attempt.userId !== req.user!.id) {
-        return res.status(403).json({ message: "Unauthorized" });
-      }
+      // Update attempt status
+      const [completedAttempt] = await db
+        .update(quizAttempts)
+        .set({ 
+          status: 'completed',
+          completedAt: new Date()
+        })
+        .where(eq(quizAttempts.id, attemptId))
+        .returning();
 
-      const result = await storage.completeQuizAttempt(attemptId);
-      res.json(result);
+      // Calculate results (simplified version)
+      const answers = await db
+        .select()
+        .from(quizAnswers)
+        .where(eq(quizAnswers.attemptId, attemptId));
+
+      const correctAnswers = answers.filter(answer => answer.isCorrect).length;
+      const totalQuestions = answers.length;
+      const percentage = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
+
+      // Create quiz result
+      const [result] = await db.insert(quizResults).values({
+        attemptId,
+        userId: completedAttempt.userId,
+        quizId: completedAttempt.quizId,
+        totalQuestions,
+        correctAnswers,
+        incorrectAnswers: totalQuestions - correctAnswers,
+        skippedAnswers: 0,
+        totalScore: correctAnswers,
+        maxPossibleScore: totalQuestions,
+        percentage,
+        passed: percentage >= 70 // Default passing score
+      }).returning();
+
+      res.json({
+        attempt: completedAttempt,
+        result
+      });
     } catch (error) {
-      console.error("Error submitting quiz:", error);
-      res.status(500).json({ message: "Failed to submit quiz" });
+      console.error('Error completing quiz attempt:', error);
+      res.status(500).json({ message: 'Failed to complete quiz attempt' });
     }
   });
 
-  // Get quiz attempt results
-  app.get('/api/quiz-attempts/:attemptId/results', requireAuth, async (req: AuthRequest, res: Response) => {
-    try {
-      const attemptId = parseInt(req.params.attemptId);
-
-      // Verify attempt belongs to user or user is admin
-      const attempt = await storage.getQuizAttempt(attemptId);
-      const isOwner = attempt?.userId === req.user!.id;
-      const userIsAdmin = await storage.isUserAdmin(req.user!.id);
-
-      if (!attempt || (!isOwner && !userIsAdmin)) {
-        return res.status(403).json({ message: "Unauthorized" });
-      }
-
-      const results = await storage.getQuizAttemptResults(attemptId);
-      res.json(results);
-    } catch (error) {
-      console.error("Error fetching quiz results:", error);
-      res.status(500).json({ message: "Failed to fetch results" });
-    }
-  });
-
-  // **Analytics & Tracking:**
-
-  // Get user quiz performance
-  app.get('/api/users/:userId/quiz-performance', requireAuth, async (req: AuthRequest, res: Response) => {
-    try {
-      const userId = req.params.userId;
-      
-      // Users can only view their own performance unless they're admin
-      const userIsAdmin = await storage.isUserAdmin(req.user!.id);
-      if (userId !== req.user!.id && !userIsAdmin) {
-        return res.status(403).json({ message: "Unauthorized" });
-      }
-
-      const performance = await storage.getUserQuizPerformance(userId);
-      res.json(performance);
-    } catch (error) {
-      console.error("Error fetching user quiz performance:", error);
-      res.status(500).json({ message: "Failed to fetch performance data" });
-    }
-  });
-
-  // Get quiz analytics (admin only)
-  app.get('/api/admin/quizzes/:quizId/analytics', requireAuth, isAdmin, async (req: AuthRequest, res: Response) => {
+  // Get quiz results for user
+  app.get('/api/quizzes/:quizId/results', requireAuth, async (req: AuthRequest, res: Response) => {
     try {
       const quizId = parseInt(req.params.quizId);
-      const analytics = await storage.getQuizAnalytics(quizId);
-      res.json(analytics);
+      const userId = req.user!.id;
+
+      const results = await db
+        .select()
+        .from(quizResults)
+        .where(and(
+          eq(quizResults.quizId, quizId),
+          eq(quizResults.userId, userId)
+        ))
+        .orderBy(desc(quizResults.createdAt));
+
+      res.json(results);
     } catch (error) {
-      console.error("Error fetching quiz analytics:", error);
-      res.status(500).json({ message: "Failed to fetch analytics" });
+      console.error('Error fetching quiz results:', error);
+      res.status(500).json({ message: 'Failed to fetch quiz results' });
     }
   });
 
-  // Get all quizzes for a lesson (existing endpoint)
-  app.get('/api/lessons/:id/quizzes', requireAuth, async (req: Request, res: Response) => {
+  // Get available question types
+  app.get('/api/quiz/question-types', requireAuth, async (req: Request, res: Response) => {
     try {
-      const lessonId = parseInt(req.params.id);
-      const quizzes = await storage.getQuizzes(lessonId);
-      res.json(quizzes);
+      res.json(Object.values(QUESTION_TYPES));
     } catch (error) {
-      console.error("Error fetching quizzes:", error);
-      res.status(500).json({ message: "Failed to fetch quizzes" });
-    }
-  });
-
-  // Create quiz (existing endpoint)
-  app.post('/api/lessons/:id/quizzes', requireAuth, isAdmin, async (req: Request, res: Response) => {
-    try {
-      const lessonId = parseInt(req.params.id);
-      const quizData = { ...req.body, lessonId };
-      const quiz = await storage.createQuiz(quizData);
-      res.json(quiz);
-    } catch (error) {
-      console.error("Error creating quiz:", error);
-      res.status(500).json({ message: "Failed to create quiz" });
-    }
-  });
-
-  // Delete quiz (existing endpoint)
-  app.delete('/api/quizzes/:id', requireAuth, isAdmin, async (req: Request, res: Response) => {
-    try {
-      const quizId = parseInt(req.params.id);
-      await storage.deleteQuiz(quizId);
-      res.json({ message: "Quiz deleted successfully" });
-    } catch (error) {
-      console.error("Error deleting quiz:", error);
-      res.status(500).json({ message: "Failed to delete quiz" });
+      console.error('Error fetching question types:', error);
+      res.status(500).json({ message: 'Failed to fetch question types' });
     }
   });
 }

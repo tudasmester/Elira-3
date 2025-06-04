@@ -141,7 +141,7 @@ export function registerLessonRoutes(app: Express) {
   });
 
   // Get a specific lesson with all its data
-  app.get('/api/lessons/:id', isAdmin, async (req: Request, res: Response) => {
+  app.get('/api/lessons/:id', requireAuth, async (req: Request, res: Response) => {
     try {
       const lessonId = parseInt(req.params.id);
       
@@ -345,7 +345,7 @@ export function registerLessonRoutes(app: Express) {
   });
 
   // Reorder lessons within a module
-  app.put('/api/modules/:moduleId/lessons/reorder', isAdmin, async (req: Request, res: Response) => {
+  app.put('/api/modules/:moduleId/lessons/reorder', requireAuth, async (req: Request, res: Response) => {
     try {
       const moduleId = parseInt(req.params.moduleId);
       const { lessons: lessonOrder } = reorderLessonsSchema.parse(req.body);
@@ -371,7 +371,7 @@ export function registerLessonRoutes(app: Express) {
   });
 
   // Upload lesson attachment
-  app.post('/api/upload/lesson-attachment', isAdmin, upload.single('file'), async (req: Request, res: Response) => {
+  app.post('/api/upload/lesson-attachment', requireAuth, upload.single('file'), async (req: Request, res: Response) => {
     try {
       if (!req.file) {
         return res.status(400).json({ message: 'No file uploaded' });
@@ -394,7 +394,7 @@ export function registerLessonRoutes(app: Express) {
   });
 
   // Get module data (for lesson management page)
-  app.get('/api/modules/:id', isAdmin, async (req: Request, res: Response) => {
+  app.get('/api/modules/:id', requireAuth, async (req: Request, res: Response) => {
     try {
       const moduleId = parseInt(req.params.id);
       
