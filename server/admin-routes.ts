@@ -883,6 +883,16 @@ export function registerAdminRoutes(app: Express) {
       const modules = await storage.getCourseModules(courseId);
       console.log(`Found ${modules.length} modules for course ${courseId}`);
       
+      // Debug: Check if lessons are included
+      modules.forEach((module, index) => {
+        console.log(`Module ${index + 1}: ${module.title} - has ${module.lessons?.length || 0} lessons`);
+        if (module.lessons && module.lessons.length > 0) {
+          module.lessons.forEach((lesson, lessonIndex) => {
+            console.log(`  Lesson ${lessonIndex + 1}: ${lesson.title} (${lesson.type})`);
+          });
+        }
+      });
+      
       res.json(modules);
     } catch (error) {
       console.error('Error fetching course modules:', error);
