@@ -35,7 +35,346 @@ interface AuthRequest extends Request {
 
 export function registerQuizRoutes(app: Express) {
   
-  // Create a new quiz/exam
+  // Course Management API endpoints
+  
+  // GET /api/courses - List all courses
+  app.get('/api/courses', requireAuth, async (req: Request, res: Response) => {
+    try {
+      const courses = await storage.getCourses();
+      res.json(courses);
+    } catch (error) {
+      console.error('Error fetching courses:', error);
+      res.status(500).json({ message: 'Failed to fetch courses' });
+    }
+  });
+
+  // POST /api/courses - Create new course
+  app.post('/api/courses', requireAuth, async (req: Request, res: Response) => {
+    try {
+      // Validation
+      if (!req.body.title || req.body.title.trim() === '') {
+        return res.status(400).json({ message: 'Course title is required' });
+      }
+      
+      if (!req.body.description || req.body.description.trim() === '') {
+        return res.status(400).json({ message: 'Course description is required' });
+      }
+
+      const courseData = insertCourseSchema.parse(req.body);
+      const course = await storage.createCourse(courseData);
+      res.status(201).json(course);
+    } catch (error) {
+      console.error('Error creating course:', error);
+      res.status(500).json({ message: 'Failed to create course' });
+    }
+  });
+
+  // PUT /api/courses/:id - Update course
+  app.put('/api/courses/:id', requireAuth, async (req: Request, res: Response) => {
+    try {
+      const courseId = parseInt(req.params.id);
+      
+      // Validation
+      if (req.body.title && req.body.title.trim() === '') {
+        return res.status(400).json({ message: 'Course title cannot be empty' });
+      }
+
+      const updateData = insertCourseSchema.partial().parse(req.body);
+      const updatedCourse = await storage.updateCourse(courseId, updateData);
+      
+      if (!updatedCourse) {
+        return res.status(404).json({ message: 'Course not found' });
+      }
+
+      res.json(updatedCourse);
+    } catch (error) {
+      console.error('Error updating course:', error);
+      res.status(500).json({ message: 'Failed to update course' });
+    }
+  });
+
+  // DELETE /api/courses/:id - Delete course
+  app.delete('/api/courses/:id', requireAuth, async (req: Request, res: Response) => {
+    try {
+      const courseId = parseInt(req.params.id);
+      
+      // Check if course exists
+      const course = await storage.getCourse(courseId);
+      if (!course) {
+        return res.status(404).json({ message: 'Course not found' });
+      }
+
+      await storage.deleteCourse(courseId);
+      res.json({ message: 'Course deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting course:', error);
+      res.status(500).json({ message: 'Failed to delete course' });
+    }
+  });
+  
+  // Course-level exam management (as requested)
+  
+  // GET /api/courses/:courseId/exams - List exams for a course
+  app.get('/api/courses/:courseId/exams', requireAuth, async (req: Request, res: Response) => {
+    try {
+      const courseId = parseInt(req.params.courseId);
+      
+      const courseExams = await db
+        .select()
+        .from(quizzes)
+        .where(eq(quizzes.courseId, courseId))
+        .orderBy(asc(quizzes.createdAt));
+
+      res.json(courseExams);
+    } catch (error) {
+      console.error('Error fetching course exams:', error);
+      res.status(500).json({ message: 'Failed to fetch course exams' });
+    }
+  });
+
+  // POST /api/courses/:courseId/exams - Create new exam for course
+  app.post('/api/courses/:courseId/exams', requireAuth, async (req: AuthRequest, res: Response) => {
+    try {
+      const courseId = parseInt(req.params.courseId);
+      
+      // Validation
+      if (!req.body.title || req.body.title.trim() === '') {
+        return res.status(400).json({ message: 'Quiz title is required' });
+      }
+
+      const examData = insertQuizSchema.parse({
+        ...req.body,
+        courseId,
+        lessonId: null // Course-level exam, not tied to specific lesson
+      });
+
+      const [exam] = await db.insert(quizzes).values(examData).returning();
+      res.status(201).json(exam);
+    } catch (error) {
+      console.error('Error creating course exam:', error);
+      res.status(500).json({ message: 'Failed to create course exam' });
+    }
+  });
+
+  // GET /api/exams/:examId - Get exam details with questions
+  app.get('/api/exams/:examId', requireAuth, async (req: Request, res: Response) => {
+    try {
+      const examId = parseInt(req.params.examId);
+      
+      // Get exam details
+      const [exam] = await db
+        .select()
+        .from(quizzes)
+        .where(eq(quizzes.id, examId));
+
+      if (!exam) {
+        return res.status(404).json({ message: 'Exam not found' });
+      }
+
+      // Get questions with options
+      const questions = await db
+        .select()
+        .from(quizQuestions)
+        .where(eq(quizQuestions.quizId, examId))
+        .orderBy(asc(quizQuestions.orderIndex));
+
+      const questionsWithOptions = await Promise.all(
+        questions.map(async (question) => {
+          const options = await db
+            .select()
+            .from(quizQuestionOptions)
+            .where(eq(quizQuestionOptions.questionId, question.id))
+            .orderBy(asc(quizQuestionOptions.orderIndex));
+
+          return {
+            ...question,
+            options
+          };
+        })
+      );
+
+      res.json({
+        ...exam,
+        questions: questionsWithOptions
+      });
+    } catch (error) {
+      console.error('Error fetching exam:', error);
+      res.status(500).json({ message: 'Failed to fetch exam' });
+    }
+  });
+
+  // PUT /api/exams/:examId - Update exam
+  app.put('/api/exams/:examId', requireAuth, async (req: Request, res: Response) => {
+    try {
+      const examId = parseInt(req.params.examId);
+      
+      // Validation
+      if (req.body.title && req.body.title.trim() === '') {
+        return res.status(400).json({ message: 'Quiz title cannot be empty' });
+      }
+
+      const updateData = insertQuizSchema.partial().parse(req.body);
+
+      const [updatedExam] = await db
+        .update(quizzes)
+        .set({ ...updateData, updatedAt: new Date() })
+        .where(eq(quizzes.id, examId))
+        .returning();
+
+      if (!updatedExam) {
+        return res.status(404).json({ message: 'Exam not found' });
+      }
+
+      res.json(updatedExam);
+    } catch (error) {
+      console.error('Error updating exam:', error);
+      res.status(500).json({ message: 'Failed to update exam' });
+    }
+  });
+
+  // DELETE /api/exams/:examId - Delete exam
+  app.delete('/api/exams/:examId', requireAuth, async (req: Request, res: Response) => {
+    try {
+      const examId = parseInt(req.params.examId);
+
+      // Check if exam exists
+      const [exam] = await db
+        .select()
+        .from(quizzes)
+        .where(eq(quizzes.id, examId));
+
+      if (!exam) {
+        return res.status(404).json({ message: 'Exam not found' });
+      }
+
+      // Delete exam (cascade will handle related data)
+      await db.delete(quizzes).where(eq(quizzes.id, examId));
+
+      res.json({ message: 'Exam deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting exam:', error);
+      res.status(500).json({ message: 'Failed to delete exam' });
+    }
+  });
+
+  // GET /api/exams/:examId/questions - List questions for an exam
+  app.get('/api/exams/:examId/questions', requireAuth, async (req: Request, res: Response) => {
+    try {
+      const examId = parseInt(req.params.examId);
+      
+      const questions = await db
+        .select()
+        .from(quizQuestions)
+        .where(eq(quizQuestions.quizId, examId))
+        .orderBy(asc(quizQuestions.orderIndex));
+
+      const questionsWithOptions = await Promise.all(
+        questions.map(async (question) => {
+          const options = await db
+            .select()
+            .from(quizQuestionOptions)
+            .where(eq(quizQuestionOptions.questionId, question.id))
+            .orderBy(asc(quizQuestionOptions.orderIndex));
+
+          return {
+            ...question,
+            options
+          };
+        })
+      );
+
+      res.json(questionsWithOptions);
+    } catch (error) {
+      console.error('Error fetching exam questions:', error);
+      res.status(500).json({ message: 'Failed to fetch exam questions' });
+    }
+  });
+
+  // POST /api/exams/:examId/questions - Add new question to exam
+  app.post('/api/exams/:examId/questions', requireAuth, async (req: Request, res: Response) => {
+    try {
+      const examId = parseInt(req.params.examId);
+      
+      // Validation
+      if (!req.body.questionText || req.body.questionText.trim() === '') {
+        return res.status(400).json({ message: 'Question text is required' });
+      }
+
+      if (!req.body.questionType) {
+        return res.status(400).json({ message: 'Question type is required' });
+      }
+
+      const questionData = insertQuizQuestionSchema.parse({
+        ...req.body,
+        quizId: examId
+      });
+
+      const [question] = await db.insert(quizQuestions).values(questionData).returning();
+      res.status(201).json(question);
+    } catch (error) {
+      console.error('Error creating exam question:', error);
+      res.status(500).json({ message: 'Failed to create exam question' });
+    }
+  });
+
+  // GET /api/questions/:questionId - Get question details
+  app.get('/api/questions/:questionId', requireAuth, async (req: Request, res: Response) => {
+    try {
+      const questionId = parseInt(req.params.questionId);
+      
+      const [question] = await db
+        .select()
+        .from(quizQuestions)
+        .where(eq(quizQuestions.id, questionId));
+
+      if (!question) {
+        return res.status(404).json({ message: 'Question not found' });
+      }
+
+      const options = await db
+        .select()
+        .from(quizQuestionOptions)
+        .where(eq(quizQuestionOptions.questionId, questionId))
+        .orderBy(asc(quizQuestionOptions.orderIndex));
+
+      res.json({
+        ...question,
+        options
+      });
+    } catch (error) {
+      console.error('Error fetching question:', error);
+      res.status(500).json({ message: 'Failed to fetch question' });
+    }
+  });
+
+  // PUT /api/questions/:questionId/reorder - Reorder questions
+  app.put('/api/questions/:questionId/reorder', requireAuth, async (req: Request, res: Response) => {
+    try {
+      const questionId = parseInt(req.params.questionId);
+      const { newOrderIndex } = req.body;
+
+      if (typeof newOrderIndex !== 'number' || newOrderIndex < 0) {
+        return res.status(400).json({ message: 'Valid order index is required' });
+      }
+
+      const [updatedQuestion] = await db
+        .update(quizQuestions)
+        .set({ orderIndex: newOrderIndex })
+        .where(eq(quizQuestions.id, questionId))
+        .returning();
+
+      if (!updatedQuestion) {
+        return res.status(404).json({ message: 'Question not found' });
+      }
+
+      res.json(updatedQuestion);
+    } catch (error) {
+      console.error('Error reordering question:', error);
+      res.status(500).json({ message: 'Failed to reorder question' });
+    }
+  });
+  
+  // Create a new quiz/exam (legacy endpoint for lesson-specific quizzes)
   app.post('/api/lessons/:lessonId/quizzes', requireAuth, async (req: AuthRequest, res: Response) => {
     try {
       const lessonId = parseInt(req.params.lessonId);
