@@ -640,6 +640,14 @@ export class DatabaseStorage implements IStorage {
     return lesson;
   }
 
+  async getLessonsByModule(moduleId: number): Promise<Lesson[]> {
+    return await db
+      .select()
+      .from(lessons)
+      .where(eq(lessons.moduleId, moduleId))
+      .orderBy(lessons.order);
+  }
+
   // Quiz operations
   async createQuiz(quizData: InsertQuiz): Promise<Quiz> {
     const [quiz] = await db
@@ -651,11 +659,42 @@ export class DatabaseStorage implements IStorage {
 
   // Course Module operations
   async getCourseModules(courseId: number): Promise<CourseModule[]> {
-    return await db
+    // Get all modules for the course
+    const modules = await db
       .select()
       .from(courseModules)
       .where(eq(courseModules.courseId, courseId))
       .orderBy(courseModules.orderIndex);
+
+    // Get all lessons for all modules in this course
+    const allLessons = await db
+      .select()
+      .from(lessons)
+      .innerJoin(courseModules, eq(lessons.moduleId, courseModules.id))
+      .where(eq(courseModules.courseId, courseId))
+      .orderBy(lessons.order);
+
+    // Group lessons by module
+    const moduleMap = new Map();
+    
+    // Initialize modules with empty lesson arrays
+    modules.forEach(module => {
+      moduleMap.set(module.id, {
+        ...module,
+        lessons: []
+      });
+    });
+
+    // Add lessons to their respective modules
+    allLessons.forEach(result => {
+      const lesson = result.lessons;
+      const moduleId = lesson.moduleId;
+      if (moduleMap.has(moduleId)) {
+        moduleMap.get(moduleId).lessons.push(lesson);
+      }
+    });
+
+    return Array.from(moduleMap.values());
   }
 
   async updateCourseModule(moduleId: number, moduleData: Partial<InsertCourseModule>): Promise<CourseModule> {
