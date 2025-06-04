@@ -30,7 +30,9 @@ import {
   MoreHorizontal,
   Sparkles,
   Import,
-  Link
+  Link,
+  ClipboardList,
+  BookOpen
 } from 'lucide-react';
 
 interface Module {
@@ -346,7 +348,7 @@ export default function CourseOutlineBuilder() {
     { icon: FileText, label: 'Szöveg/PDF', type: 'text', color: 'bg-green-500' },
     { icon: HelpCircle, label: 'Quiz', type: 'quiz', color: 'bg-purple-500' },
     { icon: Users, label: 'Élő session', type: 'live_session', color: 'bg-orange-500' },
-    { icon: Award, label: 'Feladat', type: 'assignment', color: 'bg-red-500' },
+    { icon: ClipboardList, label: 'Feladat', type: 'assignment', color: 'bg-red-500' },
   ];
 
   if (isLoading) {
@@ -863,7 +865,7 @@ export default function CourseOutlineBuilder() {
                 {selectedActivityType === 'assignment' && (
                   <div className="space-y-4 p-4 bg-green-50 rounded-lg border border-green-200">
                     <h4 className="font-medium text-green-900 flex items-center gap-2">
-                      <Assignment className="h-4 w-4" />
+                      <ClipboardList className="h-4 w-4" />
                       Feladat beállítások
                     </h4>
                     
