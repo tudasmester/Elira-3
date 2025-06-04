@@ -409,20 +409,16 @@ export function registerAdminRoutes(app: Express) {
 
       const token = authHeader.substring(7);
       
-      // Import verification function locally
-      const jwt = require('jsonwebtoken');
-      let decoded;
-      try {
-        decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
-      } catch (err) {
-        console.log("Token verification failed:", err);
+      // Use the existing verification function
+      const { verifyToken } = await import('./auth-working');
+      const decoded = verifyToken(token);
+      
+      if (!decoded) {
+        console.log("Token verification failed");
         return res.status(401).json({ message: "Unauthorized" });
       }
       
-      if (!decoded) {
-        console.log("No decoded token");
-        return res.status(401).json({ message: "Unauthorized" });
-      }
+
 
       const user = await storage.getUser(decoded.userId);
       if (!user || !user.isAdmin) {
@@ -464,11 +460,42 @@ export function registerAdminRoutes(app: Express) {
   });
 
   // Delete module
-  app.delete('/api/modules/:id', isAdmin, async (req: Request, res: Response) => {
+  app.delete('/api/modules/:id', async (req: any, res: any) => {
     try {
+      // Manual authentication check
+      const authHeader = req.headers.authorization;
+      console.log("Module delete auth header:", authHeader ? `Bearer ${authHeader.substring(7, 20)}...` : "None");
+      
+      if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        console.log("No valid auth header for module delete");
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      const token = authHeader.substring(7);
+      
+      // Use the existing verification function
+      const { verifyToken } = await import('./auth-working');
+      const decoded = verifyToken(token);
+      
+      if (!decoded) {
+        console.log("Token verification failed for delete");
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      const user = await storage.getUser(decoded.userId);
+      if (!user || !user.isAdmin) {
+        console.log("User not found or not admin for delete:", user?.id, user?.isAdmin);
+        return res.status(403).json({ message: "Admin access required" });
+      }
+
+      console.log("Module delete auth successful for user:", user.id);
+
       const moduleId = parseInt(req.params.id);
+      console.log("Deleting module:", moduleId);
       
       await storage.deleteCourseModule(moduleId);
+      
+      console.log("Module deleted successfully:", moduleId);
       res.json({ message: "Module deleted successfully" });
     } catch (error) {
       console.error("Error deleting module:", error);
