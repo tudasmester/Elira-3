@@ -148,6 +148,34 @@ export function LessonEditor({ lesson, onClose, onSave }: LessonEditorProps) {
     }
   };
 
+  const handleDeleteLesson = async () => {
+    if (!confirm(`Biztosan törli a "${lesson.title}" leckét? Ez a művelet nem visszavonható és minden kapcsolódó kvíz is törlődik.`)) {
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      await apiRequest('DELETE', `/api/lessons/${lesson.id}`);
+      toast({
+        title: "Lecke törölve",
+        description: "A lecke sikeresen törölve.",
+      });
+      onClose(); // Close the dialog
+      // Trigger parent component refresh by calling onSave with null to indicate deletion
+      if (onSave) {
+        onSave(null as any);
+      }
+    } catch (error) {
+      toast({
+        title: "Hiba",
+        description: "Nem sikerült törölni a leckét.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const getTypeIcon = (type: string) => {
     switch (type) {
       case 'video': return <Video className="h-4 w-4" />;
@@ -249,10 +277,16 @@ export function LessonEditor({ lesson, onClose, onSave }: LessonEditorProps) {
           <TabsContent value="quizzes" className="space-y-4">
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-semibold">Kvízek kezelése</h3>
-              <Button onClick={handleCreateQuiz} className="flex items-center gap-2">
-                <Plus className="h-4 w-4" />
-                Új kvíz
-              </Button>
+              {lesson.type === 'quiz' ? (
+                <Button onClick={handleCreateQuiz} className="flex items-center gap-2">
+                  <Plus className="h-4 w-4" />
+                  Új kvíz
+                </Button>
+              ) : (
+                <div className="text-sm text-gray-500 bg-gray-100 px-3 py-2 rounded-lg">
+                  Kvízek csak kvíz típusú leckékhez adhatók hozzá
+                </div>
+              )}
             </div>
 
             {quizzes.length === 0 ? (
@@ -345,15 +379,25 @@ export function LessonEditor({ lesson, onClose, onSave }: LessonEditorProps) {
           </TabsContent>
         </Tabs>
 
-        <div className="flex justify-end gap-2 pt-4 border-t">
-          <Button variant="outline" onClick={onClose}>
-            <X className="h-4 w-4 mr-2" />
-            Mégse
+        <div className="flex justify-between pt-4 border-t">
+          <Button 
+            variant="destructive" 
+            onClick={handleDeleteLesson}
+            disabled={isLoading}
+          >
+            <Trash2 className="h-4 w-4 mr-2" />
+            Lecke törlése
           </Button>
-          <Button onClick={handleSaveLesson} disabled={isLoading}>
-            <Save className="h-4 w-4 mr-2" />
-            {isLoading ? 'Mentés...' : 'Mentés'}
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={onClose}>
+              <X className="h-4 w-4 mr-2" />
+              Mégse
+            </Button>
+            <Button onClick={handleSaveLesson} disabled={isLoading}>
+              <Save className="h-4 w-4 mr-2" />
+              {isLoading ? 'Mentés...' : 'Mentés'}
+            </Button>
+          </div>
         </div>
       </DialogContent>
 

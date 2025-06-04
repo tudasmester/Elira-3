@@ -645,6 +645,18 @@ export function registerAdminRoutes(app: Express) {
     }
   });
 
+  // Delete lesson
+  app.delete('/api/lessons/:id', isAdmin, async (req: Request, res: Response) => {
+    try {
+      const lessonId = parseInt(req.params.id);
+      await storage.deleteLesson(lessonId);
+      res.json({ message: "Lesson deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting lesson:", error);
+      res.status(500).json({ message: "Failed to delete lesson" });
+    }
+  });
+
   // Update module status - specific endpoint for status changes
   app.put('/api/modules/:id/status', isAdmin, async (req: Request, res: Response) => {
     try {
