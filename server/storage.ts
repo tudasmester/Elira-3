@@ -657,6 +657,315 @@ export class DatabaseStorage implements IStorage {
     return quiz;
   }
 
+  async getQuiz(quizId: number): Promise<Quiz | undefined> {
+    const [quiz] = await db
+      .select()
+      .from(quizzes)
+      .where(eq(quizzes.id, quizId));
+    return quiz;
+  }
+
+  async getQuizWithDetails(quizId: number): Promise<any> {
+    const quiz = await this.getQuiz(quizId);
+    if (!quiz) return null;
+
+    const questions = await db
+      .select()
+      .from(quizQuestions)
+      .where(eq(quizQuestions.quizId, quizId))
+      .orderBy(quizQuestions.order);
+
+    const questionsWithOptions = await Promise.all(
+      questions.map(async (question) => {
+        const options = await db
+          .select()
+          .from(quizQuestionOptions)
+          .where(eq(quizQuestionOptions.questionId, question.id))
+          .orderBy(quizQuestionOptions.order);
+        return { ...question, options };
+      })
+    );
+
+    return { ...quiz, questions: questionsWithOptions };
+  }
+
+  async getQuizByLesson(lessonId: number): Promise<any> {
+    const [quiz] = await db
+      .select()
+      .from(quizzes)
+      .where(eq(quizzes.lessonId, lessonId));
+    
+    if (!quiz) return null;
+    return this.getQuizWithDetails(quiz.id);
+  }
+
+  async createQuizQuestion(questionData: InsertQuizQuestion): Promise<QuizQuestion> {
+    const [question] = await db
+      .insert(quizQuestions)
+      .values(questionData)
+      .returning();
+    return question;
+  }
+
+  async updateQuizQuestion(questionId: number, questionData: Partial<InsertQuizQuestion>): Promise<QuizQuestion> {
+    const [question] = await db
+      .update(quizQuestions)
+      .set(questionData)
+      .where(eq(quizQuestions.id, questionId))
+      .returning();
+    return question;
+  }
+
+  async deleteQuizQuestion(questionId: number): Promise<void> {
+    await db.delete(quizQuestions).where(eq(quizQuestions.id, questionId));
+  }
+
+  async createQuizQuestionOption(optionData: InsertQuizQuestionOption): Promise<QuizQuestionOption> {
+    const [option] = await db
+      .insert(quizQuestionOptions)
+      .values(optionData)
+      .returning();
+    return option;
+  }
+
+  async createQuizAttempt(attemptData: InsertQuizAttempt): Promise<QuizAttempt> {
+    const [attempt] = await db
+      .insert(quizAttempts)
+      .values(attemptData)
+      .returning();
+    return attempt;
+  }
+
+  async getQuizAttempt(attemptId: number): Promise<QuizAttempt | undefined> {
+    const [attempt] = await db
+      .select()
+      .from(quizAttempts)
+      .where(eq(quizAttempts.id, attemptId));
+    return attempt;
+  }
+
+  async getUserQuizAttempts(userId: string, quizId: number): Promise<QuizAttempt[]> {
+    return await db
+      .select()
+      .from(quizAttempts)
+      .where(
+        and(
+          eq(quizAttempts.userId, userId),
+          eq(quizAttempts.quizId, quizId)
+        )
+      );
+  }
+
+  async getQuizMaxScore(quizId: number): Promise<number> {
+    const result = await db
+      .select({ totalPoints: sql<number>`sum(${quizQuestions.points})` })
+      .from(quizQuestions)
+      .where(eq(quizQuestions.quizId, quizId));
+    
+    return result[0]?.totalPoints || 0;
+  }
+
+  async submitQuizAnswer(answerData: {
+    attemptId: number;
+    questionId: number;
+    selectedOptionId?: number;
+    textAnswer?: string;
+  }): Promise<QuizAnswer> {
+    // Get question details
+    const question = await db
+      .select()
+      .from(quizQuestions)
+      .where(eq(quizQuestions.id, answerData.questionId))
+      .limit(1);
+
+    if (!question.length) {
+      throw new Error("Question not found");
+    }
+
+    let isCorrect = 0;
+    let pointsEarned = 0;
+
+    // Evaluate answer based on question type
+    if (question[0].type === 'multiple_choice' && answerData.selectedOptionId) {
+      const option = await db
+        .select()
+        .from(quizQuestionOptions)
+        .where(eq(quizQuestionOptions.id, answerData.selectedOptionId))
+        .limit(1);
+      
+      if (option.length && option[0].isCorrect) {
+        isCorrect = 1;
+        pointsEarned = question[0].points;
+      }
+    } else if (question[0].type === 'true_false' && answerData.selectedOptionId) {
+      const option = await db
+        .select()
+        .from(quizQuestionOptions)
+        .where(eq(quizQuestionOptions.id, answerData.selectedOptionId))
+        .limit(1);
+      
+      if (option.length && option[0].isCorrect) {
+        isCorrect = 1;
+        pointsEarned = question[0].points;
+      }
+    } else if (question[0].type === 'fill_blank' && answerData.textAnswer) {
+      // Get the correct answer from options
+      const correctOption = await db
+        .select()
+        .from(quizQuestionOptions)
+        .where(
+          and(
+            eq(quizQuestionOptions.questionId, answerData.questionId),
+            eq(quizQuestionOptions.isCorrect, 1)
+          )
+        )
+        .limit(1);
+
+      if (correctOption.length) {
+        const userAnswer = answerData.textAnswer.toLowerCase().trim();
+        const correctAnswer = correctOption[0].optionText.toLowerCase().trim();
+        
+        // Flexible matching for fill-in-the-blank
+        if (userAnswer === correctAnswer || userAnswer.includes(correctAnswer) || correctAnswer.includes(userAnswer)) {
+          isCorrect = 1;
+          pointsEarned = question[0].points;
+        }
+      }
+    }
+
+    const [answer] = await db
+      .insert(quizAnswers)
+      .values({
+        ...answerData,
+        isCorrect,
+        pointsEarned
+      })
+      .returning();
+
+    return answer;
+  }
+
+  async completeQuizAttempt(attemptId: number): Promise<QuizAttempt> {
+    // Calculate total score
+    const scoreResult = await db
+      .select({ 
+        totalScore: sql<number>`sum(${quizAnswers.pointsEarned})`,
+        maxScore: sql<number>`sum(${quizQuestions.points})`
+      })
+      .from(quizAnswers)
+      .innerJoin(quizQuestions, eq(quizAnswers.questionId, quizQuestions.id))
+      .where(eq(quizAnswers.attemptId, attemptId));
+
+    const totalScore = scoreResult[0]?.totalScore || 0;
+    const maxScore = scoreResult[0]?.maxScore || 1;
+    const percentageScore = Math.round((totalScore / maxScore) * 100);
+
+    const [attempt] = await db
+      .update(quizAttempts)
+      .set({
+        endTime: new Date(),
+        totalScore,
+        maxScore,
+        percentageScore,
+        status: "completed"
+      })
+      .where(eq(quizAttempts.id, attemptId))
+      .returning();
+
+    return attempt;
+  }
+
+  async getQuizAttemptResults(attemptId: number): Promise<any> {
+    const attempt = await this.getQuizAttempt(attemptId);
+    if (!attempt) return null;
+
+    const answers = await db
+      .select({
+        questionId: quizAnswers.questionId,
+        selectedOptionId: quizAnswers.selectedOptionId,
+        textAnswer: quizAnswers.textAnswer,
+        isCorrect: quizAnswers.isCorrect,
+        pointsEarned: quizAnswers.pointsEarned,
+        question: quizQuestions.question,
+        questionType: quizQuestions.type,
+        questionPoints: quizQuestions.points
+      })
+      .from(quizAnswers)
+      .innerJoin(quizQuestions, eq(quizAnswers.questionId, quizQuestions.id))
+      .where(eq(quizAnswers.attemptId, attemptId));
+
+    return { ...attempt, answers };
+  }
+
+  async getUserQuizPerformance(userId: string): Promise<any> {
+    const attempts = await db
+      .select({
+        quizId: quizAttempts.quizId,
+        totalScore: quizAttempts.totalScore,
+        maxScore: quizAttempts.maxScore,
+        percentageScore: quizAttempts.percentageScore,
+        completedAt: quizAttempts.endTime,
+        quizTitle: quizzes.title
+      })
+      .from(quizAttempts)
+      .innerJoin(quizzes, eq(quizAttempts.quizId, quizzes.id))
+      .where(
+        and(
+          eq(quizAttempts.userId, userId),
+          eq(quizAttempts.status, "completed")
+        )
+      )
+      .orderBy(quizAttempts.endTime);
+
+    const totalAttempts = attempts.length;
+    const averageScore = totalAttempts > 0 
+      ? attempts.reduce((sum, attempt) => sum + attempt.percentageScore, 0) / totalAttempts
+      : 0;
+
+    return {
+      totalAttempts,
+      averageScore: Math.round(averageScore),
+      attempts
+    };
+  }
+
+  async getQuizAnalytics(quizId: number): Promise<any> {
+    const attempts = await db
+      .select()
+      .from(quizAttempts)
+      .where(
+        and(
+          eq(quizAttempts.quizId, quizId),
+          eq(quizAttempts.status, "completed")
+        )
+      );
+
+    const totalAttempts = attempts.length;
+    const averageScore = totalAttempts > 0
+      ? attempts.reduce((sum, attempt) => sum + attempt.percentageScore, 0) / totalAttempts
+      : 0;
+
+    const passRate = totalAttempts > 0
+      ? attempts.filter(attempt => attempt.percentageScore >= 70).length / totalAttempts * 100
+      : 0;
+
+    return {
+      totalAttempts,
+      averageScore: Math.round(averageScore),
+      passRate: Math.round(passRate),
+      attempts
+    };
+  }
+
+  async isUserAdmin(userId: string): Promise<boolean> {
+    const [user] = await db
+      .select({ isAdmin: users.isAdmin })
+      .from(users)
+      .where(eq(users.id, userId));
+    
+    return user?.isAdmin === 1;
+  }
+
   // Course Module operations
   async getCourseModules(courseId: number): Promise<CourseModule[]> {
     // Get all modules for the course
