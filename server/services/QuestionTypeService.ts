@@ -221,7 +221,7 @@ export class TrueFalseQuestionService extends BaseQuestionService {
     };
   }
 
-  async updateQuestion(questionId: number, data: Partial<InsertQuizQuestion>): Promise<any> {
+  async updateQuestion(questionId: number, data: Partial<InsertQuizQuestion> & { correctAnswer?: boolean }): Promise<any> {
     const updatedQuestion = await super.updateQuestion(questionId, data);
     
     // Update True/False options if correctAnswer changed

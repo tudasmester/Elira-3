@@ -731,10 +731,51 @@ export function registerQuizRoutes(app: Express) {
     }
   });
 
-  // Get available question types
+  // Get available question types with specialized services
   app.get('/api/quiz/question-types', requireAuth, async (req: Request, res: Response) => {
     try {
-      res.json(Object.values(QUESTION_TYPES));
+      res.json({
+        questionTypes: Object.values(QUESTION_TYPES),
+        supported: QuestionServiceFactory.getSupportedTypes(),
+        services: {
+          multiple_choice: {
+            name: 'Multiple Choice',
+            description: 'Single or multiple correct answers',
+            requiresOptions: true,
+            validation: ['questionText', 'options']
+          },
+          true_false: {
+            name: 'True/False',
+            description: 'Binary choice question',
+            requiresOptions: false,
+            validation: ['questionText', 'correctAnswer']
+          },
+          short_text: {
+            name: 'Short Text',
+            description: 'Brief text response',
+            requiresOptions: false,
+            validation: ['questionText']
+          },
+          text_assignment: {
+            name: 'Text Assignment',
+            description: 'Long-form text response',
+            requiresOptions: false,
+            validation: ['questionText']
+          },
+          file_assignment: {
+            name: 'File Upload',
+            description: 'Document or file submission',
+            requiresOptions: false,
+            validation: ['questionText']
+          },
+          match_ordering: {
+            name: 'Match & Ordering',
+            description: 'Matching pairs or ordering items',
+            requiresOptions: true,
+            validation: ['questionText', 'matchingPairs', 'orderingItems']
+          }
+        }
+      });
     } catch (error) {
       console.error('Error fetching question types:', error);
       res.status(500).json({ message: 'Failed to fetch question types' });
