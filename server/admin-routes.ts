@@ -441,12 +441,32 @@ export function registerAdminRoutes(app: Express) {
   app.post('/api/courses/:id/modules', requireAuth, isAdmin, async (req: Request, res: Response) => {
     try {
       const courseId = parseInt(req.params.id);
+      const { title, description, status = 'piszkozat' } = req.body;
+      
+      // Validate required fields
+      if (!title || !title.trim()) {
+        return res.status(400).json({ message: "Module title is required" });
+      }
+      
+      // Validate status
+      const validStatuses = ['piszkozat', 'hamarosan', 'ingyenes', 'fizetos'];
+      if (!validStatuses.includes(status)) {
+        return res.status(400).json({ 
+          message: "Invalid status. Must be one of: piszkozat, hamarosan, ingyenes, fizetos" 
+        });
+      }
       
       // Get existing modules to determine the next order index
       const existingModules = await storage.getCourseModules(courseId);
       const orderIndex = existingModules.length;
       
-      const moduleData = { ...req.body, courseId, orderIndex };
+      const moduleData = {
+        courseId,
+        title: title.trim(),
+        description: description?.trim() || '',
+        status,
+        orderIndex
+      };
       
       const module = await storage.createCourseModule(moduleData);
       res.json(module);
@@ -493,6 +513,16 @@ export function registerAdminRoutes(app: Express) {
       const updateData = req.body;
       
       console.log("Updating module:", moduleId, "with data:", updateData);
+      
+      // Validate status if provided
+      if (updateData.status) {
+        const validStatuses = ['piszkozat', 'hamarosan', 'ingyenes', 'fizetos'];
+        if (!validStatuses.includes(updateData.status)) {
+          return res.status(400).json({ 
+            message: "Invalid status. Must be one of: piszkozat, hamarosan, ingyenes, fizetos" 
+          });
+        }
+      }
       
       // Validate that the update includes allowed fields
       const allowedFields = ['title', 'description', 'status', 'orderIndex'];
@@ -612,6 +642,58 @@ export function registerAdminRoutes(app: Express) {
     } catch (error) {
       console.error("Error updating lesson:", error);
       res.status(500).json({ message: "Failed to update lesson" });
+    }
+  });
+
+  // Update module status - specific endpoint for status changes
+  app.put('/api/modules/:id/status', isAdmin, async (req: Request, res: Response) => {
+    try {
+      const moduleId = parseInt(req.params.id);
+      const { status } = req.body;
+      
+      // Validate status
+      const validStatuses = ['piszkozat', 'hamarosan', 'ingyenes', 'fizetos'];
+      if (!validStatuses.includes(status)) {
+        return res.status(400).json({ 
+          message: "Invalid status. Must be one of: piszkozat, hamarosan, ingyenes, fizetos" 
+        });
+      }
+      
+      const module = await storage.updateCourseModule(moduleId, { status });
+      res.json({ 
+        success: true, 
+        module,
+        message: `Module status updated to ${status}` 
+      });
+    } catch (error) {
+      console.error("Error updating module status:", error);
+      res.status(500).json({ message: "Failed to update module status" });
+    }
+  });
+
+  // Get module access info - check user access to specific module
+  app.get('/api/modules/:id/access', async (req: Request, res: Response) => {
+    try {
+      const moduleId = parseInt(req.params.id);
+      const module = await storage.getCourseModule(moduleId);
+      
+      if (!module) {
+        return res.status(404).json({ message: "Module not found" });
+      }
+
+      // For now, return basic access info - can be extended with user subscription checks
+      const accessInfo = {
+        moduleId: module.id,
+        status: module.status,
+        accessible: module.status === 'ingyenes' || module.status === 'fizetos',
+        requiresPayment: module.status === 'fizetos',
+        visible: module.status !== 'piszkozat'
+      };
+
+      res.json(accessInfo);
+    } catch (error) {
+      console.error("Error checking module access:", error);
+      res.status(500).json({ message: "Failed to check module access" });
     }
   });
 

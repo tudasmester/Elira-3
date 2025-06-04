@@ -91,6 +91,7 @@ function Router() {
       <Route path="/admin/courses/wizard" component={CourseCreationWizard} />
       <Route path="/admin/courses/:id" component={AdminCourseView} />
       <Route path="/admin/courses/:id/edit" component={CourseOutlineBuilder} />
+      <Route path="/admin/courses/:id/outline" component={CourseOutlineBuilder} />
       <Route path="/admin/courses/:id/content" component={AdminContentBuilder} />
       <Route path="/admin/content-builder" component={CourseContentBuilder} />
       <Route path="/admin/modules/:moduleId/lessons" component={AdminLessonManagementPage} />

@@ -977,10 +977,30 @@ export default function CourseOutlineBuilder() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="piszkozat">Piszkozat</SelectItem>
-                      <SelectItem value="hamarosan">Hamarosan</SelectItem>
-                      <SelectItem value="ingyenes">Ingyenes</SelectItem>
-                      <SelectItem value="fizetos">Fizetős</SelectItem>
+                      <SelectItem value="piszkozat">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-gray-400 rounded-full" />
+                          Piszkozat
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="hamarosan">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-yellow-500 rounded-full" />
+                          Hamarosan
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="ingyenes">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-green-500 rounded-full" />
+                          Ingyenes
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="fizetos">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-purple-500 rounded-full" />
+                          Fizetős
+                        </div>
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
