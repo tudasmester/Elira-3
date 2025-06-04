@@ -227,8 +227,8 @@ export default function AdminCourseManager() {
   });
 
   const handleEditCourse = (course: Course) => {
-    // Navigate to course content builder with course ID
-    window.location.href = `/admin/content-builder?courseId=${course.id}`;
+    // Navigate to course outline builder with course ID
+    window.location.href = `/admin/courses/${course.id}/edit`;
   };
 
   const handleDeleteCourse = async (course: Course) => {
