@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useParams } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -29,6 +29,15 @@ export default function CourseContentEditor() {
     access: 'draft'
   });
 
+  // Simple input handlers
+  const updateTitle = (value: string) => {
+    setSectionData(prev => ({ ...prev, title: value }));
+  };
+
+  const updateDescription = (value: string) => {
+    setSectionData(prev => ({ ...prev, description: value }));
+  };
+
   const handleSectionSubmit = async () => {
     if (!sectionData.title.trim()) {
       toast({
@@ -58,8 +67,10 @@ export default function CourseContentEditor() {
       setIsModalOpen(false);
       setSectionData({ title: '', description: '', access: 'draft' });
       
-      // Refresh or redirect as needed
-      window.location.reload();
+      // Navigate to a module management page or reload
+      setTimeout(() => {
+        window.location.href = `/admin/courses/${id}/modules`;
+      }, 1000);
     } catch (error) {
       toast({
         title: "Hiba történt",
@@ -94,7 +105,7 @@ export default function CourseContentEditor() {
             <Input
               id="title"
               value={sectionData.title}
-              onChange={(e) => setSectionData(prev => ({ ...prev, title: e.target.value }))}
+              onChange={(e) => updateTitle(e.target.value)}
               placeholder="pl. Bevezetés a témába"
             />
           </div>
@@ -107,7 +118,7 @@ export default function CourseContentEditor() {
             <Textarea
               id="description"
               value={sectionData.description}
-              onChange={(e) => setSectionData(prev => ({ ...prev, description: e.target.value }))}
+              onChange={(e) => updateDescription(e.target.value)}
               placeholder="Modul leírása..."
               rows={3}
             />
