@@ -26,6 +26,7 @@ import {
 } from "@shared/schema";
 import { eq, and, desc, asc } from "drizzle-orm";
 import { QuestionServiceFactory } from "./services/QuestionTypeService";
+import { ExamBuilderService } from "./services/ExamBuilderService";
 
 interface AuthRequest extends Request {
   user?: {
@@ -37,6 +38,149 @@ interface AuthRequest extends Request {
 }
 
 export function registerQuizRoutes(app: Express) {
+  const examBuilderService = new ExamBuilderService();
+  
+  // ExamBuilderService API endpoints
+  
+  // POST /api/courses/:courseId/exams/builder - Create new exam using ExamBuilderService
+  app.post('/api/courses/:courseId/exams/builder', requireAuth, async (req: AuthRequest, res: Response) => {
+    try {
+      const courseId = parseInt(req.params.courseId);
+      const userId = req.user!.id;
+      
+      const exam = await examBuilderService.createExam(courseId, req.body, userId);
+      res.status(201).json(exam);
+    } catch (error) {
+      console.error('Error creating exam:', error);
+      res.status(500).json({ message: error.message || 'Failed to create exam' });
+    }
+  });
+
+  // POST /api/exams/:examId/questions/builder - Add question using ExamBuilderService
+  app.post('/api/exams/:examId/questions/builder', requireAuth, async (req: Request, res: Response) => {
+    try {
+      const examId = parseInt(req.params.examId);
+      
+      const question = await examBuilderService.addQuestion(examId, req.body);
+      res.status(201).json(question);
+    } catch (error) {
+      console.error('Error adding question:', error);
+      res.status(500).json({ message: error.message || 'Failed to add question' });
+    }
+  });
+
+  // POST /api/exams/:examId/questions/bulk - Bulk import questions
+  app.post('/api/exams/:examId/questions/bulk', requireAuth, async (req: Request, res: Response) => {
+    try {
+      const examId = parseInt(req.params.examId);
+      
+      const questions = await examBuilderService.bulkImportQuestions(examId, req.body.questions);
+      res.status(201).json(questions);
+    } catch (error) {
+      console.error('Error bulk importing questions:', error);
+      res.status(500).json({ message: error.message || 'Failed to bulk import questions' });
+    }
+  });
+
+  // POST /api/questions/:questionId/duplicate - Duplicate question
+  app.post('/api/questions/:questionId/duplicate', requireAuth, async (req: Request, res: Response) => {
+    try {
+      const questionId = parseInt(req.params.questionId);
+      
+      const duplicatedQuestion = await examBuilderService.duplicateQuestion(questionId);
+      res.status(201).json(duplicatedQuestion);
+    } catch (error) {
+      console.error('Error duplicating question:', error);
+      res.status(500).json({ message: error.message || 'Failed to duplicate question' });
+    }
+  });
+
+  // PUT /api/exams/:examId/questions/reorder - Reorder questions
+  app.put('/api/exams/:examId/questions/reorder', requireAuth, async (req: Request, res: Response) => {
+    try {
+      const examId = parseInt(req.params.examId);
+      
+      await examBuilderService.reorderQuestions(examId, req.body.questionOrder);
+      res.json({ message: 'Questions reordered successfully' });
+    } catch (error) {
+      console.error('Error reordering questions:', error);
+      res.status(500).json({ message: error.message || 'Failed to reorder questions' });
+    }
+  });
+
+  // PUT /api/exams/:examId/settings - Update exam settings
+  app.put('/api/exams/:examId/settings', requireAuth, async (req: Request, res: Response) => {
+    try {
+      const examId = parseInt(req.params.examId);
+      
+      const updatedExam = await examBuilderService.updateExamSettings(examId, req.body);
+      res.json(updatedExam);
+    } catch (error) {
+      console.error('Error updating exam settings:', error);
+      res.status(500).json({ message: error.message || 'Failed to update exam settings' });
+    }
+  });
+
+  // GET /api/exams/:examId/validation - Validate exam
+  app.get('/api/exams/:examId/validation', requireAuth, async (req: Request, res: Response) => {
+    try {
+      const examId = parseInt(req.params.examId);
+      
+      const validation = await examBuilderService.validateExam(examId);
+      res.json(validation);
+    } catch (error) {
+      console.error('Error validating exam:', error);
+      res.status(500).json({ message: error.message || 'Failed to validate exam' });
+    }
+  });
+
+  // POST /api/exams/:examId/publish - Publish exam
+  app.post('/api/exams/:examId/publish', requireAuth, async (req: Request, res: Response) => {
+    try {
+      const examId = parseInt(req.params.examId);
+      
+      const publishedExam = await examBuilderService.publishExam(examId);
+      res.json(publishedExam);
+    } catch (error) {
+      console.error('Error publishing exam:', error);
+      res.status(500).json({ message: error.message || 'Failed to publish exam' });
+    }
+  });
+
+  // GET /api/exams/:examId/preview - Generate exam preview
+  app.get('/api/exams/:examId/preview', requireAuth, async (req: Request, res: Response) => {
+    try {
+      const examId = parseInt(req.params.examId);
+      
+      const preview = await examBuilderService.generateExamPreview(examId);
+      res.json(preview);
+    } catch (error) {
+      console.error('Error generating exam preview:', error);
+      res.status(500).json({ message: error.message || 'Failed to generate exam preview' });
+    }
+  });
+
+  // GET /api/exam-builder/question-templates - Get question templates
+  app.get('/api/exam-builder/question-templates', requireAuth, async (req: Request, res: Response) => {
+    try {
+      const templates = ExamBuilderService.getQuestionTemplates();
+      res.json(templates);
+    } catch (error) {
+      console.error('Error fetching question templates:', error);
+      res.status(500).json({ message: 'Failed to fetch question templates' });
+    }
+  });
+
+  // GET /api/exam-builder/supported-types - Get supported question types
+  app.get('/api/exam-builder/supported-types', requireAuth, async (req: Request, res: Response) => {
+    try {
+      const types = ExamBuilderService.getSupportedQuestionTypes();
+      res.json({ supportedTypes: types });
+    } catch (error) {
+      console.error('Error fetching supported question types:', error);
+      res.status(500).json({ message: 'Failed to fetch supported question types' });
+    }
+  });
   
   // Course Management API endpoints
   
