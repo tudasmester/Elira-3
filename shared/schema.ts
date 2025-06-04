@@ -176,7 +176,7 @@ export const courseModules = pgTable("course_modules", {
   courseId: integer("course_id").notNull().references(() => courses.id),
   title: text("title").notNull(),
   description: text("description").notNull(),
-  status: text("status").notNull().default("draft"), // 'draft', 'coming_soon', 'free', 'premium'
+  status: text("status").notNull().default("piszkozat"), // 'piszkozat', 'hamarosan', 'ingyenes', 'fizetos'
   orderIndex: integer("order_index").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });

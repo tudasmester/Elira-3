@@ -69,7 +69,7 @@ export default function CourseOutlineBuilder() {
   const [isAddModuleOpen, setIsAddModuleOpen] = useState(false);
   const [newModuleTitle, setNewModuleTitle] = useState('');
   const [newModuleDescription, setNewModuleDescription] = useState('');
-  const [moduleStatus, setModuleStatus] = useState<'draft' | 'coming_soon' | 'free' | 'premium'>('draft');
+  const [moduleStatus, setModuleStatus] = useState<'piszkozat' | 'hamarosan' | 'ingyenes' | 'fizetos'>('piszkozat');
   const [isCreatingModule, setIsCreatingModule] = useState(false);
 
   // Module editing state
@@ -576,30 +576,30 @@ export default function CourseOutlineBuilder() {
                 
                 <div>
                   <Label htmlFor="module-status">Modul státusza *</Label>
-                  <Select value={moduleStatus} onValueChange={(value: 'draft' | 'coming_soon' | 'free' | 'premium') => setModuleStatus(value)}>
+                  <Select value={moduleStatus} onValueChange={(value: 'piszkozat' | 'hamarosan' | 'ingyenes' | 'fizetos') => setModuleStatus(value)}>
                     <SelectTrigger className="mt-1">
                       <SelectValue placeholder="Válasszon státuszt" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="draft">
+                      <SelectItem value="piszkozat">
                         <div className="flex items-center gap-2">
                           <div className="w-2 h-2 bg-gray-400 rounded-full" />
                           Piszkozat
                         </div>
                       </SelectItem>
-                      <SelectItem value="coming_soon">
+                      <SelectItem value="hamarosan">
                         <div className="flex items-center gap-2">
                           <div className="w-2 h-2 bg-yellow-500 rounded-full" />
                           Hamarosan
                         </div>
                       </SelectItem>
-                      <SelectItem value="free">
+                      <SelectItem value="ingyenes">
                         <div className="flex items-center gap-2">
                           <div className="w-2 h-2 bg-green-500 rounded-full" />
                           Ingyenes
                         </div>
                       </SelectItem>
-                      <SelectItem value="premium">
+                      <SelectItem value="fizetos">
                         <div className="flex items-center gap-2">
                           <div className="w-2 h-2 bg-purple-500 rounded-full" />
                           Fizetős
@@ -671,15 +671,15 @@ export default function CourseOutlineBuilder() {
 
                 <div>
                   <Label htmlFor="edit-module-status">Modul állapota</Label>
-                  <Select value={editModuleStatus} onValueChange={(value: 'draft' | 'coming_soon' | 'free' | 'premium') => setEditModuleStatus(value)}>
+                  <Select value={editModuleStatus} onValueChange={(value: 'piszkozat' | 'hamarosan' | 'ingyenes' | 'fizetos') => setEditModuleStatus(value)}>
                     <SelectTrigger className="mt-1">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="draft">Piszkozat</SelectItem>
-                      <SelectItem value="coming_soon">Hamarosan</SelectItem>
-                      <SelectItem value="free">Ingyenes</SelectItem>
-                      <SelectItem value="premium">Fizetős</SelectItem>
+                      <SelectItem value="piszkozat">Piszkozat</SelectItem>
+                      <SelectItem value="hamarosan">Hamarosan</SelectItem>
+                      <SelectItem value="ingyenes">Ingyenes</SelectItem>
+                      <SelectItem value="fizetos">Fizetős</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
