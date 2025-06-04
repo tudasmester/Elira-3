@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
-import QuizBuilder from '@/components/QuizBuilder';
+import { QuizManager } from '@/components/QuizManager';
 import { 
   FileText, 
   Video, 
@@ -275,75 +275,7 @@ export function LessonEditor({ lesson, onClose, onSave }: LessonEditorProps) {
           </TabsContent>
 
           <TabsContent value="quizzes" className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold">Kvízek kezelése</h3>
-              {lesson.type === 'quiz' ? (
-                <Button onClick={handleCreateQuiz} className="flex items-center gap-2">
-                  <Plus className="h-4 w-4" />
-                  Új kvíz
-                </Button>
-              ) : (
-                <div className="text-sm text-gray-500 bg-gray-100 px-3 py-2 rounded-lg">
-                  Kvízek csak kvíz típusú leckékhez adhatók hozzá
-                </div>
-              )}
-            </div>
-
-            {quizzes.length === 0 ? (
-              <Card>
-                <CardContent className="flex flex-col items-center justify-center py-8">
-                  <HelpCircle className="h-12 w-12 text-gray-400 mb-4" />
-                  <p className="text-gray-500 text-center">
-                    Még nincsenek kvízek ehhez a leckéhez.
-                  </p>
-                  <Button onClick={handleCreateQuiz} className="mt-4">
-                    Első kvíz létrehozása
-                  </Button>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="space-y-3">
-                {quizzes.map((quiz) => (
-                  <Card key={quiz.id}>
-                    <CardContent className="p-4">
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2">
-                            <HelpCircle className="h-4 w-4 text-green-600" />
-                            <h4 className="font-medium">{quiz.title}</h4>
-                            <Badge variant={quiz.isActive ? "default" : "secondary"}>
-                              {quiz.isActive ? "Aktív" : "Inaktív"}
-                            </Badge>
-                          </div>
-                          <p className="text-sm text-gray-600 mb-2">{quiz.description}</p>
-                          <div className="flex gap-4 text-xs text-gray-500">
-                            <span>{quiz.questions?.length || 0} kérdés</span>
-                            <span>Átmenet: {quiz.passingScore}%</span>
-                            {quiz.timeLimit && <span>Időlimit: {quiz.timeLimit} perc</span>}
-                          </div>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleEditQuiz(quiz)}
-                          >
-                            <Edit3 className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleDeleteQuiz(quiz.id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
+            <QuizManager lessonId={lesson.id} lessonType={lesson.type} />
           </TabsContent>
 
           <TabsContent value="settings" className="space-y-4">
