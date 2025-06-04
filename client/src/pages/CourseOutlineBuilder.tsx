@@ -86,6 +86,10 @@ export default function CourseOutlineBuilder() {
   const [selectedActivityType, setSelectedActivityType] = useState<string>('');
   const [activityTitle, setActivityTitle] = useState('');
   const [activityDescription, setActivityDescription] = useState('');
+  const [activityContent, setActivityContent] = useState('');
+  const [activityVideoUrl, setActivityVideoUrl] = useState('');
+  const [activityDuration, setActivityDuration] = useState(30);
+  const [activityVideoEmbedCode, setActivityVideoEmbedCode] = useState('');
   const [isCreatingActivity, setIsCreatingActivity] = useState(false);
 
   useEffect(() => {
@@ -246,6 +250,10 @@ export default function CourseOutlineBuilder() {
     setSelectedActivityType(activityType);
     setActivityTitle('');
     setActivityDescription('');
+    setActivityContent('');
+    setActivityVideoUrl('');
+    setActivityVideoEmbedCode('');
+    setActivityDuration(30);
     setIsAddActivityOpen(true);
   };
 
@@ -259,14 +267,28 @@ export default function CourseOutlineBuilder() {
       return;
     }
 
+    // Validate specific activity type requirements
+    if (selectedActivityType === 'video' && !activityVideoUrl.trim() && !activityVideoEmbedCode.trim()) {
+      toast({
+        title: "Hiányzó videó URL",
+        description: "Kérjük, adja meg a videó URL-jét vagy embed kódját.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     try {
       setIsCreatingActivity(true);
       
       const activityData = {
         title: activityTitle.trim(),
         description: activityDescription.trim() || null,
-        type: selectedActivityType,
-        moduleId: selectedModule.id
+        content: activityContent.trim() || '',
+        videoUrl: selectedActivityType === 'video' ? activityVideoUrl.trim() || null : null,
+        videoEmbedCode: selectedActivityType === 'video' ? activityVideoEmbedCode.trim() || null : null,
+        estimatedDuration: activityDuration,
+        moduleId: selectedModule.id,
+        order: (selectedModule.lessons?.length || 0) + 1
       };
 
       const response = await apiRequest('POST', `/api/modules/${selectedModule.id}/lessons`, activityData);
@@ -283,9 +305,14 @@ export default function CourseOutlineBuilder() {
         return module;
       }));
       
+      // Reset form
       setIsAddActivityOpen(false);
       setActivityTitle('');
       setActivityDescription('');
+      setActivityContent('');
+      setActivityVideoUrl('');
+      setActivityVideoEmbedCode('');
+      setActivityDuration(30);
       
       toast({
         title: "Aktivitás létrehozva",
@@ -712,9 +739,15 @@ export default function CourseOutlineBuilder() {
 
           {/* Activity Creation Dialog */}
           <Dialog open={isAddActivityOpen} onOpenChange={setIsAddActivityOpen}>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>
+                <DialogTitle className="flex items-center gap-2">
+                  {React.createElement(
+                    addActivityOptions.find(opt => opt.type === selectedActivityType)?.icon || FileText,
+                    { 
+                      className: `h-5 w-5 ${addActivityOptions.find(opt => opt.type === selectedActivityType)?.color?.replace('bg-', 'text-') || 'text-gray-500'}` 
+                    }
+                  )}
                   Új {addActivityOptions.find(opt => opt.type === selectedActivityType)?.label} aktivitás
                 </DialogTitle>
                 <DialogDescription>
@@ -722,43 +755,178 @@ export default function CourseOutlineBuilder() {
                 </DialogDescription>
               </DialogHeader>
               
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="activity-title">Aktivitás címe *</Label>
-                  <Input
-                    id="activity-title"
-                    value={activityTitle}
-                    onChange={(e) => setActivityTitle(e.target.value)}
-                    placeholder={`pl. ${selectedActivityType === 'video' ? 'Bevezetővideó' : selectedActivityType === 'quiz' ? 'Ellenőrző kvíz' : 'Új aktivitás'}`}
-                    className="mt-1"
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="activity-description">Aktivitás leírása</Label>
-                  <Textarea
-                    id="activity-description"
-                    value={activityDescription}
-                    onChange={(e) => setActivityDescription(e.target.value)}
-                    placeholder="Rövid leírás az aktivitásról..."
-                    rows={3}
-                    className="mt-1"
-                  />
+              <div className="space-y-6">
+                {/* Basic Information */}
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="activity-title">Aktivitás címe *</Label>
+                    <Input
+                      id="activity-title"
+                      value={activityTitle}
+                      onChange={(e) => setActivityTitle(e.target.value)}
+                      placeholder={`pl. ${
+                        selectedActivityType === 'video' ? 'Bevezetővideó' : 
+                        selectedActivityType === 'quiz' ? 'Ellenőrző kvíz' : 
+                        selectedActivityType === 'text' ? 'Szöveges lecke' :
+                        selectedActivityType === 'assignment' ? 'Házi feladat' :
+                        'Új aktivitás'
+                      }`}
+                      className="mt-1"
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="activity-description">Aktivitás leírása</Label>
+                    <Textarea
+                      id="activity-description"
+                      value={activityDescription}
+                      onChange={(e) => setActivityDescription(e.target.value)}
+                      placeholder="Rövid leírás az aktivitásról..."
+                      rows={2}
+                      className="mt-1"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="activity-duration">Becsült időtartam (perc)</Label>
+                    <Input
+                      id="activity-duration"
+                      type="number"
+                      min="1"
+                      max="300"
+                      value={activityDuration}
+                      onChange={(e) => setActivityDuration(parseInt(e.target.value) || 30)}
+                      className="mt-1"
+                    />
+                  </div>
                 </div>
 
+                {/* Activity Type Specific Fields */}
                 {selectedActivityType === 'video' && (
-                  <div className="bg-blue-50 p-3 rounded-lg">
-                    <p className="text-sm text-blue-800">
-                      A videó feltöltése és beállításai a következő lépésben történnek.
-                    </p>
+                  <div className="space-y-4 p-4 bg-purple-50 rounded-lg border border-purple-200">
+                    <h4 className="font-medium text-purple-900 flex items-center gap-2">
+                      <Video className="h-4 w-4" />
+                      Videó beállítások
+                    </h4>
+                    
+                    <div>
+                      <Label htmlFor="video-url">Videó URL</Label>
+                      <Input
+                        id="video-url"
+                        value={activityVideoUrl}
+                        onChange={(e) => setActivityVideoUrl(e.target.value)}
+                        placeholder="https://youtube.com/watch?v=... vagy https://vimeo.com/..."
+                        className="mt-1"
+                      />
+                      <p className="text-xs text-gray-600 mt-1">YouTube, Vimeo vagy közvetlen videó link</p>
+                    </div>
+
+                    <div className="text-center text-gray-500">vagy</div>
+
+                    <div>
+                      <Label htmlFor="video-embed">Beágyazási kód</Label>
+                      <Textarea
+                        id="video-embed"
+                        value={activityVideoEmbedCode}
+                        onChange={(e) => setActivityVideoEmbedCode(e.target.value)}
+                        placeholder='<iframe src="..." width="560" height="315"></iframe>'
+                        rows={3}
+                        className="mt-1 font-mono text-sm"
+                      />
+                      <p className="text-xs text-gray-600 mt-1">Teljes iframe embed kód</p>
+                    </div>
+                  </div>
+                )}
+
+                {selectedActivityType === 'text' && (
+                  <div className="space-y-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <h4 className="font-medium text-blue-900 flex items-center gap-2">
+                      <FileText className="h-4 w-4" />
+                      Szöveges tartalom
+                    </h4>
+                    
+                    <div>
+                      <Label htmlFor="text-content">Lecke tartalma</Label>
+                      <Textarea
+                        id="text-content"
+                        value={activityContent}
+                        onChange={(e) => setActivityContent(e.target.value)}
+                        placeholder="Írja be a lecke tartalmát... (Markdown formátum támogatott)"
+                        rows={8}
+                        className="mt-1"
+                      />
+                      <p className="text-xs text-gray-600 mt-1">Markdown formázás használható (**félkövér**, *dőlt*, stb.)</p>
+                    </div>
+                  </div>
+                )}
+
+                {selectedActivityType === 'assignment' && (
+                  <div className="space-y-4 p-4 bg-green-50 rounded-lg border border-green-200">
+                    <h4 className="font-medium text-green-900 flex items-center gap-2">
+                      <Assignment className="h-4 w-4" />
+                      Feladat beállítások
+                    </h4>
+                    
+                    <div>
+                      <Label htmlFor="assignment-instructions">Feladat leírása</Label>
+                      <Textarea
+                        id="assignment-instructions"
+                        value={activityContent}
+                        onChange={(e) => setActivityContent(e.target.value)}
+                        placeholder="Adja meg a feladat részletes leírását, elvárásokat, értékelési szempontokat..."
+                        rows={6}
+                        className="mt-1"
+                      />
+                    </div>
                   </div>
                 )}
 
                 {selectedActivityType === 'quiz' && (
-                  <div className="bg-purple-50 p-3 rounded-lg">
-                    <p className="text-sm text-purple-800">
-                      A kvíz kérdések hozzáadása a következő lépésben történik.
-                    </p>
+                  <div className="space-y-4 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                    <h4 className="font-medium text-yellow-900 flex items-center gap-2">
+                      <HelpCircle className="h-4 w-4" />
+                      Kvíz beállítások
+                    </h4>
+                    
+                    <div>
+                      <Label htmlFor="quiz-instructions">Kvíz utasítások</Label>
+                      <Textarea
+                        id="quiz-instructions"
+                        value={activityContent}
+                        onChange={(e) => setActivityContent(e.target.value)}
+                        placeholder="Utasítások a kvíz kitöltéséhez..."
+                        rows={3}
+                        className="mt-1"
+                      />
+                    </div>
+
+                    <div className="bg-yellow-100 p-3 rounded-lg">
+                      <p className="text-sm text-yellow-800">
+                        <BookOpen className="h-4 w-4 inline mr-1" />
+                        A kvíz kérdések hozzáadása az aktivitás létrehozása után történik.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {selectedActivityType === 'live_session' && (
+                  <div className="space-y-4 p-4 bg-red-50 rounded-lg border border-red-200">
+                    <h4 className="font-medium text-red-900 flex items-center gap-2">
+                      <Users className="h-4 w-4" />
+                      Élő oktatás beállítások
+                    </h4>
+                    
+                    <div>
+                      <Label htmlFor="session-details">Részletek és menetrend</Label>
+                      <Textarea
+                        id="session-details"
+                        value={activityContent}
+                        onChange={(e) => setActivityContent(e.target.value)}
+                        placeholder="Az élő oktatás részletei, témái, időpontja..."
+                        rows={4}
+                        className="mt-1"
+                      />
+                    </div>
                   </div>
                 )}
               </div>
