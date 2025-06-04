@@ -41,6 +41,39 @@ const upload = multer({
   }
 });
 
+// Video upload configuration
+const videoStorage = multer.diskStorage({
+  destination: async (req, file, cb) => {
+    const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'videos');
+    try {
+      await fs.mkdir(uploadDir, { recursive: true });
+      cb(null, uploadDir);
+    } catch (error) {
+      cb(error, uploadDir);
+    }
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const ext = path.extname(file.originalname);
+    cb(null, `video-${uniqueSuffix}${ext}`);
+  }
+});
+
+const videoUpload = multer({
+  storage: videoStorage,
+  limits: {
+    fileSize: 500 * 1024 * 1024, // 500MB limit for videos
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = ['video/mp4', 'video/webm', 'video/ogg', 'video/avi', 'video/mov', 'video/wmv'];
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only video files are allowed (MP4, WebM, OGG, AVI, MOV, WMV)'));
+    }
+  }
+});
+
 export function registerAdminRoutes(app: Express) {
   // File upload endpoint for course images
   app.post('/api/admin/upload/course-image', requireAuth, isAdmin, upload.single('image'), async (req, res) => {
@@ -66,6 +99,34 @@ export function registerAdminRoutes(app: Express) {
     } catch (error) {
       console.error('File upload error:', error);
       res.status(500).json({ message: 'File upload failed', error: error.message });
+    }
+  });
+
+  // Video upload endpoint for lessons
+  app.post('/api/admin/upload/video', requireAuth, isAdmin, videoUpload.single('video'), async (req, res) => {
+    try {
+      console.log('=== VIDEO UPLOAD ===');
+      console.log('File received:', req.file ? 'Yes' : 'No');
+      console.log('File details:', req.file);
+      
+      if (!req.file) {
+        return res.status(400).json({ message: 'No video file uploaded' });
+      }
+
+      const videoUrl = `/uploads/videos/${req.file.filename}`;
+      
+      console.log('Generated video URL:', videoUrl);
+      
+      res.json({
+        success: true,
+        videoUrl: videoUrl,
+        filename: req.file.filename,
+        size: req.file.size,
+        originalName: req.file.originalname
+      });
+    } catch (error) {
+      console.error('Video upload error:', error);
+      res.status(500).json({ message: 'Video upload failed', error: error.message });
     }
   });
 

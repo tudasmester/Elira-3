@@ -92,6 +92,9 @@ export default function CourseOutlineBuilder() {
   const [activityVideoUrl, setActivityVideoUrl] = useState('');
   const [activityDuration, setActivityDuration] = useState(30);
   const [activityVideoEmbedCode, setActivityVideoEmbedCode] = useState('');
+  const [activityVideoFile, setActivityVideoFile] = useState<File | null>(null);
+  const [isUploadingVideo, setIsUploadingVideo] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [isCreatingActivity, setIsCreatingActivity] = useState(false);
 
   useEffect(() => {
@@ -255,8 +258,54 @@ export default function CourseOutlineBuilder() {
     setActivityContent('');
     setActivityVideoUrl('');
     setActivityVideoEmbedCode('');
+    setActivityVideoFile(null);
     setActivityDuration(30);
+    setUploadProgress(0);
     setIsAddActivityOpen(true);
+  };
+
+  const handleVideoFileUpload = async (file: File) => {
+    setIsUploadingVideo(true);
+    setUploadProgress(0);
+    
+    try {
+      const formData = new FormData();
+      formData.append('video', file);
+
+      const token = localStorage.getItem('auth_token');
+      const response = await fetch('/api/admin/upload/video', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      });
+
+      if (!response.ok) {
+        throw new Error('Video upload failed');
+      }
+
+      const result = await response.json();
+      setActivityVideoUrl(result.videoUrl);
+      setUploadProgress(100);
+      
+      toast({
+        title: "Videó feltöltve",
+        description: `A videó sikeresen feltöltve: ${result.originalName}`
+      });
+      
+      return result.videoUrl;
+    } catch (error) {
+      console.error('Video upload error:', error);
+      toast({
+        title: "Feltöltési hiba",
+        description: "A videó feltöltése nem sikerült.",
+        variant: "destructive"
+      });
+      throw error;
+    } finally {
+      setIsUploadingVideo(false);
+    }
   };
 
   const handleCreateActivity = async () => {
@@ -270,10 +319,10 @@ export default function CourseOutlineBuilder() {
     }
 
     // Validate specific activity type requirements
-    if (selectedActivityType === 'video' && !activityVideoUrl.trim() && !activityVideoEmbedCode.trim()) {
+    if (selectedActivityType === 'video' && !activityVideoUrl.trim() && !activityVideoEmbedCode.trim() && !activityVideoFile) {
       toast({
-        title: "Hiányzó videó URL",
-        description: "Kérjük, adja meg a videó URL-jét vagy embed kódját.",
+        title: "Hiányzó videó",
+        description: "Kérjük, adja meg a videó URL-jét, embed kódját, vagy töltsön fel egy videó fájlt.",
         variant: "destructive"
       });
       return;
@@ -282,11 +331,22 @@ export default function CourseOutlineBuilder() {
     try {
       setIsCreatingActivity(true);
       
+      // Handle video file upload if a file is selected
+      let finalVideoUrl = activityVideoUrl.trim() || null;
+      if (selectedActivityType === 'video' && activityVideoFile && !finalVideoUrl) {
+        try {
+          finalVideoUrl = await handleVideoFileUpload(activityVideoFile);
+        } catch (error) {
+          setIsCreatingActivity(false);
+          return;
+        }
+      }
+      
       const activityData = {
         title: activityTitle.trim(),
         description: activityDescription.trim() || null,
         content: activityContent.trim() || '',
-        videoUrl: selectedActivityType === 'video' ? activityVideoUrl.trim() || null : null,
+        videoUrl: selectedActivityType === 'video' ? finalVideoUrl : null,
         videoEmbedCode: selectedActivityType === 'video' ? activityVideoEmbedCode.trim() || null : null,
         estimatedDuration: activityDuration,
         moduleId: selectedModule.id,
