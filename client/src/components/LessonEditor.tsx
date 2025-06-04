@@ -69,27 +69,9 @@ interface LessonEditorProps {
 
 export function LessonEditor({ lesson, onClose, onSave }: LessonEditorProps) {
   const [editedLesson, setEditedLesson] = useState<Lesson>(lesson);
-  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [activeTab, setActiveTab] = useState('content');
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedQuiz, setSelectedQuiz] = useState<Quiz | null>(null);
-  const [showQuizBuilder, setShowQuizBuilder] = useState(false);
   const { toast } = useToast();
-
-  // Load quizzes for this lesson
-  useEffect(() => {
-    fetchQuizzes();
-  }, [lesson.id]);
-
-  const fetchQuizzes = async () => {
-    try {
-      const response = await apiRequest('GET', `/api/lessons/${lesson.id}/quizzes`);
-      const data = await response.json();
-      setQuizzes(data);
-    } catch (error) {
-      console.error('Error loading quizzes:', error);
-    }
-  };
 
   const handleSaveLesson = async () => {
     setIsLoading(true);
@@ -112,41 +94,7 @@ export function LessonEditor({ lesson, onClose, onSave }: LessonEditorProps) {
     }
   };
 
-  const handleCreateQuiz = () => {
-    setSelectedQuiz(null);
-    setShowQuizBuilder(true);
-  };
 
-  const handleEditQuiz = (quiz: Quiz) => {
-    setSelectedQuiz(quiz);
-    setShowQuizBuilder(true);
-  };
-
-  const handleQuizSaved = async (quizData: any) => {
-    setShowQuizBuilder(false);
-    await fetchQuizzes();
-    toast({
-      title: "Kvíz mentve",
-      description: "A kvíz sikeresen mentve.",
-    });
-  };
-
-  const handleDeleteQuiz = async (quizId: number) => {
-    try {
-      await apiRequest('DELETE', `/api/quizzes/${quizId}`);
-      await fetchQuizzes();
-      toast({
-        title: "Kvíz törölve",
-        description: "A kvíz sikeresen törölve.",
-      });
-    } catch (error) {
-      toast({
-        title: "Hiba",
-        description: "Nem sikerült törölni a kvízt.",
-        variant: "destructive",
-      });
-    }
-  };
 
   const handleDeleteLesson = async () => {
     if (!confirm(`Biztosan törli a "${lesson.title}" leckét? Ez a művelet nem visszavonható és minden kapcsolódó kvíz is törlődik.`)) {
@@ -333,14 +281,7 @@ export function LessonEditor({ lesson, onClose, onSave }: LessonEditorProps) {
         </div>
       </DialogContent>
 
-      {showQuizBuilder && (
-        <QuizBuilder
-          lessonId={lesson.id}
-          quiz={selectedQuiz}
-          onSave={handleQuizSaved}
-          onClose={() => setShowQuizBuilder(false)}
-        />
-      )}
+
     </Dialog>
   );
 }
