@@ -7,6 +7,7 @@ import { registerAdminRoutes } from "./admin-routes";
 import { registerLearningPathRoutes } from "./learning-path-routes";
 import { registerLessonRoutes } from "./lesson-routes";
 import { registerQuizRoutes } from "./quiz-routes";
+import { registerQuizBuilderRoutes } from "./quiz-builder-routes";
 import { generateCareerPathInfo, getCareerRecommendation, generateSkillsAnalysis } from "./openai";
 import { contentManager } from "./content-manager";
 import type { Request, Response } from "express";
@@ -307,6 +308,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Quiz routes
   registerQuizRoutes(app);
+  
+  // Quiz Builder routes
+  registerQuizBuilderRoutes(app);
 
   const httpServer = createServer(app);
   return httpServer;

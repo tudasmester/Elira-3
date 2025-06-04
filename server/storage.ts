@@ -99,15 +99,17 @@ export interface IStorage {
   
   // Quiz operations
   createQuiz(quiz: InsertQuiz): Promise<Quiz>;
+  getQuiz(quizId: number): Promise<Quiz | undefined>;
   getQuizzes(lessonId: number): Promise<Quiz[]>;
   updateQuiz(quizId: number, quiz: Partial<InsertQuiz>): Promise<Quiz>;
   deleteQuiz(quizId: number): Promise<void>;
   
   // Quiz question operations
   createQuizQuestion(question: InsertQuizQuestion): Promise<QuizQuestion>;
+  getQuizQuestion(questionId: number): Promise<QuizQuestion | undefined>;
   getQuizQuestions(quizId: number): Promise<QuizQuestion[]>;
   updateQuizQuestion(questionId: number, question: Partial<InsertQuizQuestion>): Promise<QuizQuestion>;
-  deleteQuizQuestion(questionId: number): Promise<void>;
+  deleteQuizQuestion(questionId: number): Promise<boolean>;
   
   // Quiz answer operations
   createQuizAnswer(answer: InsertQuizAnswer): Promise<QuizAnswer>;
