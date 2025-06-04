@@ -648,6 +648,15 @@ export class DatabaseStorage implements IStorage {
     return module;
   }
 
+  async updateCourseModule(moduleId: number, moduleData: Partial<InsertCourseModule>): Promise<CourseModule> {
+    const [module] = await db
+      .update(courseModules)
+      .set(moduleData)
+      .where(eq(courseModules.id, moduleId))
+      .returning();
+    return module;
+  }
+
   async deleteCourseModule(moduleId: number): Promise<void> {
     await db.delete(courseModules).where(eq(courseModules.id, moduleId));
   }
