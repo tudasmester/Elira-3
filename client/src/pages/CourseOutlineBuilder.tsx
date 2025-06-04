@@ -98,6 +98,18 @@ export default function CourseOutlineBuilder() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isCreatingActivity, setIsCreatingActivity] = useState(false);
 
+  // Lesson editing state
+  const [isEditLessonOpen, setIsEditLessonOpen] = useState(false);
+  const [editingLesson, setEditingLesson] = useState<Lesson | null>(null);
+  const [editLessonTitle, setEditLessonTitle] = useState('');
+  const [editLessonDescription, setEditLessonDescription] = useState('');
+  const [editLessonContent, setEditLessonContent] = useState('');
+  const [editLessonVideoUrl, setEditLessonVideoUrl] = useState('');
+  const [editLessonVideoEmbedCode, setEditLessonVideoEmbedCode] = useState('');
+  const [editLessonVideoFile, setEditLessonVideoFile] = useState<File | null>(null);
+  const [editLessonDuration, setEditLessonDuration] = useState(30);
+  const [isUpdatingLesson, setIsUpdatingLesson] = useState(false);
+
   useEffect(() => {
     loadCourseData();
   }, [id]);
@@ -404,6 +416,120 @@ export default function CourseOutlineBuilder() {
     setExpandedModules(newExpanded);
   };
 
+  const handleEditLesson = (lesson: Lesson) => {
+    setEditingLesson(lesson);
+    setEditLessonTitle(lesson.title);
+    setEditLessonDescription(''); // Will be fetched from API
+    setEditLessonContent(''); // Will be fetched from API
+    setEditLessonVideoUrl(''); // Will be fetched from API
+    setEditLessonVideoEmbedCode(''); // Will be fetched from API
+    setEditLessonVideoFile(null);
+    setEditLessonDuration(lesson.duration || 30);
+    setIsEditLessonOpen(true);
+    
+    // Load full lesson data
+    loadLessonData(lesson.id!);
+  };
+
+  const loadLessonData = async (lessonId: number) => {
+    try {
+      const response = await apiRequest('GET', `/api/lessons/${lessonId}`);
+      const lessonData = await response.json();
+      
+      setEditLessonTitle(lessonData.title || '');
+      setEditLessonDescription(lessonData.description || '');
+      setEditLessonContent(lessonData.content || '');
+      setEditLessonVideoUrl(lessonData.videoUrl || '');
+      setEditLessonVideoEmbedCode(lessonData.videoEmbedCode || '');
+      setEditLessonDuration(lessonData.estimatedDuration || 30);
+    } catch (error) {
+      console.error('Error loading lesson data:', error);
+      toast({
+        title: "Hiba",
+        description: "A lecke adatainak betöltése nem sikerült.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleUpdateLesson = async () => {
+    if (!editLessonTitle.trim() || !editingLesson) {
+      toast({
+        title: "Hiányzó adat",
+        description: "Kérjük, adja meg a lecke címét.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      setIsUpdatingLesson(true);
+      
+      // Handle video file upload if a new file is selected
+      let finalVideoUrl = editLessonVideoUrl.trim() || null;
+      if (editingLesson.type === 'video' && editLessonVideoFile && !finalVideoUrl) {
+        try {
+          finalVideoUrl = await handleVideoFileUpload(editLessonVideoFile);
+        } catch (error) {
+          setIsUpdatingLesson(false);
+          return;
+        }
+      }
+      
+      const updateData = {
+        title: editLessonTitle.trim(),
+        description: editLessonDescription.trim() || null,
+        content: editLessonContent.trim() || '',
+        videoUrl: editingLesson.type === 'video' ? finalVideoUrl : null,
+        videoEmbedCode: editingLesson.type === 'video' ? editLessonVideoEmbedCode.trim() || null : null,
+        estimatedDuration: editLessonDuration
+      };
+
+      const response = await apiRequest('PUT', `/api/lessons/${editingLesson.id}`, updateData);
+      const updatedLesson = await response.json();
+      
+      // Update modules to reflect changes
+      setModules(prev => prev.map(module => ({
+        ...module,
+        lessons: module.lessons?.map(lesson => 
+          lesson.id === editingLesson.id 
+            ? { ...lesson, ...updatedLesson }
+            : lesson
+        )
+      })));
+      
+      // Reset form
+      setIsEditLessonOpen(false);
+      setEditingLesson(null);
+      resetEditLessonForm();
+      
+      toast({
+        title: "Lecke frissítve",
+        description: `A "${editLessonTitle}" lecke sikeresen frissítve.`
+      });
+      
+    } catch (error) {
+      console.error('Error updating lesson:', error);
+      toast({
+        title: "Hiba történt",
+        description: "A lecke frissítése nem sikerült.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsUpdatingLesson(false);
+    }
+  };
+
+  const resetEditLessonForm = () => {
+    setEditLessonTitle('');
+    setEditLessonDescription('');
+    setEditLessonContent('');
+    setEditLessonVideoUrl('');
+    setEditLessonVideoEmbedCode('');
+    setEditLessonVideoFile(null);
+    setEditLessonDuration(30);
+  };
+
   const addActivityOptions = [
     { icon: Video, label: 'Videó', type: 'video', color: 'bg-blue-500' },
     { icon: FileText, label: 'Szöveg/PDF', type: 'text', color: 'bg-green-500' },
@@ -580,7 +706,7 @@ export default function CourseOutlineBuilder() {
                                 {lesson.duration && ` • ${lesson.duration} perc`}
                               </p>
                             </div>
-                            <Button variant="ghost" size="sm">
+                            <Button variant="ghost" size="sm" onClick={() => handleEditLesson(lesson)}>
                               <Edit3 className="h-4 w-4" />
                             </Button>
                           </div>
@@ -1037,6 +1163,103 @@ export default function CourseOutlineBuilder() {
 
                     <div className="bg-yellow-100 p-3 rounded-lg">
                       <p className="text-sm text-yellow-800">
+                        💡 A kvíz kérdéseit a lecke létrehozása után adhatja hozzá a részletes szerkesztőben.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {selectedActivityType === 'live_session' && (
+                  <div className="space-y-4 p-4 bg-orange-50 rounded-lg border border-orange-200">
+                    <h4 className="font-medium text-orange-900 flex items-center gap-2">
+                      <Users className="h-4 w-4" />
+                      Élő session beállítások
+                    </h4>
+                    
+                    <div>
+                      <Label htmlFor="session-description">Session leírása</Label>
+                      <Textarea
+                        id="session-description"
+                        value={activityContent}
+                        onChange={(e) => setActivityContent(e.target.value)}
+                        placeholder="Írja le a session témáját, célját és menetét..."
+                        rows={4}
+                        className="mt-1"
+                      />
+                    </div>
+
+                    <div className="bg-orange-100 p-3 rounded-lg">
+                      <p className="text-sm text-orange-800">
+                        📅 Az élő session időpontját és részleteit később állíthatja be.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {selectedActivityType === 'text' && (
+                  <div className="space-y-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <h4 className="font-medium text-blue-900 flex items-center gap-2">
+                      <FileText className="h-4 w-4" />
+                      Szöveges tartalom
+                    </h4>
+                    
+                    <div>
+                      <Label htmlFor="text-content">Lecke tartalma</Label>
+                      <Textarea
+                        id="text-content"
+                        value={activityContent}
+                        onChange={(e) => setActivityContent(e.target.value)}
+                        placeholder="Írja be a lecke tartalmát... (Markdown formátum támogatott)"
+                        rows={8}
+                        className="mt-1"
+                      />
+                      <p className="text-xs text-gray-600 mt-1">Markdown formázás használható (**félkövér**, *dőlt*, stb.)</p>
+                    </div>
+                  </div>
+                )}
+
+                {selectedActivityType === 'assignment' && (
+                  <div className="space-y-4 p-4 bg-green-50 rounded-lg border border-green-200">
+                    <h4 className="font-medium text-green-900 flex items-center gap-2">
+                      <ClipboardList className="h-4 w-4" />
+                      Feladat beállítások
+                    </h4>
+                    
+                    <div>
+                      <Label htmlFor="assignment-instructions">Feladat leírása</Label>
+                      <Textarea
+                        id="assignment-instructions"
+                        value={activityContent}
+                        onChange={(e) => setActivityContent(e.target.value)}
+                        placeholder="Adja meg a feladat részletes leírását, elvárásokat, értékelési szempontokat..."
+                        rows={6}
+                        className="mt-1"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {selectedActivityType === 'quiz' && (
+                  <div className="space-y-4 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                    <h4 className="font-medium text-yellow-900 flex items-center gap-2">
+                      <HelpCircle className="h-4 w-4" />
+                      Kvíz beállítások
+                    </h4>
+                    
+                    <div>
+                      <Label htmlFor="quiz-instructions">Kvíz utasítások</Label>
+                      <Textarea
+                        id="quiz-instructions"
+                        value={activityContent}
+                        onChange={(e) => setActivityContent(e.target.value)}
+                        placeholder="Utasítások a kvíz kitöltéséhez..."
+                        rows={3}
+                        className="mt-1"
+                      />
+                    </div>
+
+                    <div className="bg-yellow-100 p-3 rounded-lg">
+                      <p className="text-sm text-yellow-800">
                         <BookOpen className="h-4 w-4 inline mr-1" />
                         A kvíz kérdések hozzáadása az aktivitás létrehozása után történik.
                       </p>
@@ -1085,6 +1308,205 @@ export default function CourseOutlineBuilder() {
                     </>
                   ) : (
                     'Aktivitás létrehozása'
+                  )}
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          {/* Edit Lesson Dialog */}
+          <Dialog open={isEditLessonOpen} onOpenChange={setIsEditLessonOpen}>
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Lecke szerkesztése</DialogTitle>
+                <DialogDescription>
+                  Módosítsa a lecke részleteit és tartalmát.
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="edit-lesson-title">Lecke címe *</Label>
+                    <Input
+                      id="edit-lesson-title"
+                      value={editLessonTitle}
+                      onChange={(e) => setEditLessonTitle(e.target.value)}
+                      placeholder="pl. Bevezetővideó"
+                      className="mt-1"
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="edit-lesson-duration">Becsült időtartam (perc)</Label>
+                    <Input
+                      id="edit-lesson-duration"
+                      type="number"
+                      min="1"
+                      max="300"
+                      value={editLessonDuration}
+                      onChange={(e) => setEditLessonDuration(parseInt(e.target.value) || 30)}
+                      className="mt-1"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="edit-lesson-description">Lecke leírása</Label>
+                  <Textarea
+                    id="edit-lesson-description"
+                    value={editLessonDescription}
+                    onChange={(e) => setEditLessonDescription(e.target.value)}
+                    placeholder="Rövid leírás a lecke tartalmáról..."
+                    rows={3}
+                    className="mt-1"
+                  />
+                </div>
+
+                {/* Video-specific fields */}
+                {editingLesson?.type === 'video' && (
+                  <div className="space-y-4 p-4 bg-purple-50 rounded-lg border border-purple-200">
+                    <h4 className="font-medium text-purple-900 flex items-center gap-2">
+                      <Video className="h-4 w-4" />
+                      Videó beállítások
+                    </h4>
+                    
+                    {/* Video File Upload */}
+                    <div>
+                      <Label htmlFor="edit-video-file">Új videó fájl feltöltése</Label>
+                      <div className="mt-1">
+                        <input
+                          id="edit-video-file"
+                          type="file"
+                          accept="video/mp4,video/webm,video/ogg,video/avi,video/mov,video/wmv"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              setEditLessonVideoFile(file);
+                              setEditLessonVideoUrl('');
+                              setEditLessonVideoEmbedCode('');
+                            }
+                          }}
+                          className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
+                          disabled={isUploadingVideo}
+                        />
+                        {editLessonVideoFile && (
+                          <div className="mt-2 flex items-center justify-between p-2 bg-white rounded border">
+                            <span className="text-sm text-gray-700">{editLessonVideoFile.name}</span>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                setEditLessonVideoFile(null);
+                                const fileInput = document.getElementById('edit-video-file') as HTMLInputElement;
+                                if (fileInput) fileInput.value = '';
+                              }}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        )}
+                        {isUploadingVideo && (
+                          <div className="mt-2">
+                            <div className="w-full bg-gray-200 rounded-full h-2">
+                              <div 
+                                className="bg-purple-600 h-2 rounded-full transition-all duration-300"
+                                style={{ width: `${uploadProgress}%` }}
+                              ></div>
+                            </div>
+                            <p className="text-sm text-gray-600 mt-1">Feltöltés folyamatban... {uploadProgress}%</p>
+                          </div>
+                        )}
+                        <p className="text-xs text-gray-600 mt-1">Új videó fájl feltöltése (max. 500MB)</p>
+                      </div>
+                    </div>
+
+                    <div className="text-center text-gray-500">vagy</div>
+                    
+                    <div>
+                      <Label htmlFor="edit-video-url">Videó URL</Label>
+                      <Input
+                        id="edit-video-url"
+                        value={editLessonVideoUrl}
+                        onChange={(e) => {
+                          setEditLessonVideoUrl(e.target.value);
+                          if (e.target.value.trim()) {
+                            setEditLessonVideoFile(null);
+                            const fileInput = document.getElementById('edit-video-file') as HTMLInputElement;
+                            if (fileInput) fileInput.value = '';
+                          }
+                        }}
+                        placeholder="https://youtube.com/watch?v=... vagy https://vimeo.com/..."
+                        className="mt-1"
+                        disabled={!!editLessonVideoFile}
+                      />
+                      <p className="text-xs text-gray-600 mt-1">YouTube, Vimeo vagy közvetlen videó link</p>
+                    </div>
+
+                    <div className="text-center text-gray-500">vagy</div>
+
+                    <div>
+                      <Label htmlFor="edit-video-embed">Beágyazási kód</Label>
+                      <Textarea
+                        id="edit-video-embed"
+                        value={editLessonVideoEmbedCode}
+                        onChange={(e) => {
+                          setEditLessonVideoEmbedCode(e.target.value);
+                          if (e.target.value.trim()) {
+                            setEditLessonVideoFile(null);
+                            const fileInput = document.getElementById('edit-video-file') as HTMLInputElement;
+                            if (fileInput) fileInput.value = '';
+                          }
+                        }}
+                        placeholder='<iframe src="..." width="560" height="315"></iframe>'
+                        rows={3}
+                        className="mt-1 font-mono text-sm"
+                        disabled={!!editLessonVideoFile}
+                      />
+                      <p className="text-xs text-gray-600 mt-1">HTML embed kód (iframe)</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Text content for non-video lessons */}
+                {editingLesson?.type !== 'video' && (
+                  <div>
+                    <Label htmlFor="edit-lesson-content">Lecke tartalma</Label>
+                    <Textarea
+                      id="edit-lesson-content"
+                      value={editLessonContent}
+                      onChange={(e) => setEditLessonContent(e.target.value)}
+                      placeholder="Írja be a lecke tartalmát..."
+                      rows={8}
+                      className="mt-1"
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div className="flex justify-end gap-2 pt-4">
+                <Button 
+                  variant="outline" 
+                  onClick={() => {
+                    setIsEditLessonOpen(false);
+                    setEditingLesson(null);
+                    resetEditLessonForm();
+                  }}
+                >
+                  Mégse
+                </Button>
+                <Button 
+                  onClick={handleUpdateLesson}
+                  disabled={isUpdatingLesson || !editLessonTitle.trim()}
+                >
+                  {isUpdatingLesson ? (
+                    <>
+                      <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2" />
+                      Frissítés...
+                    </>
+                  ) : (
+                    'Lecke frissítése'
                   )}
                 </Button>
               </div>
