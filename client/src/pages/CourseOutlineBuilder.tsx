@@ -37,7 +37,7 @@ interface Module {
   id?: number;
   title: string;
   description?: string;
-  status: 'draft' | 'coming_soon' | 'free' | 'premium';
+  status: 'piszkozat' | 'hamarosan' | 'ingyenes' | 'fizetos';
   orderIndex: number;
   lessons?: Lesson[];
 }
@@ -77,7 +77,7 @@ export default function CourseOutlineBuilder() {
   const [isEditModuleOpen, setIsEditModuleOpen] = useState(false);
   const [editModuleTitle, setEditModuleTitle] = useState('');
   const [editModuleDescription, setEditModuleDescription] = useState('');
-  const [editModuleStatus, setEditModuleStatus] = useState<'draft' | 'coming_soon' | 'free' | 'premium'>('draft');
+  const [editModuleStatus, setEditModuleStatus] = useState<'piszkozat' | 'hamarosan' | 'ingyenes' | 'fizetos'>('piszkozat');
   const [isUpdatingModule, setIsUpdatingModule] = useState(false);
 
   // Activity creation state
@@ -143,7 +143,7 @@ export default function CourseOutlineBuilder() {
       setModules(prev => [...prev, newModule]);
       setNewModuleTitle('');
       setNewModuleDescription('');
-      setModuleStatus('draft');
+      setModuleStatus('piszkozat');
       setIsAddModuleOpen(false);
       
       toast({
@@ -387,21 +387,21 @@ export default function CourseOutlineBuilder() {
                           <h3 className="text-lg font-semibold">{String(moduleIndex + 1).padStart(2, '0')}</h3>
                           <Badge 
                             variant={
-                              module.status === 'draft' ? 'secondary' :
-                              module.status === 'coming_soon' ? 'outline' :
-                              module.status === 'free' ? 'default' :
+                              module.status === 'piszkozat' ? 'secondary' :
+                              module.status === 'hamarosan' ? 'outline' :
+                              module.status === 'ingyenes' ? 'default' :
                               'destructive'
                             }
                             className={`text-xs ${
-                              module.status === 'draft' ? 'bg-gray-100 text-gray-600' :
-                              module.status === 'coming_soon' ? 'bg-orange-100 text-orange-700 border-orange-200' :
-                              module.status === 'free' ? 'bg-green-100 text-green-700' :
+                              module.status === 'piszkozat' ? 'bg-gray-100 text-gray-600' :
+                              module.status === 'hamarosan' ? 'bg-orange-100 text-orange-700 border-orange-200' :
+                              module.status === 'ingyenes' ? 'bg-green-100 text-green-700' :
                               'bg-blue-100 text-blue-700'
                             }`}
                           >
-                            {module.status === 'draft' ? 'Piszkozat' :
-                             module.status === 'coming_soon' ? 'Hamarosan' :
-                             module.status === 'free' ? 'Ingyenes' :
+                            {module.status === 'piszkozat' ? 'Piszkozat' :
+                             module.status === 'hamarosan' ? 'Hamarosan' :
+                             module.status === 'ingyenes' ? 'Ingyenes' :
                              'Fizetős'}
                           </Badge>
                         </div>
