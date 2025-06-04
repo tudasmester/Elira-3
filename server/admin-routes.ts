@@ -1,6 +1,6 @@
-import type { Express } from "express";
+import type { Express, Request, Response } from "express";
 import { storage } from "./storage";
-import { requireAuth } from "./auth-working";
+import { requireAuth, verifyToken } from "./auth-working";
 import { isAdmin } from "./adminAuth";
 import { insertCourseSchema, insertUniversitySchema } from "@shared/schema";
 import { contentSync } from "./content-sync";
@@ -395,18 +395,67 @@ export function registerAdminRoutes(app: Express) {
     }
   });
 
-  // Update module
-  app.put('/api/modules/:id', isAdmin, async (req: Request, res: Response) => {
+  // Update module - with authentication middleware
+  app.put('/api/modules/:id', async (req: any, res: any, next: any) => {
     try {
+      // Manual authentication check
+      const authHeader = req.headers.authorization;
+      console.log("Module update auth header:", authHeader ? `Bearer ${authHeader.substring(7, 20)}...` : "None");
+      
+      if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        console.log("No valid auth header for module update");
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      const token = authHeader.substring(7);
+      
+      // Import verification function locally
+      const jwt = require('jsonwebtoken');
+      let decoded;
+      try {
+        decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+      } catch (err) {
+        console.log("Token verification failed:", err);
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      
+      if (!decoded) {
+        console.log("No decoded token");
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      const user = await storage.getUser(decoded.userId);
+      if (!user || !user.isAdmin) {
+        console.log("User not found or not admin:", user?.id, user?.isAdmin);
+        return res.status(403).json({ message: "Admin access required" });
+      }
+
+      console.log("Module update auth successful for user:", user.id);
+
       const moduleId = parseInt(req.params.id);
       const updateData = req.body;
       
-      const updatedModule = await storage.updateCourseModule(moduleId, updateData);
+      console.log("Updating module:", moduleId, "with data:", updateData);
+      
+      // Validate that the update includes allowed fields
+      const allowedFields = ['title', 'description', 'status', 'orderIndex'];
+      const filteredData: any = {};
+      
+      for (const field of allowedFields) {
+        if (updateData[field] !== undefined) {
+          filteredData[field] = updateData[field];
+        }
+      }
+      
+      console.log("Filtered update data:", filteredData);
+      
+      const updatedModule = await storage.updateCourseModule(moduleId, filteredData);
       
       if (!updatedModule) {
         return res.status(404).json({ message: "Module not found" });
       }
       
+      console.log("Module updated successfully:", updatedModule);
       res.json(updatedModule);
     } catch (error) {
       console.error("Error updating module:", error);
