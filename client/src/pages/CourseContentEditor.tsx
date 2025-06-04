@@ -42,12 +42,13 @@ export default function CourseContentEditor() {
     try {
       const moduleData = {
         title: sectionData.title,
-        description: sectionData.description,
-        courseId: parseInt(id!),
-        orderIndex: 0
+        description: sectionData.description
       };
 
-      await apiRequest('POST', `/api/courses/${id}/modules`, moduleData);
+      console.log('Creating module with data:', moduleData);
+      const response = await apiRequest('POST', `/api/courses/${id}/modules`, moduleData);
+      const result = await response.json();
+      console.log('Module created successfully:', result);
       
       toast({
         title: "Modul létrehozva",

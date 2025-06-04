@@ -627,8 +627,12 @@ export function registerAdminRoutes(app: Express) {
   app.get('/api/admin/courses/:id/modules', isAdmin, async (req: Request, res: Response) => {
     try {
       const courseId = parseInt(req.params.id);
-      // For now, return empty array as we build the module system
-      res.json([]);
+      console.log(`Fetching modules for course ${courseId}`);
+      
+      const modules = await storage.getCourseModules(courseId);
+      console.log(`Found ${modules.length} modules for course ${courseId}`);
+      
+      res.json(modules);
     } catch (error) {
       console.error('Error fetching course modules:', error);
       res.status(500).json({ message: 'Failed to fetch course modules' });
