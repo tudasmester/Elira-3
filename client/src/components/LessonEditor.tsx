@@ -155,7 +155,7 @@ export function LessonEditor({ lesson, onClose, onSave }: LessonEditorProps) {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="content">Tartalom</TabsTrigger>
-            <TabsTrigger value="quizzes">Kvízek ({quizzes.length})</TabsTrigger>
+            <TabsTrigger value="quizzes">Kvízek</TabsTrigger>
             <TabsTrigger value="settings">Beállítások</TabsTrigger>
           </TabsList>
 
